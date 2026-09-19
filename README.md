@@ -16,20 +16,21 @@
 
 ---
 
+## 💻 National Hackathons & Tech Initiatives
+Active builder and collaborator across multiple national-level hackathons, engineering incubators, and student digital summits in Nepal:
+- **BNKS National Hackathon (Budhanilkantha School)**: Competed across technical tracks, developing digital solutions and rapid system prototypes.
+- **Build Nepal Hackathon**: Collaborated alongside student engineering bodies, notably the **Innovative Computer Engineering Students (ICES)**.
+- **National Hackathon Circuit (including MBMC IdeaX Hackathon)**: Innovated across fintech, agricultural data infrastructure, and rapid software prototyping.
+- **UI/UX & Digital Design**: Active contributor to digital design sprints, design systems, and tech workshops across Kathmandu.
+
+---
+
 ## 🎙️ National-Level Debating & Parliamentary Discourse
 Aayush is a seasoned competitor on Nepal's national debating circuit, having engaged in parliamentary debates and analytical forums. Notable appearances include:
 - **9th Annual MahaKumbha 2022 (National Schools Debating Championship / Pre-Worlds)**  
   *Organized by Debate Network Nepal (DNN) in collaboration with Brihaspati Vidhyasadan School, Naxal.*
   - Competed in rigorous British Parliamentary / World Schools debating formats evaluating international governance, socioeconomic frameworks, and public ethics.
 - **Circuit Debates & Tournaments**: Active across various youth debates, speech conclaves, and national-level discourse platforms in Nepal.
-
----
-
-## 💻 National Hackathons & Tech Initiatives
-Active builder and collaborator across various national-level hackathons, engineering incubators, and student digital summits in Nepal:
-- **Build Nepal Hackathon**: Collaborated alongside student engineering bodies, notably the **Innovative Computer Engineering Students (ICES)**.
-- **National Hackathon Circuit (including MBMC IdeaX Hackathon)**: Innovated across fintech, agricultural data infrastructure, and rapid software prototyping.
-- **UI/UX & Digital Design**: Active contributor to digital design sprints, design systems, and tech workshops across Kathmandu.
 
 ---
 
@@ -54,7 +55,11 @@ Engaged across prominent diplomatic simulations and youth leadership assemblies:
   "location": "Kathmandu, Nepal",
   "occupation": ["Software Developer", "UI/UX Designer", "Content Creator"],
   "debating": ["National Level Debater", "9th Annual MahaKumbha 2022 - Debate Network Nepal"],
-  "hackathons": ["Build Nepal Hackathon (ICES)", "National Hackathon Competitor"],
+  "hackathons": [
+    "BNKS National Hackathon (Budhanilkantha School)",
+    "Build Nepal Hackathon (ICES)",
+    "MBMC IdeaX National Hackathon"
+  ],
   "mun": ["NYC MUN 2023 - Delegate of Switzerland in UNEP (UN Nepal / National Youth Council)"],
   "tiktok": "https://www.tiktok.com/@aayushifty",
   "github": "https://github.com/aayushbhatta230-ux"
