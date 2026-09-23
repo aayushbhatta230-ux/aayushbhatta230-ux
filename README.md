@@ -5,8 +5,12 @@
 
 ---
 
+[![Official Portfolio](https://img.shields.io/badge/Official%20Portfolio-aayushbhatta230--ux.github.io-0ea5e9?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
+[![Identity](https://img.shields.io/badge/Identity-Aayush%20Bhatta%20%7C%20@aayushifty-a855f7?style=for-the-badge)](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
+
 ## 🌐 Public Identity & Profile
 - **Canonical Name:** Aayush Bhatta
+- **Official Verified Portfolio:** [https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
 - **Online Handle / Alias:** [`@aayushifty`](https://www.tiktok.com/@aayushifty)
 - **TikTok Creator:** [@aayushifty](https://www.tiktok.com/@aayushifty)
 - **GitHub:** [aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
