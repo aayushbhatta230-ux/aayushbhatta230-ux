@@ -6,18 +6,23 @@ Online and across social platforms, I go by **@aayushifty**.
 
 ---
 
-### What I'm Building
-- **[HandChord](https://github.com/aayushbhatta230-ux/handchord)** â€” Play chords and songs in your browser with webcam hand gestures using MediaPipe and the Web Audio API.
-- **[KrishiPath / KrishiTrust](https://github.com/aayushbhatta230-ux/KrishiPath)** â€” Transit shock monitoring and reliability scoring for produce transport in Nepal.
+### Featured Repositories & Projects
+
+| Project | Description | Stack | Link |
+|:---|:---|:---|:---:|
+| **[HandChord](https://github.com/aayushbhatta230-ux/handchord)** | Camera-controlled musical instrument that lets you play chords with webcam hand gestures. | MediaPipe, Web Audio API, Vite | [View Repo](https://github.com/aayushbhatta230-ux/handchord) |
+| **[KrishiPath](https://github.com/aayushbhatta230-ux/KrishiPath)** | Transit shock monitoring and reliability scoring for produce transport in Nepal. | Hardware, Analytics, Web | [View Repo](https://github.com/aayushbhatta230-ux/KrishiPath) |
+
+---
 
 ### Hackathons & Engineering
-- **BNKS National Hackathon** (Budhanilkantha School)
+- **BNKS National Hackathon** (Budhanilkantha School) - Technical prototype build
 - **Build Nepal Hackathon** (with Innovative Computer Engineering Students / ICES)
-- **MBMC IdeaX Hackathon**
+- **MBMC IdeaX Hackathon** - Rapid software and hardware prototyping
 
 ### Debating & Model UN
-- **MahaKumbha 2022** â€” 9th Annual National Schools Debating Championship (Debate Network Nepal / Brihaspati Vidhyasadan)
-- **NYC MUN 2023** â€” National Youth Council Model United Nations, Delegate of Switzerland (UNEP)
+- **MahaKumbha 2022** - 9th Annual National Schools Debating Championship (Debate Network Nepal / Brihaspati Vidhyasadan)
+- **NYC MUN 2023** - National Youth Council Model United Nations, Delegate of Switzerland (UNEP)
 
 ---
 
