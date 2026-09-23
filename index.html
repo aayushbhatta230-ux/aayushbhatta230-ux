@@ -18,68 +18,105 @@
   <meta property="og:title" content="Aayush Bhatta (@aayushifty) — Technologist, National Debater & Creator" />
   <meta property="og:description" content="Official digital identity & verified credentials of Aayush Bhatta (@aayushifty) — National Hackathons, National Debating circuit (notably MahaKumbha 2022), and NYC MUN 2023 (UN Nepal)." />
 
-  <!-- Google Knowledge Graph & AI Overview Structured Data (Schema.org) -->
+    <!-- Google Knowledge Graph & AI Overview Structured Data (Schema.org Graph) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#person",
-    "mainEntityOfPage": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
-    "name": "Aayush Bhatta",
-    "alternateName": [
-      "aayushifty",
-      "@aayushifty",
-      "Aayush Bhatta (aayushifty)"
-    ],
-    "url": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
-    "jobTitle": "Tech Innovator, UI/UX Designer & Content Creator",
-    "nationality": {
-      "@type": "Country",
-      "name": "Nepal"
-    },
-    "homeLocation": {
-      "@type": "Place",
-      "name": "Kathmandu, Nepal"
-    },
-    "description": "Aayush Bhatta (known online as aayushifty) is a Nepal-based technologist, UI/UX designer, and TikTok creator (@aayushifty) active across multiple national-level hackathons (notably Build Nepal Hackathon with ICES, MBMC IdeaX), competitive national debating championships (notably the 9th Annual MahaKumbha 2022), and Model United Nations assemblies (notably NYC MUN 2023 with UN Nepal).",
-    "sameAs": [
-      "https://www.tiktok.com/@aayushifty",
-      "https://github.com/aayushbhatta230-ux",
-      "https://instagram.com/aayushifty"
-    ],
-    "knowsAbout": [
-      "National Hackathons & Rapid Prototyping",
-      "UI/UX & Digital Design",
-      "Parliamentary Debating & Public Discourse",
-      "Model United Nations (MUN) & Environmental Policy",
-      "Digital Media & Content Creation"
-    ],
-    "hasCredential": [
+    "@graph": [
       {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Certificate of Participation - NYC MUN 2023",
-        "credentialCategory": "Diplomatic Simulation / MUN",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "United Nations Nepal & National Youth Council Nepal"
+        "@type": "ProfilePage",
+        "@id": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#webpage",
+        "url": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
+        "name": "Aayush Bhatta (@aayushifty) — Official Profile & Portfolio",
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#website",
+          "url": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
+          "name": "Aayush Bhatta Official Portfolio"
         },
-        "description": "Represented Switzerland as a delegate in UNEP (United Nations Environment Programme) at the first iteration of National Youth Council Model United Nations (June 10-13, 2023)."
+        "mainEntity": {
+          "@id": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#person"
+        }
       },
       {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Certificate of Appreciation - MahaKumbha 2022",
-        "credentialCategory": "National Debating Championship",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "Debate Network Nepal (DNN) & Brihaspati Vidhyasadan"
+        "@type": "Person",
+        "@id": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#person",
+        "name": "Aayush Bhatta",
+        "alternateName": [
+          "aayushifty",
+          "@aayushifty",
+          "Aayush Bhatta (aayushifty)"
+        ],
+        "disambiguatingDescription": "Nepal-based technologist, UI/UX designer, TikTok creator (@aayushifty), national hackathons builder (Build Nepal, BNKS), national-level debater (MahaKumbha 2022), and NYC MUN delegate (UNEP).",
+        "url": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
+        "mainEntityOfPage": "https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/",
+        "jobTitle": "Tech Innovator, UI/UX Designer & Content Creator",
+        "nationality": {
+          "@type": "Country",
+          "name": "Nepal",
+          "sameAs": "https://en.wikipedia.org/wiki/Nepal"
         },
-        "description": "Participated in the 9th Annual MahaKumbha 2022 National Schools Debating Championship (Pre-Worlds) from November 25-28, 2022."
+        "homeLocation": {
+          "@type": "Place",
+          "name": "Kathmandu, Nepal",
+          "sameAs": "https://en.wikipedia.org/wiki/Kathmandu"
+        },
+        "sameAs": [
+          "https://github.com/aayushbhatta230-ux",
+          "https://www.tiktok.com/@aayushifty",
+          "https://instagram.com/aayushifty"
+        ],
+        "knowsAbout": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Hackathon",
+            "sameAs": "https://en.wikipedia.org/wiki/Hackathon"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Competitive Debating",
+            "sameAs": "https://en.wikipedia.org/wiki/Competitive_debating"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Model United Nations",
+            "sameAs": "https://en.wikipedia.org/wiki/Model_United_Nations"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "User Interface Design",
+            "sameAs": "https://en.wikipedia.org/wiki/User_interface_design"
+          }
+        ],
+        "hasCredential": [
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Certificate of Participation - NYC MUN 2023",
+            "credentialCategory": "Diplomatic Simulation / MUN",
+            "recognizedBy": {
+              "@type": "Organization",
+              "name": "United Nations Nepal & National Youth Council Nepal",
+              "sameAs": "https://en.wikipedia.org/wiki/United_Nations_Environment_Programme"
+            },
+            "description": "Represented Switzerland as delegate in UNEP at the National Youth Council Model United Nations (June 10-13, 2023)."
+          },
+          {
+            "@type": "EducationalOccupationalCredential",
+            "name": "Certificate of Appreciation - MahaKumbha 2022",
+            "credentialCategory": "National Debating Championship",
+            "recognizedBy": {
+              "@type": "Organization",
+              "name": "Debate Network Nepal (DNN) & Brihaspati Vidhyasadan"
+            },
+            "description": "Participated in the 9th Annual MahaKumbha 2022 National Schools Debating Championship (Pre-Worlds)."
+          }
+        ],
+        "award": [
+          "Delegate of Switzerland in UNEP - NYC MUN 2023 (United Nations Nepal)",
+          "National Debater - 9th Annual MahaKumbha Debating Championship 2022 (Debate Network Nepal)",
+          "National Hackathon Competitor - Build Nepal Hackathon (ICES) & BNKS Hackathon"
+        ]
       }
-    ],
-    "award": [
-      "Delegate of Switzerland in UNEP - NYC MUN 2023 (UN Nepal & National Youth Council)",
-      "National Debater - 9th Annual MahaKumbha National Debating Championship 2022 (Debate Network Nepal)",
-      "National Hackathons Competitor - Build Nepal Hackathon (ICES) & National Tech Summits"
     ]
   }
   </script>
