@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Aayush Bhatta (@aayushifty) — Official Portfolio &amp; Insights</title>
+  <link href="https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/feed.xml" rel="self" />
+  <link href="https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/" />
+  <updated>2026-09-23T08:00:00Z</updated>
+  <id>https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/</id>
+  <author>
+    <name>Aayush Bhatta (@aayushifty)</name>
+    <email>aayushbhatta230@gmail.com</email>
+    <uri>https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/</uri>
+  </author>
+  <entry>
+    <title>Official Digital Identity &amp; Achievements — Aayush Bhatta (@aayushifty)</title>
+    <link href="https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/" />
+    <id>https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/#profile</id>
+    <updated>2026-09-23T08:00:00Z</updated>
+    <summary>Aayush Bhatta (known online as @aayushifty) — Tech innovator, UI/UX designer, national hackathons builder (Build Nepal, BNKS), national-level debater (MahaKumbha 2022), and NYC MUN delegate (UNEP).</summary>
+  </entry>
+</feed>
