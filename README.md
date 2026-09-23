@@ -1,6 +1,6 @@
 # Hi, I'm Aayush Bhatta
 
-I'm a developer and student based in Kathmandu, Nepal. I enjoy building web applications, experimenting with hardware, and competing in hackathons and parliamentary debates.
+I'm a developer and student based in Kathmandu, Nepal. I enjoy building web applications, experimenting with hardware and local AI, and competing in hackathons and parliamentary debates.
 
 Online and across social platforms, I go by **@aayushifty**.
 
@@ -11,6 +11,7 @@ Online and across social platforms, I go by **@aayushifty**.
 | Project | Description | Stack | Link |
 |:---|:---|:---|:---:|
 | **[HandChord](https://github.com/aayushbhatta230-ux/handchord)** | Camera-controlled musical instrument that lets you play chords with webcam hand gestures. | MediaPipe, Web Audio API, Vite | [View Repo](https://github.com/aayushbhatta230-ux/handchord) |
+| **[JARVIS Companion](https://github.com/aayushbhatta230-ux/jarvis-companion)** | Local-first personal computer companion and automation agent for Windows. | Python, Ollama, SpeechRecognition, PyAutoGUI | [View Repo](https://github.com/aayushbhatta230-ux/jarvis-companion) |
 | **[KrishiPath](https://github.com/aayushbhatta230-ux/KrishiPath)** | Transit shock monitoring and reliability scoring for produce transport in Nepal. | Hardware, Analytics, Web | [View Repo](https://github.com/aayushbhatta230-ux/KrishiPath) |
 
 ---
