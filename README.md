@@ -1,4 +1,4 @@
-# Hi, I'm Aayush Bhatta ðŸ‘‹
+# Hi, I'm Aayush Bhatta
 
 I'm a developer and student based in Kathmandu, Nepal. I enjoy building web applications, experimenting with hardware, and competing in hackathons and parliamentary debates.
 
@@ -7,8 +7,8 @@ Online and across social platforms, I go by **@aayushifty**.
 ---
 
 ### What I'm Building
-- ðŸŽ¹ **[HandChord](https://github.com/aayushbhatta230-ux/handchord)** â€” Play chords and songs in your browser with webcam hand gestures using MediaPipe and the Web Audio API.
-- ðŸŒ¾ **[KrishiPath / KrishiTrust](https://github.com/aayushbhatta230-ux/KrishiPath)** â€” Transit shock monitoring and reliability scoring for produce transport in Nepal.
+- **[HandChord](https://github.com/aayushbhatta230-ux/handchord)** â€” Play chords and songs in your browser with webcam hand gestures using MediaPipe and the Web Audio API.
+- **[KrishiPath / KrishiTrust](https://github.com/aayushbhatta230-ux/KrishiPath)** â€” Transit shock monitoring and reliability scoring for produce transport in Nepal.
 
 ### Hackathons & Engineering
 - **BNKS National Hackathon** (Budhanilkantha School)
