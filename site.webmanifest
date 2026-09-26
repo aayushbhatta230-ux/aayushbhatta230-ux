@@ -1,0 +1,18 @@
+{
+  "name": "Aayush Bhatta — Portfolio",
+  "short_name": "Aayush Bhatta",
+  "description": "Portfolio of Aayush Bhatta (@aayushifty) — Student, Developer, Musician & Athlete from Kathmandu, Nepal.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#05070c",
+  "theme_color": "#05070c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/spiderman.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
