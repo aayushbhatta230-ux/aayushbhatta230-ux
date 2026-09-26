@@ -1,0 +1,21 @@
+{
+  "name": "aayushbhatta-portfolio",
+  "version": "2.1.0",
+  "description": "Interactive 3D portfolio and creative universe of Aayush Bhatta (@aayushifty)",
+  "main": "script.js",
+  "scripts": {
+    "test": "node test/validate.js",
+    "lint:js": "node -c script.js",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "portfolio",
+    "threejs",
+    "web-audio-api",
+    "origami-transition",
+    "interactive-3d",
+    "aayush-bhatta"
+  ],
+  "author": "Aayush Bhatta <aayushbhatta230@gmail.com>",
+  "license": "MIT"
+}
