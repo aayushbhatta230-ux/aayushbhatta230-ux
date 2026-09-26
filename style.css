@@ -56,6 +56,12 @@ body {
   min-height: 100vh;
 }
 
+/* Accessible Focus States */
+:focus-visible {
+  outline: 2px solid var(--cyan-accent);
+  outline-offset: 3px;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
@@ -961,13 +967,25 @@ body {
 
 .human-tag {
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s var(--ease-elastic);
+  backdrop-filter: blur(8px);
+}
+
+.human-tag:hover {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.35);
+  color: #ffffff;
+  transform: translateY(-2px);
 }
 
 .hero-buttons {
@@ -1176,10 +1194,11 @@ body {
 
 .project-card {
   border-radius: 24px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, rgba(16, 24, 40, 0.75) 0%, rgba(9, 14, 26, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
   padding: 28px 24px;
-  transition: all 0.25s var(--ease-elastic);
+  transition: all 0.3s var(--ease-elastic);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1187,8 +1206,8 @@ body {
 
 .project-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(0, 240, 255, 0.4);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 240, 255, 0.45);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 25px rgba(0, 240, 255, 0.12);
 }
 
 .project-header {
@@ -1284,16 +1303,18 @@ body {
 
 .about-card {
   border-radius: 24px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, rgba(16, 24, 40, 0.75) 0%, rgba(9, 14, 26, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
   padding: 32px 26px;
   line-height: 1.65;
-  transition: transform 0.3s var(--ease-elastic), border-color 0.3s;
+  transition: transform 0.3s var(--ease-elastic), border-color 0.3s, box-shadow 0.3s;
 }
 
 .about-card:hover {
   transform: translateY(-4px);
   border-color: var(--cyan-accent);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 25px rgba(0, 240, 255, 0.1);
 }
 
 .about-card h3 {
@@ -1325,11 +1346,12 @@ body {
 
 .cert-card {
   border-radius: 22px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, rgba(16, 24, 40, 0.75) 0%, rgba(9, 14, 26, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   padding: 24px 22px;
   cursor: pointer;
-  transition: all 0.25s var(--ease-elastic);
+  transition: all 0.28s var(--ease-elastic);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1338,7 +1360,7 @@ body {
 .cert-card:hover {
   transform: translateY(-5px);
   border-color: var(--cyan-accent);
-  box-shadow: 0 16px 36px rgba(0, 240, 255, 0.15);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 240, 255, 0.12);
 }
 
 .cert-card-header {
