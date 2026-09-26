@@ -450,40 +450,41 @@ body {
    -------------------------------------------------------------------------- */
 .screen-pane.anim-plane-squeeze {
   display: flex !important;
-  animation: pageSqueezeToPlane 1.15s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+  animation: pageSqueezeToPlane 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   transform-origin: center center;
   pointer-events: none;
 }
 
 @keyframes pageSqueezeToPlane {
   0% {
-    transform: perspective(1400px) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0, 0, 0);
+    transform: perspective(1600px) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0, 0, 0);
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
     opacity: 1;
     filter: brightness(1) drop-shadow(0 10px 30px rgba(0,0,0,0.5));
   }
-  25% {
-    /* The whole page squeezes horizontally along a central origami crease */
-    transform: perspective(1400px) scale(0.72) rotateX(15deg) rotateY(-8deg) translate3d(0, -20px, 80px);
+  35% {
+    /* Smoothly squeeze horizontally along central origami crease */
+    transform: perspective(1600px) scale(0.78) rotateX(12deg) rotateY(-6deg) translate3d(0, -10px, 60px);
     clip-path: polygon(50% 0%, 94% 45%, 50% 100%, 6% 45%);
-    filter: brightness(1.2) drop-shadow(0 20px 50px rgba(0, 240, 255, 0.35));
-  }
-  50% {
-    /* Sharpens into an aerodynamic paper airplane dart */
-    transform: perspective(1400px) scale(0.52) rotateX(28deg) rotateY(18deg) rotateZ(-18deg) translate3d(50px, -60px, 200px);
-    clip-path: polygon(50% 0%, 100% 88%, 50% 72%, 0% 88%);
-    filter: brightness(1.4) drop-shadow(0 25px 60px rgba(0, 240, 255, 0.6));
+    filter: brightness(1.15) drop-shadow(0 20px 45px rgba(0, 240, 255, 0.3));
     opacity: 1;
   }
-  75% {
-    /* Accelerates and banks steeply into the upper-right sky */
-    transform: perspective(1400px) scale(0.36) rotateX(38deg) rotateY(32deg) rotateZ(-26deg) translate3d(360px, -280px, 380px);
+  60% {
+    /* Sharpens cleanly into an aerodynamic paper airplane dart & banks gracefully */
+    transform: perspective(1600px) scale(0.55) rotateX(24deg) rotateY(16deg) rotateZ(-15deg) translate3d(40px, -40px, 160px);
+    clip-path: polygon(50% 0%, 100% 88%, 50% 72%, 0% 88%);
+    filter: brightness(1.35) drop-shadow(0 25px 55px rgba(0, 240, 255, 0.5));
+    opacity: 1;
+  }
+  80% {
+    /* Glides up and banks smoothly */
+    transform: perspective(1600px) scale(0.42) rotateX(32deg) rotateY(26deg) rotateZ(-22deg) translate3d(240px, -180px, 320px);
     clip-path: polygon(50% 0%, 100% 90%, 50% 75%, 0% 90%);
     opacity: 0.95;
   }
   100% {
-    /* Whooshes completely off-screen into deep space */
-    transform: perspective(1400px) scale(0.08) rotateX(45deg) rotateY(45deg) rotateZ(-36deg) translate3d(140vw, -130vh, 850px);
+    /* Soars into deep space */
+    transform: perspective(1600px) scale(0.08) rotateX(42deg) rotateY(38deg) rotateZ(-32deg) translate3d(140vw, -130vh, 850px);
     clip-path: polygon(50% 0%, 100% 90%, 50% 75%, 0% 90%);
     opacity: 0;
   }
@@ -491,23 +492,23 @@ body {
 
 .screen-pane.anim-plane-emerge {
   display: flex !important;
-  animation: pageEmergeUnfold 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: pageEmergeUnfold 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes pageEmergeUnfold {
   0% {
     opacity: 0;
-    transform: perspective(1400px) scale(0.6) rotateX(-20deg) translate3d(0, 80px, -200px);
+    transform: perspective(1600px) scale(0.7) rotateX(-15deg) translate3d(0, 60px, -160px);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
-  50% {
-    opacity: 0.85;
-    transform: perspective(1400px) scale(0.88) rotateX(-6deg) translate3d(0, 20px, -50px);
-    clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+  55% {
+    opacity: 0.9;
+    transform: perspective(1600px) scale(0.92) rotateX(-4deg) translate3d(0, 15px, -30px);
+    clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
   }
   100% {
     opacity: 1;
-    transform: perspective(1400px) scale(1) rotateX(0deg) translate3d(0, 0, 0);
+    transform: perspective(1600px) scale(1) rotateX(0deg) translate3d(0, 0, 0);
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
   }
 }
@@ -517,38 +518,38 @@ body {
    -------------------------------------------------------------------------- */
 .screen-pane.anim-cube-out {
   display: flex !important;
-  animation: cubeSpinOut 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+  animation: cubeSpinOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   transform-origin: center right;
   pointer-events: none;
 }
 
 @keyframes cubeSpinOut {
   0% {
-    transform: perspective(1600px) rotateY(0deg) translateZ(0);
+    transform: perspective(1800px) rotateY(0deg) translateZ(0);
     opacity: 1;
     filter: brightness(1);
   }
   100% {
-    transform: perspective(1600px) rotateY(-90deg) translateZ(350px) translateX(-40%);
+    transform: perspective(1800px) rotateY(-90deg) translateZ(400px) translateX(-35%);
     opacity: 0;
-    filter: brightness(0.6) blur(4px);
+    filter: brightness(0.5) blur(6px);
   }
 }
 
 .screen-pane.anim-cube-in {
   display: flex !important;
-  animation: cubeSpinIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: cubeSpinIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: center left;
 }
 
 @keyframes cubeSpinIn {
   0% {
-    transform: perspective(1600px) rotateY(90deg) translateZ(350px) translateX(40%);
+    transform: perspective(1800px) rotateY(90deg) translateZ(400px) translateX(35%);
     opacity: 0;
-    filter: brightness(0.7) blur(4px);
+    filter: brightness(0.6) blur(6px);
   }
   100% {
-    transform: perspective(1600px) rotateY(0deg) translateZ(0);
+    transform: perspective(1800px) rotateY(0deg) translateZ(0);
     opacity: 1;
     filter: brightness(1) blur(0);
   }
@@ -559,7 +560,7 @@ body {
    -------------------------------------------------------------------------- */
 .screen-pane.anim-origami-fold-out {
   display: flex !important;
-  animation: diagonalOrigamiOut 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important;
+  animation: diagonalOrigamiOut 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   transform-origin: center center;
   pointer-events: none;
 }
@@ -567,42 +568,42 @@ body {
 @keyframes diagonalOrigamiOut {
   0% {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-    transform: perspective(1400px) scale(1) rotateZ(0deg);
+    transform: perspective(1600px) scale(1) rotateZ(0deg);
     opacity: 1;
   }
-  45% {
+  50% {
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    transform: perspective(1400px) scale(0.7) rotateZ(18deg) rotateX(12deg);
-    opacity: 0.85;
-    filter: drop-shadow(0 15px 40px rgba(168, 85, 247, 0.4));
+    transform: perspective(1600px) scale(0.75) rotateZ(12deg) rotateX(8deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 20px 45px rgba(168, 85, 247, 0.35));
   }
   100% {
     clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
-    transform: perspective(1400px) scale(0.15) rotateZ(55deg) translate3d(0, -100px, 300px);
+    transform: perspective(1600px) scale(0.2) rotateZ(45deg) translate3d(0, -80px, 250px);
     opacity: 0;
   }
 }
 
 .screen-pane.anim-origami-fold-in {
   display: flex !important;
-  animation: diagonalOrigamiIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: diagonalOrigamiIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: center center;
 }
 
 @keyframes diagonalOrigamiIn {
   0% {
     clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
-    transform: perspective(1400px) scale(0.2) rotateZ(-45deg);
+    transform: perspective(1600px) scale(0.25) rotateZ(-35deg);
     opacity: 0;
   }
-  60% {
+  65% {
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    transform: perspective(1400px) scale(0.85) rotateZ(-6deg);
-    opacity: 0.9;
+    transform: perspective(1600px) scale(0.88) rotateZ(-4deg);
+    opacity: 0.92;
   }
   100% {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-    transform: perspective(1400px) scale(1) rotateZ(0deg);
+    transform: perspective(1600px) scale(1) rotateZ(0deg);
     opacity: 1;
   }
 }
@@ -612,36 +613,36 @@ body {
    -------------------------------------------------------------------------- */
 .screen-pane.anim-warp-out {
   display: flex !important;
-  animation: warpZoomOut 0.75s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important;
+  animation: warpZoomOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   pointer-events: none;
 }
 
 @keyframes warpZoomOut {
   0% {
-    transform: perspective(1200px) scale(1) translateZ(0);
+    transform: perspective(1400px) scale(1) translateZ(0);
     filter: blur(0);
     opacity: 1;
   }
   100% {
-    transform: perspective(1200px) scale(2.4) translateZ(550px);
-    filter: blur(14px);
+    transform: perspective(1400px) scale(2.2) translateZ(600px);
+    filter: blur(16px);
     opacity: 0;
   }
 }
 
 .screen-pane.anim-warp-in {
   display: flex !important;
-  animation: warpZoomIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: warpZoomIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes warpZoomIn {
   0% {
-    transform: perspective(1200px) scale(0.35) translateZ(-500px);
-    filter: blur(10px);
+    transform: perspective(1400px) scale(0.4) translateZ(-450px);
+    filter: blur(12px);
     opacity: 0;
   }
   100% {
-    transform: perspective(1200px) scale(1) translateZ(0);
+    transform: perspective(1400px) scale(1) translateZ(0);
     filter: blur(0);
     opacity: 1;
   }
@@ -652,36 +653,36 @@ body {
    -------------------------------------------------------------------------- */
 .screen-pane.anim-peel-out {
   display: flex !important;
-  animation: pagePeelOut 0.85s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important;
+  animation: pagePeelOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   transform-origin: bottom left;
   pointer-events: none;
 }
 
 @keyframes pagePeelOut {
   0% {
-    transform: perspective(1400px) rotateY(0deg) rotateX(0deg);
+    transform: perspective(1600px) rotateY(0deg) rotateX(0deg);
     opacity: 1;
   }
   100% {
-    transform: perspective(1400px) rotateY(-110deg) rotateX(20deg) translateZ(140px);
+    transform: perspective(1600px) rotateY(-105deg) rotateX(15deg) translateZ(120px);
     opacity: 0;
-    filter: drop-shadow(-30px 20px 40px rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(-25px 15px 35px rgba(0, 0, 0, 0.75));
   }
 }
 
 .screen-pane.anim-peel-in {
   display: flex !important;
-  animation: pagePeelIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: pagePeelIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: top right;
 }
 
 @keyframes pagePeelIn {
   0% {
-    transform: perspective(1400px) rotateY(60deg) rotateX(-15deg) translateZ(-100px);
+    transform: perspective(1600px) rotateY(50deg) rotateX(-12deg) translateZ(-80px);
     opacity: 0;
   }
   100% {
-    transform: perspective(1400px) rotateY(0deg) rotateX(0deg) translateZ(0);
+    transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0);
     opacity: 1;
   }
 }
@@ -1090,12 +1091,29 @@ body {
   gap: 24px;
 }
 
+.about-grid.four-cards {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.about-card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: inline-block;
+  filter: drop-shadow(0 4px 12px rgba(0, 240, 255, 0.25));
+}
+
 .about-card {
   border-radius: 24px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   padding: 32px 26px;
   line-height: 1.65;
+  transition: transform 0.3s var(--ease-elastic), border-color 0.3s;
+}
+
+.about-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--cyan-accent);
 }
 
 .about-card h3 {

@@ -278,17 +278,19 @@ const Sound = new CyberSoundEngine();
 // ==========================================================================
 // 2. DYNAMIC 3D PAGE TRANSITION ENGINE (5 Creative Rotating Styles)
 // ==========================================================================
+// 2. DYNAMIC 3D PAGE TRANSITION ENGINE (5 Creative Rotating Styles)
+// ==========================================================================
 const TRANSITIONS = [
   {
     name: 'Aeroplane Fold & Fly',
     icon: '✈️',
     outClass: 'anim-plane-squeeze',
     inClass: 'anim-plane-emerge',
-    duration: 1150,
-    switchTime: 580,
+    duration: 1600,
+    switchTime: 850,
     playStart: () => {
       Sound.playPaperFold();
-      setTimeout(() => Sound.playWhoosh(), 360);
+      setTimeout(() => Sound.playWhoosh(), 550);
     }
   },
   {
@@ -296,8 +298,8 @@ const TRANSITIONS = [
     icon: '🧊',
     outClass: 'anim-cube-out',
     inClass: 'anim-cube-in',
-    duration: 850,
-    switchTime: 420,
+    duration: 1400,
+    switchTime: 650,
     playStart: () => {
       Sound.playCubeRotate();
     }
@@ -307,11 +309,11 @@ const TRANSITIONS = [
     icon: '💎',
     outClass: 'anim-origami-fold-out',
     inClass: 'anim-origami-fold-in',
-    duration: 850,
-    switchTime: 420,
+    duration: 1400,
+    switchTime: 680,
     playStart: () => {
       Sound.playPaperFold();
-      setTimeout(() => Sound.playWhoosh(), 200);
+      setTimeout(() => Sound.playWhoosh(), 400);
     }
   },
   {
@@ -319,8 +321,8 @@ const TRANSITIONS = [
     icon: '🌌',
     outClass: 'anim-warp-out',
     inClass: 'anim-warp-in',
-    duration: 800,
-    switchTime: 380,
+    duration: 1350,
+    switchTime: 640,
     playStart: () => {
       Sound.playWarpZoom();
     }
@@ -330,8 +332,8 @@ const TRANSITIONS = [
     icon: '📄',
     outClass: 'anim-peel-out',
     inClass: 'anim-peel-in',
-    duration: 850,
-    switchTime: 420,
+    duration: 1400,
+    switchTime: 660,
     playStart: () => {
       Sound.playPeelSound();
     }
@@ -416,7 +418,7 @@ class OrigamiTransitionEngine {
     let lastWheelTime = 0;
     window.addEventListener('wheel', (e) => {
       const now = performance.now();
-      if (now - lastWheelTime < 1300) return; // Debounce transition
+      if (now - lastWheelTime < 1700) return; // Debounce transition for smooth completion
       if (this.isModalActive()) return;
 
       if (e.deltaY > 35) {
@@ -627,10 +629,10 @@ function initThreeJS() {
 // ==========================================================================
 const PHOTO_DATA = [
   {
-    title: "Gym Session in the Suit",
-    tag: "Workout & Stamina",
+    title: "Training & Discipline",
+    tag: "Athletics & Stamina",
     src: "assets/images/spiderman.png",
-    story: "Wearing the Spider-Man suit during workouts in Kathmandu. Daily fitness conditioning gives me the energy and focus to build software and hardware for hours."
+    story: "Putting in the physical work off the screen. Staying active, agile, and disciplined gives me the endurance and mental clarity for long engineering sessions."
   },
   {
     title: "Kathmandu Hills at Sunset",
@@ -885,7 +887,7 @@ function initTerminal() {
 <div>• <span class="cmd-hl">clear</span> - Clear terminal</div>
 <div>• <span class="cmd-hl">exit</span> - Close terminal</div>`,
 
-    about: () => `<div>Aayush Bhatta (@aayushifty) — Student, Developer, and Athlete from Kathmandu, Nepal.</div>`,
+    about: () => `<div>Aayush Bhatta (@aayushifty) — Student, Developer, Athlete (Basketball), Musician (Singer & Guitarist), and Dancer from Kathmandu, Nepal.</div>`,
 
     fly: () => {
       if (window.origamiEngine) {
@@ -899,7 +901,7 @@ function initTerminal() {
 <div>• JARVIS: Local voice and touch assistant running Llama 3.2.</div>
 <div>• HandChord: Webcam hand gesture musical chord player.</div>
 <div>• KrishiTrust: ESP32 produce shock monitoring vehicle prototype.</div>
-<div>• TikTok @aayushifty: Tech and student lifestyle content (20K+).</div>`,
+<div>• TikTok @aayushifty: Creative tech experiments, guitar jams, and student lifestyle.</div>`,
 
     certificates: () => `
 <div>• NYC MUN 2023: Delegate of Switzerland (UNEP) - Signed by Deputy PM & UN Resident Coordinator.</div>
