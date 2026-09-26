@@ -188,23 +188,168 @@ class CyberSoundEngine {
       noise.stop(now + 0.65);
     } catch (e) {}
   }
+
+  // 3D Cube Rotation sound: deep spatial sweep
+  playCubeRotate() {
+    if (this.isMuted || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const filter = this.ctx.createBiquadFilter();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.exponentialRampToValueAtTime(70, now + 0.45);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(450, now);
+      filter.frequency.exponentialRampToValueAtTime(120, now + 0.45);
+
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } catch (e) {}
+  }
+
+  // Spatial Warp Zoom sound: futuristic ascending laser warp sweep
+  playWarpZoom() {
+    if (this.isMuted || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(1800, now + 0.4);
+
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } catch (e) {}
+  }
+
+  // Tactile Page Peel rustle
+  playPeelSound() {
+    if (this.isMuted || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const bufferSize = Math.floor(this.ctx.sampleRate * 0.22);
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
+      }
+      const noise = this.ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(1200, now);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      noise.start(now);
+      noise.stop(now + 0.22);
+    } catch (e) {}
+  }
 }
 
 const Sound = new CyberSoundEngine();
 
 // ==========================================================================
-// 2. 3D ORIGAMI PAGE-FOLD & FLY-OFF TRANSITION ENGINE
+// 2. DYNAMIC 3D PAGE TRANSITION ENGINE (5 Creative Rotating Styles)
 // ==========================================================================
+const TRANSITIONS = [
+  {
+    name: 'Aeroplane Fold & Fly',
+    icon: '✈️',
+    outClass: 'anim-plane-squeeze',
+    inClass: 'anim-plane-emerge',
+    duration: 1150,
+    switchTime: 580,
+    playStart: () => {
+      Sound.playPaperFold();
+      setTimeout(() => Sound.playWhoosh(), 360);
+    }
+  },
+  {
+    name: '3D Cube Shift',
+    icon: '🧊',
+    outClass: 'anim-cube-out',
+    inClass: 'anim-cube-in',
+    duration: 850,
+    switchTime: 420,
+    playStart: () => {
+      Sound.playCubeRotate();
+    }
+  },
+  {
+    name: 'Origami Diagonal Crease',
+    icon: '💎',
+    outClass: 'anim-origami-fold-out',
+    inClass: 'anim-origami-fold-in',
+    duration: 850,
+    switchTime: 420,
+    playStart: () => {
+      Sound.playPaperFold();
+      setTimeout(() => Sound.playWhoosh(), 200);
+    }
+  },
+  {
+    name: 'Spatial Warp Zoom',
+    icon: '🌌',
+    outClass: 'anim-warp-out',
+    inClass: 'anim-warp-in',
+    duration: 800,
+    switchTime: 380,
+    playStart: () => {
+      Sound.playWarpZoom();
+    }
+  },
+  {
+    name: 'Architectural Page Peel',
+    icon: '📄',
+    outClass: 'anim-peel-out',
+    inClass: 'anim-peel-in',
+    duration: 850,
+    switchTime: 420,
+    playStart: () => {
+      Sound.playPeelSound();
+    }
+  }
+];
+
 class OrigamiTransitionEngine {
   constructor() {
     this.screens = document.querySelectorAll('.screen-pane');
     this.totalScreens = this.screens.length;
     this.currentScreen = 0;
     this.isTransitioning = false;
-    this.origamiStage = document.getElementById('origami-stage');
+    this.transitionIndex = 0;
     this.screenNumEl = document.getElementById('current-screen-num');
     this.navBtns = document.querySelectorAll('.nav-link-btn');
     this.dots = document.querySelectorAll('.screen-dots .dot');
+    this.transNameEl = document.getElementById('transition-name-text');
+    this.pillEl = document.getElementById('transition-indicator-pill');
 
     this.init();
   }
@@ -246,6 +391,26 @@ class OrigamiTransitionEngine {
     prevBtn?.addEventListener('click', () => {
       this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
     });
+
+    // Interactive Pill: click to cycle transition style manually
+    if (this.pillEl) {
+      this.pillEl.style.cursor = 'pointer';
+      this.pillEl.addEventListener('click', () => {
+        this.transitionIndex = (this.transitionIndex + 1) % TRANSITIONS.length;
+        const currentT = TRANSITIONS[this.transitionIndex];
+        if (this.transNameEl) {
+          this.transNameEl.innerHTML = `${currentT.icon} ${currentT.name}`;
+        }
+        Sound.playTick();
+        showToast(`Next Transition: ${currentT.icon} ${currentT.name}`);
+      });
+    }
+
+    // Set initial transition text
+    if (this.transNameEl) {
+      const initT = TRANSITIONS[0];
+      this.transNameEl.innerHTML = `${initT.icon} ${initT.name}`;
+    }
 
     // Mouse wheel / trackpad swipe
     let lastWheelTime = 0;
@@ -308,35 +473,37 @@ class OrigamiTransitionEngine {
     const outgoingScreen = this.screens[this.currentScreen];
     const incomingScreen = this.screens[index];
 
-    // Step 1: Initiate Origami Fold
-    Sound.playPaperFold();
-    this.origamiStage.classList.add('active', 'folding');
-    outgoingScreen.classList.add('exit-folding');
+    // Select the next transition in our creative dynamic rotation
+    const t = TRANSITIONS[this.transitionIndex % TRANSITIONS.length];
+    this.transitionIndex++;
 
-    // Step 2: At fold midpoint (380ms), trigger aerodynamic whoosh and fly-off
-    setTimeout(() => {
-      Sound.playWhoosh();
-    }, 380);
+    // Update the transition pill text with icon
+    if (this.transNameEl) {
+      this.transNameEl.innerHTML = `${t.icon} ${t.name}`;
+    }
 
-    // Step 3: Switch active screens as the plane accelerates off
+    // Trigger transition sound & start outgoing screen compression/folding
+    t.playStart();
+    outgoingScreen.classList.add(t.outClass);
+
+    // Midpoint: switch active screen and trigger incoming entry animation
     setTimeout(() => {
-      outgoingScreen.classList.remove('active', 'exit-folding');
-      incomingScreen.classList.add('active', 'enter-shifting');
+      outgoingScreen.classList.remove('active', t.outClass);
+      incomingScreen.classList.add('active', t.inClass);
 
       this.currentScreen = index;
       this.updateHUD(index);
 
-      // Scroll view to top cleanly
+      // Cleanly scroll viewport to top of new section
       window.scrollTo({ top: 0, behavior: 'instant' });
-    }, 600);
+    }, t.switchTime);
 
-    // Step 4: Finish transition, play chime, reset origami stage
+    // Completion: clear animation classes and play arrival chime
     setTimeout(() => {
-      incomingScreen.classList.remove('enter-shifting');
-      this.origamiStage.classList.remove('active', 'folding');
+      incomingScreen.classList.remove(t.inClass);
       Sound.playChime(659.25); // E5 arrival chime
       this.isTransitioning = false;
-    }, 1180);
+    }, t.duration);
   }
 
   updateHUD(index) {

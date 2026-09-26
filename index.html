@@ -56,27 +56,6 @@
   <canvas id="webgl-canvas"></canvas>
   <div class="cyber-grid-overlay"></div>
 
-  <!-- ==========================================================================
-       3D ORIGAMI PAGE-FOLD & FLY TRANSITION STAGE
-       ========================================================================== -->
-  <div id="origami-stage" class="origami-stage" aria-hidden="true">
-    <div id="origami-paper-plane" class="origami-plane-mesh">
-      <!-- 3D Origami Creases and Wing Flaps -->
-      <div class="origami-body">
-        <div class="origami-wing left-wing">
-          <div class="wing-inner"></div>
-        </div>
-        <div class="origami-wing right-wing">
-          <div class="wing-inner"></div>
-        </div>
-        <div class="origami-keel"></div>
-        <div class="origami-nose"></div>
-      </div>
-      <div class="origami-plane-shadow"></div>
-      <div class="origami-contrail"></div>
-    </div>
-  </div>
-
   <!-- Navigation Bar -->
   <header class="nav-hud">
     <a href="#hero" class="nav-brand nav-screen-btn" data-screen="0">
@@ -132,8 +111,12 @@
 
   <!-- Quick Floating Next/Prev Arrow Controls -->
   <div class="screen-controls">
+    <div id="transition-indicator-pill" class="transition-indicator-pill" title="Current Screen Transition Effect">
+      <span class="pill-dot">●</span>
+      <span id="transition-name-text">Aeroplane Fold</span>
+    </div>
     <button id="btn-prev-screen" class="screen-arrow-btn prev" title="Previous Page (↑)">↑</button>
-    <button id="btn-next-screen" class="screen-arrow-btn next" title="Fold & Fly to Next Page (↓)">
+    <button id="btn-next-screen" class="screen-arrow-btn next" title="Next Page (↓)">
       <span>Next</span>
       <span class="arrow">↓</span>
     </button>
