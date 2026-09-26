@@ -1511,3 +1511,644 @@ body {
     padding: 36px 20px;
   }
 }
+
+/* ==========================================================================
+   PAPER AIRPLANE FLIGHT TRANSITION SYSTEM (Inspired by @jerrythewebdev)
+   ========================================================================== */
+.paper-plane-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1600;
+  overflow: hidden;
+}
+
+.paper-plane-trail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.7));
+}
+
+.interactive-glider {
+  position: absolute;
+  top: 90px;
+  right: 40px;
+  width: 58px;
+  height: 58px;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1650;
+  transition: transform 0.15s ease-out;
+  transform-origin: center center;
+  perspective: 600px;
+}
+
+.glider-body {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 8px 18px rgba(0, 240, 255, 0.45));
+}
+
+.glider-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.glider-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: pulseGliderGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseGliderGlow {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.85; }
+}
+
+.interactive-glider:hover .glider-body {
+  transform: scale(1.15) rotate(-15deg);
+}
+
+.btn-paper-plane {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--cyan-glow);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-elastic);
+}
+
+.btn-paper-plane:hover {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Hero Badges Strip */
+.hero-badges-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0 28px 0;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.hero-badge.athlete {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+
+.hero-badge.hackathon {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+
+.hero-badge:hover {
+  transform: translateY(-2px);
+}
+
+/* Athlete Bento Box */
+.bento-athlete {
+  grid-column: span 6;
+  background: linear-gradient(135deg, rgba(28, 22, 14, 0.6) 0%, rgba(14, 18, 28, 0.75) 100%);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.bento-athlete:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 16px 40px rgba(245, 158, 11, 0.15);
+}
+
+.athlete-stats-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.athlete-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #fde68a;
+  transition: all 0.2s;
+}
+
+.athlete-pill:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: #f59e0b;
+  transform: translateY(-2px);
+}
+
+.athlete-pill .pill-icon {
+  font-size: 1.15rem;
+}
+
+/* 4D Temporal Chronometer */
+.bento-chronometer {
+  grid-column: span 6;
+  background: linear-gradient(135deg, rgba(8, 24, 38, 0.65) 0%, rgba(10, 16, 26, 0.8) 100%);
+  border-color: rgba(0, 240, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chronometer-display {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 16px 0;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.chrono-time {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+.chrono-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.chrono-tz {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--cyan-glow);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chrono-ms {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: #facc15;
+  font-weight: 700;
+}
+
+.chrono-bars {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chrono-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan-glow), #facc15);
+  border-radius: 999px;
+  transition: width 0.05s linear;
+}
+
+.bento-credentials-preview {
+  grid-column: span 6;
+  background: linear-gradient(135deg, rgba(28, 16, 42, 0.6) 0%, rgba(12, 16, 26, 0.8) 100%);
+  border-color: rgba(168, 85, 247, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   VERIFIED CREDENTIALS & TRACK RECORD SECTION (#credentials)
+   ========================================================================== */
+.credentials-section {
+  padding: 80px 0;
+}
+
+.credentials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.credential-pass-card {
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(16, 22, 36, 0.8), rgba(9, 13, 22, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 28px 24px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-elastic);
+}
+
+.credential-pass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan-glow), var(--purple-glow));
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.credential-pass-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--cyan-glow);
+  box-shadow: 0 20px 50px rgba(0, 240, 255, 0.18);
+}
+
+.credential-pass-card:hover::before {
+  opacity: 1;
+}
+
+.pass-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.pass-seal {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  color: var(--cyan-glow);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.pass-title-group {
+  flex: 1;
+}
+
+.pass-category {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--text-cyan);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  display: block;
+}
+
+.pass-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.pass-status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.pass-status-badge.verified {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #34d399;
+}
+
+.pass-status-badge.gold {
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid #f59e0b;
+  color: #facc15;
+}
+
+.pass-body {
+  margin-bottom: 20px;
+}
+
+.pass-summary {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.pass-signatories-preview {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border-left: 2px solid var(--cyan-glow);
+}
+
+.pass-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+}
+
+.pass-date {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.btn-inspect-cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: var(--cyan-glow);
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-inspect-cert:hover {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+}
+
+/* ==========================================================================
+   OFFICIAL CERTIFICATE & CREDENTIAL MODAL (#cert-modal)
+   ========================================================================== */
+.cert-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(4, 7, 14, 0.92);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  z-index: 2100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.cert-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cert-modal-card {
+  width: 100%;
+  max-width: 680px;
+  background: linear-gradient(150deg, #0e1526, #070b14);
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  border-radius: 28px;
+  padding: 38px 34px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(0, 240, 255, 0.25);
+  position: relative;
+  transform: scale(0.92);
+  transition: transform 0.35s var(--ease-elastic);
+}
+
+.cert-modal-backdrop.active .cert-modal-card {
+  transform: scale(1);
+}
+
+.cert-modal-close-btn {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cert-modal-close-btn:hover {
+  background: rgba(254, 44, 85, 0.3);
+  border-color: #fe2c55;
+  transform: rotate(90deg);
+}
+
+.cert-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+}
+
+.cert-badge-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2));
+  border: 1px solid var(--cyan-glow);
+  color: #ffffff;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--glow-cyan-sm);
+  flex-shrink: 0;
+}
+
+.cert-header-text {
+  flex: 1;
+}
+
+.cert-org {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cyan-glow);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cert-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 4px;
+}
+
+.cert-verified-stamp {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1.5px solid #10b981;
+  color: #34d399;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.cert-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.cert-field {
+  margin-bottom: 18px;
+}
+
+.cert-field label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.cert-field .field-val {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+.cert-signatories-box {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border-left: 3px solid #10b981;
+  font-family: var(--font-mono) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.5;
+  color: #e2e8f0 !important;
+}
+
+.cert-desc-box {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  line-height: 1.6;
+  font-size: 0.92rem !important;
+  color: var(--text-secondary) !important;
+}
+
+.cert-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .hero-badges-strip {
+    flex-direction: column;
+  }
+  .bento-athlete, .bento-chronometer, .bento-credentials-preview {
+    grid-column: span 12;
+  }
+  .athlete-stats-row {
+    grid-template-columns: 1fr;
+  }
+  .credentials-grid {
+    grid-template-columns: 1fr;
+  }
+  .cert-field-row {
+    grid-template-columns: 1fr;
+  }
+  .cert-modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .interactive-glider {
+    right: 16px;
+    top: 75px;
+  }
+}
+
