@@ -111,15 +111,21 @@
 
   <!-- Quick Floating Next/Prev Arrow Controls -->
   <div class="screen-controls">
-    <div id="transition-indicator-pill" class="transition-indicator-pill" title="Current Screen Transition Effect">
-      <span class="pill-dot">●</span>
-      <span id="transition-name-text">Aeroplane Fold</span>
-    </div>
     <button id="btn-prev-screen" class="screen-arrow-btn prev" title="Previous Page (↑)">↑</button>
     <button id="btn-next-screen" class="screen-arrow-btn next" title="Next Page (↓)">
       <span>Next</span>
       <span class="arrow">↓</span>
     </button>
+  </div>
+
+  <!-- ==========================================================================
+       DYNAMIC 3D TRANSITION STAGE (Take-Off, In-Flight & Landing)
+       ========================================================================== -->
+  <div id="transition-stage" class="transition-stage" aria-hidden="true">
+    <div id="flight-contrail" class="flight-contrail"></div>
+    <div id="takeoff-craft" class="takeoff-craft"></div>
+    <div id="landing-craft" class="landing-craft"></div>
+    <div id="touchdown-ripple" class="touchdown-ripple"></div>
   </div>
 
   <!-- ==========================================================================
@@ -171,12 +177,7 @@
         <!-- Hero Photo Card -->
         <div class="hero-photo-wrapper">
           <div class="photo-card-tilt" data-index="0">
-            <img src="assets/images/spiderman.png" alt="Aayush Bhatta Training" class="hero-card-img" />
-            <div class="photo-card-meta">
-              <h3>Training &amp; Discipline</h3>
-              <p>Physical stamina and focus give me the clarity to build and create for hours.</p>
-              <span class="inspect-cue">Click to view photo ↗</span>
-            </div>
+            <img src="assets/images/spiderman.png" alt="Aayush Bhatta" class="hero-card-img" />
           </div>
         </div>
       </div>
@@ -194,58 +195,38 @@
         </div>
 
         <div class="moments-grid">
-          <!-- Photo 0: Training -->
+          <!-- Photo 0 -->
           <div class="moment-item" data-index="0">
             <div class="moment-img-box">
-              <img src="assets/images/spiderman.png" alt="Training &amp; Stamina" />
-            </div>
-            <div class="moment-info">
-              <h4>Training &amp; Stamina</h4>
-              <p>Physical conditioning and movement. Staying active and disciplined gives me the endurance to build for hours.</p>
+              <img src="assets/images/spiderman.png" alt="Aayush" />
             </div>
           </div>
 
-          <!-- Photo 1: Golden Sunset -->
+          <!-- Photo 1 -->
           <div class="moment-item" data-index="1">
             <div class="moment-img-box">
-              <img src="assets/images/golden_sunset.png" alt="Kathmandu Sunset" />
-            </div>
-            <div class="moment-info">
-              <h4>Kathmandu Hills at Sunset</h4>
-              <p>Golden hour looking over the valley. My favorite spot to step back and reflect.</p>
+              <img src="assets/images/golden_sunset.png" alt="Kathmandu Hills at Sunset" />
             </div>
           </div>
 
-          <!-- Photo 2: Mountain B&W -->
+          <!-- Photo 2 -->
           <div class="moment-item" data-index="2">
             <div class="moment-img-box">
               <img src="assets/images/mountain_bw.png" alt="Mountain Trek" />
             </div>
-            <div class="moment-info">
-              <h4>Up in the Mountains</h4>
-              <p>Trekking in the high altitude. Reminds me to stay calm and push through when things get difficult.</p>
-            </div>
           </div>
 
-          <!-- Photo 3: Forest & River -->
+          <!-- Photo 3 -->
           <div class="moment-item" data-index="3">
             <div class="moment-img-box">
               <img src="assets/images/forest_nature.png" alt="Pine Forest and River" />
             </div>
-            <div class="moment-info">
-              <h4>River &amp; Pine Trails</h4>
-              <p>Trail runs and river walks outside the city. Nature is where I go to clear my head.</p>
-            </div>
           </div>
 
-          <!-- Photo 4: Mirror Candid -->
+          <!-- Photo 4 -->
           <div class="moment-item" data-index="4">
             <div class="moment-img-box">
-              <img src="assets/images/mirror_candid.png" alt="Creator Candid" />
-            </div>
-            <div class="moment-info">
-              <h4>Late Night in the Room</h4>
-              <p>Taking a break after coding prototypes and recording clips for the TikTok community.</p>
+              <img src="assets/images/mirror_candid.png" alt="Candid" />
             </div>
           </div>
         </div>
@@ -623,12 +604,12 @@
 
       <div class="terminal-body">
         <div id="terminal-log" class="terminal-log">
-          <div>Welcome. Type <span class="cmd-hl">help</span> to view commands, or <span class="cmd-hl">fly</span> to trigger the origami page fold.</div>
+          <div>Welcome to my terminal. Type <span class="cmd-hl">help</span> to view commands, or <span class="cmd-hl">next</span> to browse sections.</div>
         </div>
 
         <div class="terminal-input-row">
           <span class="terminal-prompt">aayush:~$</span>
-          <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false" placeholder="help, fly, projects, about, contact..." />
+          <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false" placeholder="help, next, projects, about, contact..." />
         </div>
       </div>
     </div>

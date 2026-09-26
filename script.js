@@ -271,6 +271,25 @@ class CyberSoundEngine {
       noise.stop(now + 0.22);
     } catch (e) {}
   }
+
+  // Touchdown impact sound on landing arrival
+  playTouchdown() {
+    if (this.isMuted || !this.ctx) return;
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(36, now + 0.35);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } catch (e) {}
+  }
 }
 
 const Sound = new CyberSoundEngine();
@@ -278,64 +297,158 @@ const Sound = new CyberSoundEngine();
 // ==========================================================================
 // 2. DYNAMIC 3D PAGE TRANSITION ENGINE (5 Creative Rotating Styles)
 // ==========================================================================
-// 2. DYNAMIC 3D PAGE TRANSITION ENGINE (5 Creative Rotating Styles)
+// 2. DYNAMIC TAKE-OFF & LANDING TRANSITION ENGINE
 // ==========================================================================
+const CRAFTS = {
+  aeroplane: {
+    takeoff: `
+      <svg viewBox="0 0 140 140" style="width: 130px; height: 130px; filter: drop-shadow(0 0 25px rgba(0,240,255,0.8));">
+        <polygon points="70,10 130,115 70,95 10,115" fill="rgba(0, 240, 255, 0.95)" stroke="#ffffff" stroke-width="2" />
+        <polygon points="70,10 70,95 10,115" fill="rgba(0, 180, 220, 0.75)" />
+        <polygon points="70,10 130,115 70,95" fill="rgba(255, 255, 255, 0.9)" />
+        <line x1="70" y1="10" x2="70" y2="95" stroke="#00f0ff" stroke-width="2" />
+      </svg>
+    `,
+    landing: `
+      <svg viewBox="0 0 160 120" style="width: 145px; height: 110px; filter: drop-shadow(0 0 30px rgba(168,85,247,0.85));">
+        <polygon points="80,15 150,95 80,78 10,95" fill="rgba(168, 85, 247, 0.95)" stroke="#ffffff" stroke-width="2" />
+        <polygon points="80,15 80,78 10,95" fill="rgba(130, 50, 210, 0.75)" />
+        <polygon points="80,15 150,95 80,78" fill="rgba(255, 255, 255, 0.9)" />
+        <circle cx="20" cy="95" r="5" fill="#00f0ff" />
+        <circle cx="140" cy="95" r="5" fill="#00f0ff" />
+        <circle cx="80" cy="80" r="4" fill="#ffffff" />
+      </svg>
+    `
+  },
+  cube: {
+    takeoff: `
+      <svg viewBox="0 0 140 140" style="width: 130px; height: 130px; filter: drop-shadow(0 0 25px rgba(0,240,255,0.7));">
+        <polygon points="70,20 120,48 70,76 20,48" fill="rgba(0,240,255,0.4)" stroke="#00f0ff" stroke-width="2" />
+        <polygon points="20,48 70,76 70,125 20,97" fill="rgba(0,180,220,0.6)" stroke="#00f0ff" stroke-width="2" />
+        <polygon points="120,48 70,76 70,125 120,97" fill="rgba(0,240,255,0.7)" stroke="#00f0ff" stroke-width="2" />
+      </svg>
+    `,
+    landing: `
+      <svg viewBox="0 0 160 160" style="width: 140px; height: 140px; filter: drop-shadow(0 0 30px rgba(168,85,247,0.8));">
+        <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(168,85,247,0.6)" stroke-width="2" stroke-dasharray="8 6" />
+        <polygon points="80,30 125,56 80,82 35,56" fill="rgba(168,85,247,0.5)" stroke="#ffffff" stroke-width="2" />
+        <polygon points="35,56 80,82 80,130 35,104" fill="rgba(120,40,200,0.7)" stroke="#ffffff" stroke-width="2" />
+        <polygon points="125,56 80,82 80,130 125,104" fill="rgba(200,120,255,0.8)" stroke="#ffffff" stroke-width="2" />
+      </svg>
+    `
+  },
+  origami: {
+    takeoff: `
+      <svg viewBox="0 0 140 140" style="width: 130px; height: 130px; filter: drop-shadow(0 0 25px rgba(255,0,220,0.75));">
+        <polygon points="70,15 88,52 125,70 88,88 70,125 52,88 15,70 52,52" fill="rgba(255,0,220,0.85)" stroke="#ffffff" stroke-width="2" />
+      </svg>
+    `,
+    landing: `
+      <svg viewBox="0 0 160 160" style="width: 145px; height: 145px; filter: drop-shadow(0 0 30px rgba(0,240,255,0.9));">
+        <ellipse cx="80" cy="80" rx="22" ry="55" fill="rgba(0,240,255,0.6)" stroke="#ffffff" stroke-width="1.5" />
+        <ellipse cx="80" cy="80" rx="55" ry="22" fill="rgba(168,85,247,0.6)" stroke="#ffffff" stroke-width="1.5" />
+        <circle cx="80" cy="80" r="14" fill="#ffffff" />
+      </svg>
+    `
+  },
+  warp: {
+    takeoff: `
+      <svg viewBox="0 0 140 140" style="width: 130px; height: 130px; filter: drop-shadow(0 0 30px rgba(0,240,255,0.9));">
+        <circle cx="70" cy="70" r="45" fill="none" stroke="#00f0ff" stroke-width="3" stroke-dasharray="12 8" />
+        <circle cx="70" cy="70" r="25" fill="rgba(0,240,255,0.7)" />
+      </svg>
+    `,
+    landing: `
+      <svg viewBox="0 0 160 160" style="width: 140px; height: 140px; filter: drop-shadow(0 0 35px rgba(255,255,255,0.95));">
+        <circle cx="80" cy="80" r="55" fill="none" stroke="#ffffff" stroke-width="3" />
+        <circle cx="80" cy="80" r="30" fill="rgba(168,85,247,0.8)" />
+        <polygon points="80,10 95,65 150,80 95,95 80,150 65,95 10,80 65,65" fill="rgba(0,240,255,0.7)" />
+      </svg>
+    `
+  },
+  peel: {
+    takeoff: `
+      <svg viewBox="0 0 140 140" style="width: 130px; height: 130px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
+        <rect x="25" y="25" width="90" height="90" rx="8" fill="rgba(15,22,35,0.85)" stroke="#00f0ff" stroke-width="2" />
+        <line x1="38" y1="45" x2="102" y2="45" stroke="#cbd5e1" stroke-width="2" />
+        <line x1="38" y1="65" x2="88" y2="65" stroke="#cbd5e1" stroke-width="2" />
+      </svg>
+    `,
+    landing: `
+      <svg viewBox="0 0 160 160" style="width: 140px; height: 140px; filter: drop-shadow(0 20px 40px rgba(0,240,255,0.5));">
+        <rect x="30" y="30" width="100" height="100" rx="10" fill="rgba(12,17,28,0.9)" stroke="#a855f7" stroke-width="2" />
+        <circle cx="80" cy="80" r="16" fill="rgba(0,240,255,0.6)" />
+      </svg>
+    `
+  }
+};
+
 const TRANSITIONS = [
   {
-    name: 'Aeroplane Fold & Fly',
-    icon: '✈️',
-    outClass: 'anim-plane-squeeze',
-    inClass: 'anim-plane-emerge',
-    duration: 1600,
-    switchTime: 850,
+    key: 'aeroplane',
+    outClass: 'anim-plane-takeoff',
+    inClass: 'anim-plane-landing',
+    duration: 1550,
+    switchTime: 750,
     playStart: () => {
       Sound.playPaperFold();
-      setTimeout(() => Sound.playWhoosh(), 550);
+      setTimeout(() => Sound.playWhoosh(), 350);
+    },
+    playTouchdown: () => {
+      Sound.playTouchdown();
     }
   },
   {
-    name: '3D Cube Shift',
-    icon: '🧊',
-    outClass: 'anim-cube-out',
-    inClass: 'anim-cube-in',
-    duration: 1400,
-    switchTime: 650,
+    key: 'cube',
+    outClass: 'anim-cube-takeoff',
+    inClass: 'anim-cube-landing',
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playCubeRotate();
+    },
+    playTouchdown: () => {
+      Sound.playTouchdown();
     }
   },
   {
-    name: 'Origami Diagonal Crease',
-    icon: '💎',
-    outClass: 'anim-origami-fold-out',
-    inClass: 'anim-origami-fold-in',
-    duration: 1400,
-    switchTime: 680,
+    key: 'origami',
+    outClass: 'anim-origami-takeoff',
+    inClass: 'anim-origami-landing',
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playPaperFold();
-      setTimeout(() => Sound.playWhoosh(), 400);
+      setTimeout(() => Sound.playWhoosh(), 300);
+    },
+    playTouchdown: () => {
+      Sound.playTouchdown();
     }
   },
   {
-    name: 'Spatial Warp Zoom',
-    icon: '🌌',
-    outClass: 'anim-warp-out',
-    inClass: 'anim-warp-in',
-    duration: 1350,
-    switchTime: 640,
+    key: 'warp',
+    outClass: 'anim-warp-takeoff',
+    inClass: 'anim-warp-landing',
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playWarpZoom();
+    },
+    playTouchdown: () => {
+      Sound.playTouchdown();
     }
   },
   {
-    name: 'Architectural Page Peel',
-    icon: '📄',
-    outClass: 'anim-peel-out',
-    inClass: 'anim-peel-in',
-    duration: 1400,
-    switchTime: 660,
+    key: 'peel',
+    outClass: 'anim-peel-takeoff',
+    inClass: 'anim-peel-landing',
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playPeelSound();
+    },
+    playTouchdown: () => {
+      Sound.playTouchdown();
     }
   }
 ];
@@ -347,11 +460,12 @@ class OrigamiTransitionEngine {
     this.currentScreen = 0;
     this.isTransitioning = false;
     this.transitionIndex = 0;
+    this.stageEl = document.getElementById('transition-stage');
+    this.takeoffCraft = document.getElementById('takeoff-craft');
+    this.landingCraft = document.getElementById('landing-craft');
     this.screenNumEl = document.getElementById('current-screen-num');
     this.navBtns = document.querySelectorAll('.nav-link-btn');
     this.dots = document.querySelectorAll('.screen-dots .dot');
-    this.transNameEl = document.getElementById('transition-name-text');
-    this.pillEl = document.getElementById('transition-indicator-pill');
 
     this.init();
   }
@@ -393,26 +507,6 @@ class OrigamiTransitionEngine {
     prevBtn?.addEventListener('click', () => {
       this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
     });
-
-    // Interactive Pill: click to cycle transition style manually
-    if (this.pillEl) {
-      this.pillEl.style.cursor = 'pointer';
-      this.pillEl.addEventListener('click', () => {
-        this.transitionIndex = (this.transitionIndex + 1) % TRANSITIONS.length;
-        const currentT = TRANSITIONS[this.transitionIndex];
-        if (this.transNameEl) {
-          this.transNameEl.innerHTML = `${currentT.icon} ${currentT.name}`;
-        }
-        Sound.playTick();
-        showToast(`Next Transition: ${currentT.icon} ${currentT.name}`);
-      });
-    }
-
-    // Set initial transition text
-    if (this.transNameEl) {
-      const initT = TRANSITIONS[0];
-      this.transNameEl.innerHTML = `${initT.icon} ${initT.name}`;
-    }
 
     // Mouse wheel / trackpad swipe
     let lastWheelTime = 0;
@@ -475,20 +569,26 @@ class OrigamiTransitionEngine {
     const outgoingScreen = this.screens[this.currentScreen];
     const incomingScreen = this.screens[index];
 
-    // Select the next transition in our creative dynamic rotation
+    // Select the next transition in rotation
     const t = TRANSITIONS[this.transitionIndex % TRANSITIONS.length];
     this.transitionIndex++;
 
-    // Update the transition pill text with icon
-    if (this.transNameEl) {
-      this.transNameEl.innerHTML = `${t.icon} ${t.name}`;
+    // Stage setup: trigger craft elements
+    if (this.stageEl) {
+      this.stageEl.className = `transition-stage active stage-${t.key}`;
+      if (this.takeoffCraft && CRAFTS[t.key]) {
+        this.takeoffCraft.innerHTML = CRAFTS[t.key].takeoff;
+      }
+      if (this.landingCraft && CRAFTS[t.key]) {
+        this.landingCraft.innerHTML = CRAFTS[t.key].landing;
+      }
     }
 
-    // Trigger transition sound & start outgoing screen compression/folding
+    // Step 1: Start outgoing take-off animation & sound
     t.playStart();
     outgoingScreen.classList.add(t.outClass);
 
-    // Midpoint: switch active screen and trigger incoming entry animation
+    // Step 2: Switch active screen and trigger incoming landing approach
     setTimeout(() => {
       outgoingScreen.classList.remove('active', t.outClass);
       incomingScreen.classList.add('active', t.inClass);
@@ -500,10 +600,20 @@ class OrigamiTransitionEngine {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }, t.switchTime);
 
-    // Completion: clear animation classes and play arrival chime
+    // Step 3: Touchdown impact sound on landing arrival
+    setTimeout(() => {
+      t.playTouchdown();
+    }, t.switchTime + 280);
+
+    // Step 4: Completion: clean up stage and play arrival chime
     setTimeout(() => {
       incomingScreen.classList.remove(t.inClass);
-      Sound.playChime(659.25); // E5 arrival chime
+      if (this.stageEl) {
+        this.stageEl.className = 'transition-stage';
+        if (this.takeoffCraft) this.takeoffCraft.innerHTML = '';
+        if (this.landingCraft) this.landingCraft.innerHTML = '';
+      }
+      Sound.playChime(659.25);
       this.isTransitioning = false;
     }, t.duration);
   }
@@ -525,6 +635,7 @@ class OrigamiTransitionEngine {
     });
   }
 }
+
 
 // ==========================================================================
 // 3. THREE.JS BACKGROUND ATMOSPHERE
@@ -629,34 +740,24 @@ function initThreeJS() {
 // ==========================================================================
 const PHOTO_DATA = [
   {
-    title: "Training & Discipline",
-    tag: "Athletics & Stamina",
-    src: "assets/images/spiderman.png",
-    story: "Putting in the physical work off the screen. Staying active, agile, and disciplined gives me the endurance and mental clarity for long engineering sessions."
+    title: "Kathmandu Valley",
+    src: "assets/images/spiderman.png"
   },
   {
-    title: "Kathmandu Hills at Sunset",
-    tag: "Evening in the Hills",
-    src: "assets/images/golden_sunset.png",
-    story: "Overlooking the terraced hills of Kathmandu valley during golden hour. A quiet moment to step back from screens and reflect."
+    title: "Hills at Golden Hour",
+    src: "assets/images/golden_sunset.png"
   },
   {
-    title: "Up in the Mountains",
-    tag: "Altitude & Focus",
-    src: "assets/images/mountain_bw.png",
-    story: "Trekking high in the mountains amid cold air and fog. Staying composed when the terrain gets tough carries directly into how I solve complex engineering problems."
+    title: "Mountain Altitude",
+    src: "assets/images/mountain_bw.png"
   },
   {
-    title: "River & Pine Trails",
-    tag: "Outdoors Sanctuary",
-    src: "assets/images/forest_nature.png",
-    story: "Trail runs and boulder rivers outside the city. Nature is where I go to clear my head and get new creative ideas."
+    title: "Nature Trails",
+    src: "assets/images/forest_nature.png"
   },
   {
-    title: "Late Night in the Room",
-    tag: "Creating for TikTok",
-    src: "assets/images/mirror_candid.png",
-    story: "Quick mirror check after coding prototypes and recording clips for the @aayushifty TikTok community."
+    title: "Late Night Coding",
+    src: "assets/images/mirror_candid.png"
   }
 ];
 
@@ -666,8 +767,6 @@ function initLightbox() {
   const backdrop = document.getElementById('lightbox-backdrop');
   const imgEl = document.getElementById('lightbox-img');
   const titleEl = document.getElementById('lightbox-title');
-  const tagEl = document.getElementById('lightbox-tag');
-  const storyEl = document.getElementById('lightbox-story');
   const closeBtn = document.getElementById('lightbox-close');
   const prevBtn = document.getElementById('lightbox-prev');
   const nextBtn = document.getElementById('lightbox-next');
@@ -680,9 +779,7 @@ function initLightbox() {
 
     imgEl.src = data.src;
     imgEl.alt = data.title;
-    titleEl.innerText = data.title;
-    tagEl.innerText = data.tag;
-    storyEl.innerText = data.story;
+    if (titleEl) titleEl.innerText = data.title;
 
     backdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -881,7 +978,7 @@ function initTerminal() {
 <div>Available commands:</div>
 <div>• <span class="cmd-hl">about</span> - Brief intro</div>
 <div>• <span class="cmd-hl">projects</span> - What I'm building</div>
-<div>• <span class="cmd-hl">fly</span> - Trigger the origami paper plane transition</div>
+<div>• <span class="cmd-hl">next</span> - Navigate to next section</div>
 <div>• <span class="cmd-hl">certificates</span> - Verified certifications & achievements</div>
 <div>• <span class="cmd-hl">contact</span> - Email & socials</div>
 <div>• <span class="cmd-hl">clear</span> - Clear terminal</div>
@@ -889,13 +986,15 @@ function initTerminal() {
 
     about: () => `<div>Aayush Bhatta (@aayushifty) — Student, Developer, Athlete (Basketball), Musician (Singer & Guitarist), and Dancer from Kathmandu, Nepal.</div>`,
 
-    fly: () => {
+    next: () => {
       if (window.origamiEngine) {
         const next = (window.origamiEngine.currentScreen + 1) % window.origamiEngine.totalScreens;
         window.origamiEngine.goToScreen(next);
       }
-      return `<div>✈ Origami page folded and launched!</div>`;
+      return `<div>Navigating to next section...</div>`;
     },
+
+    fly: function() { return this.next(); },
 
     projects: () => `
 <div>• JARVIS: Local voice and touch assistant running Llama 3.2.</div>

@@ -384,43 +384,240 @@ body {
   transform: translateY(-2px);
 }
 
-/* Transition Indicator Pill */
-.transition-indicator-pill {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(15, 22, 35, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-accent);
-  color: var(--cyan-accent);
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  font-weight: 700;
-  display: inline-flex;
+/* ==========================================================================
+   DYNAMIC TAKE-OFF, IN-FLIGHT & LANDING TRANSITION STAGE
+   The outgoing screen and craft take off, fly across, and an incoming craft
+   lands and unfolds the new page!
+   ========================================================================== */
+.transition-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 900;
+  pointer-events: none;
+  overflow: hidden;
+  display: none;
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+.transition-stage.active {
+  display: block;
+}
+
+.takeoff-craft,
+.landing-craft {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 16px rgba(0, 240, 255, 0.15);
+  justify-content: center;
+  opacity: 0;
+  transform-style: preserve-3d;
 }
 
-.transition-indicator-pill .pill-dot {
-  font-size: 0.6rem;
-  animation: pulsePillDot 1.5s infinite ease-in-out;
+.touchdown-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 2px solid var(--cyan-accent);
+  box-shadow: 0 0 50px rgba(0, 240, 255, 0.6), inset 0 0 30px rgba(0, 240, 255, 0.4);
+  opacity: 0;
+  pointer-events: none;
 }
 
-@keyframes pulsePillDot {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+.transition-stage.active .touchdown-ripple {
+  animation: rippleTouchdown 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s forwards;
+}
+
+@keyframes rippleTouchdown {
+  0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.95; }
+  60% { opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(3.8); opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   1. AEROPLANE: TAKE-OFF FLIGHT & LANDING TOUCHDOWN
+   -------------------------------------------------------------------------- */
+.transition-stage.stage-aeroplane .takeoff-craft {
+  opacity: 1;
+  animation: planeTakeoffFlight 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes planeTakeoffFlight {
+  0% {
+    opacity: 0;
+    transform: perspective(1600px) translate3d(0, 35vh, -150px) scale(0.4) rotateX(15deg) rotateY(-5deg) rotateZ(-5deg);
+  }
+  20% {
+    opacity: 1;
+    transform: perspective(1600px) translate3d(0, 18vh, 50px) scale(0.9) rotateX(25deg) rotateY(-10deg) rotateZ(-12deg);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(1600px) translate3d(35vw, -15vh, 250px) scale(1.15) rotateX(32deg) rotateY(20deg) rotateZ(-24deg);
+    filter: drop-shadow(0 20px 40px rgba(0, 240, 255, 0.7));
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1600px) translate3d(120vw, -110vh, 600px) scale(0.25) rotateX(45deg) rotateY(35deg) rotateZ(-36deg);
+  }
+}
+
+.transition-stage.stage-aeroplane .landing-craft {
+  opacity: 0;
+  animation: planeLandingTouchdown 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes planeLandingTouchdown {
+  0% {
+    opacity: 0;
+    transform: perspective(1600px) translate3d(-90vw, -70vh, -400px) scale(0.25) rotateX(-20deg) rotateY(30deg) rotateZ(35deg);
+  }
+  30% {
+    opacity: 1;
+    transform: perspective(1600px) translate3d(-30vw, -25vh, -80px) scale(0.75) rotateX(-12deg) rotateY(18deg) rotateZ(18deg);
+  }
+  75% {
+    opacity: 1;
+    /* Flare nose up right before touchdown */
+    transform: perspective(1600px) translate3d(0, 4vh, 60px) scale(1.05) rotateX(16deg) rotateY(0deg) rotateZ(0deg);
+    filter: drop-shadow(0 25px 50px rgba(168, 85, 247, 0.8));
+  }
+  90% {
+    /* Touchdown on runway! */
+    opacity: 1;
+    transform: perspective(1600px) translate3d(0, 10px, 0) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1600px) translate3d(0, 0, 0) scale(1.15) rotateX(0deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. 3D CUBE: LAUNCH & DOCKING
+   -------------------------------------------------------------------------- */
+.transition-stage.stage-cube .takeoff-craft {
+  opacity: 1;
+  animation: cubeLaunchFlight 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes cubeLaunchFlight {
+  0% { opacity: 0; transform: scale(0.5) rotateX(0) rotateY(0) translateZ(0); }
+  25% { opacity: 1; transform: scale(1.1) rotateX(30deg) rotateY(45deg) translateZ(100px); }
+  100% { opacity: 0; transform: scale(0.2) rotateX(180deg) rotateY(270deg) translate3d(-100vw, -60vh, -600px); }
+}
+
+.transition-stage.stage-cube .landing-craft {
+  opacity: 0;
+  animation: cubeDockLanding 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes cubeDockLanding {
+  0% { opacity: 0; transform: scale(0.3) rotateX(-90deg) rotateY(90deg) translate3d(0, -60vh, -400px); }
+  60% { opacity: 1; transform: scale(1.05) rotateX(-10deg) rotateY(15deg) translate3d(0, -10px, 50px); }
+  85% { opacity: 1; transform: scale(0.98) rotateX(0) rotateY(0) translate3d(0, 0, 0); }
+  100% { opacity: 0; transform: scale(1.15) rotateX(0) rotateY(0) translate3d(0, 0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   3. ORIGAMI: STAR LAUNCH & LOTUS BLOSSOM
+   -------------------------------------------------------------------------- */
+.transition-stage.stage-origami .takeoff-craft {
+  opacity: 1;
+  animation: origamiStarLaunch 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes origamiStarLaunch {
+  0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  30% { opacity: 1; transform: scale(1.2) rotate(120deg) translate3d(0, -20px, 80px); }
+  100% { opacity: 0; transform: scale(0.2) rotate(480deg) translate3d(0, -110vh, 400px); }
+}
+
+.transition-stage.stage-origami .landing-craft {
+  opacity: 0;
+  animation: origamiLotusLanding 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes origamiLotusLanding {
+  0% { opacity: 0; transform: scale(0.3) rotate(-180deg) translate3d(0, -70vh, -200px); }
+  60% { opacity: 1; transform: scale(1.1) rotate(15deg) translate3d(0, 10px, 50px); }
+  85% { opacity: 1; transform: scale(1) rotate(0deg) translate3d(0, 0, 0); }
+  100% { opacity: 0; transform: scale(1.3) rotate(0deg) translate3d(0, 0, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   4. SPATIAL WARP: JUMP & RE-ENTRY
+   -------------------------------------------------------------------------- */
+.transition-stage.stage-warp .takeoff-craft {
+  opacity: 1;
+  animation: warpJumpFlight 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes warpJumpFlight {
+  0% { opacity: 0; transform: scale(0.6) translateZ(0); }
+  40% { opacity: 1; transform: scale(1.3) translateZ(200px); }
+  100% { opacity: 0; transform: scale(4.5) translateZ(800px); }
+}
+
+.transition-stage.stage-warp .landing-craft {
+  opacity: 0;
+  animation: warpReentryLanding 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes warpReentryLanding {
+  0% { opacity: 0; transform: scale(0.2) translateZ(-600px); }
+  60% { opacity: 1; transform: scale(1.15) translateZ(80px); }
+  85% { opacity: 1; transform: scale(0.98) translateZ(0); }
+  100% { opacity: 0; transform: scale(1.2) translateZ(0); }
+}
+
+/* --------------------------------------------------------------------------
+   5. ARCHITECTURAL PEEL: KINETIC LIFT & TOUCHDOWN
+   -------------------------------------------------------------------------- */
+.transition-stage.stage-peel .takeoff-craft {
+  opacity: 1;
+  animation: peelLiftFlight 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes peelLiftFlight {
+  0% { opacity: 0; transform: scale(0.6) rotateX(0deg) translate3d(0, 20vh, 0); }
+  35% { opacity: 1; transform: scale(1) rotateX(30deg) translate3d(-10vw, -10vh, 100px); }
+  100% { opacity: 0; transform: scale(0.3) rotateX(80deg) translate3d(-80vw, -90vh, 400px); }
+}
+
+.transition-stage.stage-peel .landing-craft {
+  opacity: 0;
+  animation: peelTouchdownLanding 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes peelTouchdownLanding {
+  0% { opacity: 0; transform: scale(0.4) rotateX(-60deg) translate3d(60vw, -60vh, -200px); }
+  65% { opacity: 1; transform: scale(1.05) rotateX(10deg) translate3d(0, -10px, 40px); }
+  85% { opacity: 1; transform: scale(1) rotateX(0deg) translate3d(0, 0, 0); }
+  100% { opacity: 0; transform: scale(1.15) rotateX(0deg); }
 }
 
 /* ==========================================================================
    SCREENS CONTAINER & DYNAMIC 3D PAGE TRANSITIONS
-   The entire page itself folds, squeezes, shifts, and morphs creatively!
    ========================================================================== */
 .screens-wrapper {
   position: relative;
   width: 100%;
   min-height: 100vh;
   z-index: 10;
-  perspective: 1600px;
+  perspective: 1800px;
   transform-style: preserve-3d;
 }
 
@@ -445,12 +642,11 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* --------------------------------------------------------------------------
-   1. AEROPLANE FOLD & FLY-OFF: The entire page squeezes into a plane & flies!
-   -------------------------------------------------------------------------- */
+/* 1. Aeroplane: Squeeze & Take-Off / Descent & Landing */
+.screen-pane.anim-plane-takeoff,
 .screen-pane.anim-plane-squeeze {
   display: flex !important;
-  animation: pageSqueezeToPlane 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  animation: pageSqueezeToPlane 1.55s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   transform-origin: center center;
   pointer-events: none;
 }
@@ -463,48 +659,50 @@ body {
     filter: brightness(1) drop-shadow(0 10px 30px rgba(0,0,0,0.5));
   }
   35% {
-    /* Smoothly squeeze horizontally along central origami crease */
     transform: perspective(1600px) scale(0.78) rotateX(12deg) rotateY(-6deg) translate3d(0, -10px, 60px);
     clip-path: polygon(50% 0%, 94% 45%, 50% 100%, 6% 45%);
     filter: brightness(1.15) drop-shadow(0 20px 45px rgba(0, 240, 255, 0.3));
     opacity: 1;
   }
   60% {
-    /* Sharpens cleanly into an aerodynamic paper airplane dart & banks gracefully */
     transform: perspective(1600px) scale(0.55) rotateX(24deg) rotateY(16deg) rotateZ(-15deg) translate3d(40px, -40px, 160px);
     clip-path: polygon(50% 0%, 100% 88%, 50% 72%, 0% 88%);
     filter: brightness(1.35) drop-shadow(0 25px 55px rgba(0, 240, 255, 0.5));
     opacity: 1;
   }
   80% {
-    /* Glides up and banks smoothly */
     transform: perspective(1600px) scale(0.42) rotateX(32deg) rotateY(26deg) rotateZ(-22deg) translate3d(240px, -180px, 320px);
     clip-path: polygon(50% 0%, 100% 90%, 50% 75%, 0% 90%);
     opacity: 0.95;
   }
   100% {
-    /* Soars into deep space */
     transform: perspective(1600px) scale(0.08) rotateX(42deg) rotateY(38deg) rotateZ(-32deg) translate3d(140vw, -130vh, 850px);
     clip-path: polygon(50% 0%, 100% 90%, 50% 75%, 0% 90%);
     opacity: 0;
   }
 }
 
+.screen-pane.anim-plane-landing,
 .screen-pane.anim-plane-emerge {
   display: flex !important;
-  animation: pageEmergeUnfold 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: pageEmergeUnfold 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes pageEmergeUnfold {
   0% {
     opacity: 0;
-    transform: perspective(1600px) scale(0.7) rotateX(-15deg) translate3d(0, 60px, -160px);
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    transform: perspective(1600px) scale(0.65) rotateX(-18deg) translate3d(0, 60px, -180px);
+    clip-path: polygon(50% 0%, 100% 88%, 50% 72%, 0% 88%);
   }
-  55% {
-    opacity: 0.9;
-    transform: perspective(1600px) scale(0.92) rotateX(-4deg) translate3d(0, 15px, -30px);
-    clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+  45% {
+    opacity: 0.85;
+    transform: perspective(1600px) scale(0.85) rotateX(-8deg) translate3d(0, 20px, -60px);
+    clip-path: polygon(50% 0%, 94% 45%, 50% 100%, 6% 45%);
+  }
+  80% {
+    opacity: 0.98;
+    transform: perspective(1600px) scale(0.98) rotateX(2deg) translate3d(0, 5px, 0);
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
   }
   100% {
     opacity: 1;
@@ -513,9 +711,8 @@ body {
   }
 }
 
-/* --------------------------------------------------------------------------
-   2. 3D GLASS CUBE / PRISM SCREEN SHIFT
-   -------------------------------------------------------------------------- */
+/* 2. 3D Cube: Launch & Docking */
+.screen-pane.anim-cube-takeoff,
 .screen-pane.anim-cube-out {
   display: flex !important;
   animation: cubeSpinOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
@@ -536,9 +733,10 @@ body {
   }
 }
 
+.screen-pane.anim-cube-landing,
 .screen-pane.anim-cube-in {
   display: flex !important;
-  animation: cubeSpinIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: cubeSpinIn 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: center left;
 }
 
@@ -555,9 +753,8 @@ body {
   }
 }
 
-/* --------------------------------------------------------------------------
-   3. ORIGAMI 4-CORNER DIAGONAL FLAP FOLD
-   -------------------------------------------------------------------------- */
+/* 3. Origami: Star Launch & Lotus Blossom */
+.screen-pane.anim-origami-takeoff,
 .screen-pane.anim-origami-fold-out {
   display: flex !important;
   animation: diagonalOrigamiOut 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
@@ -584,9 +781,10 @@ body {
   }
 }
 
+.screen-pane.anim-origami-landing,
 .screen-pane.anim-origami-fold-in {
   display: flex !important;
-  animation: diagonalOrigamiIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: diagonalOrigamiIn 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: center center;
 }
 
@@ -608,9 +806,8 @@ body {
   }
 }
 
-/* --------------------------------------------------------------------------
-   4. SPATIAL WARP ZOOM / GRAVITATIONAL DISPERSION
-   -------------------------------------------------------------------------- */
+/* 4. Spatial Warp: Jump & Re-entry */
+.screen-pane.anim-warp-takeoff,
 .screen-pane.anim-warp-out {
   display: flex !important;
   animation: warpZoomOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
@@ -630,9 +827,10 @@ body {
   }
 }
 
+.screen-pane.anim-warp-landing,
 .screen-pane.anim-warp-in {
   display: flex !important;
-  animation: warpZoomIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: warpZoomIn 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes warpZoomIn {
@@ -648,9 +846,8 @@ body {
   }
 }
 
-/* --------------------------------------------------------------------------
-   5. ARCHITECTURAL 3D PAGE PEEL & FLIP
-   -------------------------------------------------------------------------- */
+/* 5. Architectural Peel: Lift & Touchdown */
+.screen-pane.anim-peel-takeoff,
 .screen-pane.anim-peel-out {
   display: flex !important;
   animation: pagePeelOut 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
@@ -670,9 +867,10 @@ body {
   }
 }
 
+.screen-pane.anim-peel-landing,
 .screen-pane.anim-peel-in {
   display: flex !important;
-  animation: pagePeelIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: pagePeelIn 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   transform-origin: top right;
 }
 
@@ -951,7 +1149,7 @@ body {
 
 .moment-img-box {
   width: 100%;
-  height: 240px;
+  height: 290px;
   overflow: hidden;
   background: #090d16;
 }
@@ -960,29 +1158,11 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.45s ease;
 }
 
 .moment-item:hover .moment-img-box img {
   transform: scale(1.06);
-}
-
-.moment-info {
-  padding: 16px 18px;
-}
-
-.moment-info h4 {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 4px;
-}
-
-.moment-info p {
-  font-size: 0.84rem;
-  color: var(--text-muted);
-  line-height: 1.45;
 }
 
 /* ==========================================================================
@@ -1672,10 +1852,6 @@ body {
     bottom: 18px;
     gap: 8px;
   }
-  .transition-indicator-pill {
-    padding: 6px 10px;
-    font-size: 0.72rem;
-  }
   .toast-msg {
     left: 18px;
     right: 18px;
@@ -1689,14 +1865,6 @@ body {
     right: 12px;
     bottom: 12px;
     gap: 6px;
-  }
-  .transition-indicator-pill {
-    padding: 6px 9px;
-    font-size: 0.68rem;
-    max-width: 140px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   .screen-arrow-btn {
     padding: 8px 12px;
