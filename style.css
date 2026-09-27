@@ -759,7 +759,7 @@ body {
 .screen-pane.anim-plane-landing,
 .screen-pane.anim-plane-emerge {
   display: flex !important;
-  animation: pageEmergeUnfold 1.2s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
+  animation: pageEmergeUnfold 1.7s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
 }
 
 @keyframes pageEmergeUnfold {
@@ -768,12 +768,12 @@ body {
     transform: perspective(1600px) scale(0.65) rotateX(-18deg) translate3d(0, 60px, -180px);
     clip-path: polygon(50% 0%, 100% 88%, 50% 72%, 0% 88%);
   }
-  45% {
-    opacity: 0.85;
-    transform: perspective(1600px) scale(0.85) rotateX(-8deg) translate3d(0, 20px, -60px);
+  55% {
+    opacity: 0.6;
+    transform: perspective(1600px) scale(0.78) rotateX(-11deg) translate3d(0, 34px, -110px);
     clip-path: polygon(50% 0%, 94% 45%, 50% 100%, 6% 45%);
   }
-  80% {
+  82% {
     opacity: 0.98;
     transform: perspective(1600px) scale(0.98) rotateX(2deg) translate3d(0, 5px, 0);
     clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
@@ -810,7 +810,7 @@ body {
 .screen-pane.anim-cube-landing,
 .screen-pane.anim-cube-in {
   display: flex !important;
-  animation: cubeSpinIn 1.15s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
+  animation: cubeSpinIn 1.7s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
   transform-origin: center left;
 }
 
@@ -819,6 +819,16 @@ body {
     transform: perspective(1800px) rotateY(90deg) translateZ(400px) translateX(35%);
     opacity: 0;
     filter: brightness(0.6) blur(6px);
+  }
+  55% {
+    transform: perspective(1800px) rotateY(38deg) translateZ(160px) translateX(14%);
+    opacity: 0.55;
+    filter: brightness(0.8) blur(3px);
+  }
+  82% {
+    transform: perspective(1800px) rotateY(8deg) translateZ(30px) translateX(3%);
+    opacity: 0.9;
+    filter: brightness(0.95) blur(1px);
   }
   100% {
     transform: perspective(1800px) rotateY(0deg) translateZ(0);
@@ -858,7 +868,7 @@ body {
 .screen-pane.anim-origami-landing,
 .screen-pane.anim-origami-fold-in {
   display: flex !important;
-  animation: diagonalOrigamiIn 1.15s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
+  animation: diagonalOrigamiIn 1.7s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
   transform-origin: center center;
 }
 
@@ -868,10 +878,15 @@ body {
     transform: perspective(1600px) scale(0.25) rotateZ(-35deg);
     opacity: 0;
   }
-  65% {
+  60% {
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    transform: perspective(1600px) scale(0.88) rotateZ(-4deg);
-    opacity: 0.92;
+    transform: perspective(1600px) scale(0.8) rotateZ(-7deg);
+    opacity: 0.72;
+  }
+  84% {
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    transform: perspective(1600px) scale(0.95) rotateZ(-1deg);
+    opacity: 0.95;
   }
   100% {
     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
@@ -904,7 +919,7 @@ body {
 .screen-pane.anim-warp-landing,
 .screen-pane.anim-warp-in {
   display: flex !important;
-  animation: warpZoomIn 1.15s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
+  animation: warpZoomIn 1.7s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
 }
 
 @keyframes warpZoomIn {
@@ -912,6 +927,16 @@ body {
     transform: perspective(1400px) scale(0.4) translateZ(-450px);
     filter: blur(12px);
     opacity: 0;
+  }
+  55% {
+    transform: perspective(1400px) scale(0.72) translateZ(-140px);
+    filter: blur(5px);
+    opacity: 0.6;
+  }
+  82% {
+    transform: perspective(1400px) scale(0.94) translateZ(-18px);
+    filter: blur(1px);
+    opacity: 0.92;
   }
   100% {
     transform: perspective(1400px) scale(1) translateZ(0);
@@ -944,7 +969,7 @@ body {
 .screen-pane.anim-peel-landing,
 .screen-pane.anim-peel-in {
   display: flex !important;
-  animation: pagePeelIn 1.15s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
+  animation: pagePeelIn 1.7s cubic-bezier(0.22, 0.9, 0.24, 1) forwards !important;
   transform-origin: top right;
 }
 
@@ -952,6 +977,14 @@ body {
   0% {
     transform: perspective(1600px) rotateY(50deg) rotateX(-12deg) translateZ(-80px);
     opacity: 0;
+  }
+  55% {
+    transform: perspective(1600px) rotateY(20deg) rotateX(-5deg) translateZ(-30px);
+    opacity: 0.6;
+  }
+  82% {
+    transform: perspective(1600px) rotateY(6deg) rotateX(-1deg) translateZ(-6px);
+    opacity: 0.92;
   }
   100% {
     transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0);
@@ -1235,14 +1268,14 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
-  transform: scale(1.02);
+  object-position: 50% 18%;
+  transform: none;
   filter: saturate(0.92) contrast(1.02);
   transition: transform 0.7s var(--ease-editorial), filter var(--dur-mid) ease;
 }
 
 .photo-card-tilt:hover .hero-card-img {
-  transform: scale(1.06);
+  transform: scale(1.03);
   filter: saturate(1) contrast(1.04);
 }
 
@@ -2858,8 +2891,8 @@ body {
 }
 
 .screen-pane.is-entering .reveal-word > span {
-  animation: wordRise 0.58s var(--ease-editorial) both;
-  animation-delay: calc(var(--wi, 0) * 24ms);
+  animation: wordRise 0.8s var(--ease-editorial) both;
+  animation-delay: calc(0.35s + var(--wi, 0) * 45ms);
 }
 
 @keyframes wordRise {
@@ -2873,16 +2906,16 @@ body {
 }
 
 .screen-pane.is-entering .stagger > * {
-  animation: riseIn 0.5s var(--ease-editorial) backwards;
+  animation: riseIn 0.8s var(--ease-editorial) backwards;
 }
 
-.screen-pane.is-entering .stagger > *:nth-child(1) { animation-delay: 0.04s; }
-.screen-pane.is-entering .stagger > *:nth-child(2) { animation-delay: 0.08s; }
-.screen-pane.is-entering .stagger > *:nth-child(3) { animation-delay: 0.12s; }
-.screen-pane.is-entering .stagger > *:nth-child(4) { animation-delay: 0.16s; }
-.screen-pane.is-entering .stagger > *:nth-child(5) { animation-delay: 0.20s; }
-.screen-pane.is-entering .stagger > *:nth-child(6) { animation-delay: 0.24s; }
-.screen-pane.is-entering .stagger > *:nth-child(n + 7) { animation-delay: 0.28s; }
+.screen-pane.is-entering .stagger > *:nth-child(1) { animation-delay: 0.4s; }
+.screen-pane.is-entering .stagger > *:nth-child(2) { animation-delay: 0.46s; }
+.screen-pane.is-entering .stagger > *:nth-child(3) { animation-delay: 0.52s; }
+.screen-pane.is-entering .stagger > *:nth-child(4) { animation-delay: 0.58s; }
+.screen-pane.is-entering .stagger > *:nth-child(5) { animation-delay: 0.64s; }
+.screen-pane.is-entering .stagger > *:nth-child(6) { animation-delay: 0.7s; }
+.screen-pane.is-entering .stagger > *:nth-child(n + 7) { animation-delay: 0.76s; }
 
 @keyframes riseIn {
   from { opacity: 0; transform: translate3d(0, 18px, 0); }

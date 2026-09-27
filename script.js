@@ -388,8 +388,8 @@ const TRANSITIONS = [
     key: 'aeroplane',
     outClass: 'anim-plane-takeoff',
     inClass: 'anim-plane-landing',
-    duration: 1550,
-    switchTime: 750,
+    duration: 2500,
+    switchTime: 950,
     playStart: () => {
       Sound.playPaperFold();
       setTimeout(() => Sound.playWhoosh(), 350);
@@ -402,8 +402,8 @@ const TRANSITIONS = [
     key: 'cube',
     outClass: 'anim-cube-takeoff',
     inClass: 'anim-cube-landing',
-    duration: 1450,
-    switchTime: 700,
+    duration: 2400,
+    switchTime: 900,
     playStart: () => {
       Sound.playCubeRotate();
     },
@@ -415,8 +415,8 @@ const TRANSITIONS = [
     key: 'origami',
     outClass: 'anim-origami-takeoff',
     inClass: 'anim-origami-landing',
-    duration: 1450,
-    switchTime: 700,
+    duration: 2400,
+    switchTime: 900,
     playStart: () => {
       Sound.playPaperFold();
       setTimeout(() => Sound.playWhoosh(), 300);
@@ -429,8 +429,8 @@ const TRANSITIONS = [
     key: 'warp',
     outClass: 'anim-warp-takeoff',
     inClass: 'anim-warp-landing',
-    duration: 1450,
-    switchTime: 700,
+    duration: 2400,
+    switchTime: 900,
     playStart: () => {
       Sound.playWarpZoom();
     },
@@ -442,8 +442,8 @@ const TRANSITIONS = [
     key: 'peel',
     outClass: 'anim-peel-takeoff',
     inClass: 'anim-peel-landing',
-    duration: 1450,
-    switchTime: 700,
+    duration: 2400,
+    switchTime: 900,
     playStart: () => {
       Sound.playPeelSound();
     },
@@ -703,10 +703,10 @@ class OrigamiTransitionEngine {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }, t.switchTime);
 
-    // Step 3: Touchdown impact sound on landing arrival
+    // Step 3: Touchdown near the START of the landing so it feels glued, not trailing
     setTimeout(() => {
       t.playTouchdown();
-    }, t.switchTime + 280);
+    }, t.switchTime + 900);
 
     // Step 4: Completion: clean up stage and play arrival chime
     setTimeout(() => {
