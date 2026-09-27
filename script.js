@@ -638,105 +638,243 @@ class OrigamiTransitionEngine {
 
 
 // ==========================================================================
-// 3. THREE.JS BACKGROUND ATMOSPHERE
+// 3. THREE.JS ATMOSPHERIC LAYER
 // ==========================================================================
+
 function initThreeJS() {
   const canvas = document.getElementById('webgl-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 75;
-
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  // 1,400 Subtle Stardust Particles
-  const particleCount = 1400;
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-
-  const colorCyan = new THREE.Color(0x00f0ff);
-  const colorPurple = new THREE.Color(0xa855f7);
-  const colorWhite = new THREE.Color(0xffffff);
-
-  for (let i = 0; i < particleCount * 3; i += 3) {
-    positions[i] = (Math.random() - 0.5) * 220;
-    positions[i + 1] = (Math.random() - 0.5) * 220;
-    positions[i + 2] = (Math.random() - 0.5) * 180;
-
-    const chosen = Math.random() > 0.65 ? colorCyan : (Math.random() > 0.5 ? colorPurple : colorWhite);
-    colors[i] = chosen.r;
-    colors[i + 1] = chosen.g;
-    colors[i + 2] = chosen.b;
+  if (!canvas || typeof THREE === 'undefined') {
+    console.warn('Three.js canvas or library not found.');
+    return;
   }
 
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  // --- SCENE ---
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050710, 0.006);
 
-  const material = new THREE.PointsMaterial({
-    size: 1.15,
-    vertexColors: true,
+  // --- CAMERA ---
+  const camera = new THREE.PerspectiveCamera(
+    50,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1200
+  );
+  camera.position.set(0, 0, 65);
+
+  // --- RENDERER ---
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas,
+    alpha: true,
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  // --- WORLD GROUP ---
+  const world = new THREE.Group();
+  scene.add(world);
+
+  // --- SECTION CONFIGURATION (used for subtle world movement) ---
+  const sectionOffsets = [
+    { x: 0, y: 0 },        // Home: centered, calm
+    { x: -1.2, y: 0.6 },   // Moments: slight drift
+    { x: 1.0, y: 0.4 },    // Projects: slight structure
+    { x: -0.5, y: -0.8 },  // About: intimate
+    { x: 0.7, y: -0.5 },   // Certificates: subtle shift
+    { x: 0, y: 0.3 }       // Contact: quiet return
+  ];
+
+  // --- PARTICLE FIELD (the only visible 3D element) ---
+  const isMobile = window.innerWidth < 700;
+  const particleCount = isMobile ? 280 : 520;
+  const particleGeometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
+  const opacities = new Float32Array(particleCount);
+
+  for (let i = 0; i < particleCount; i++) {
+    const idx = i * 3;
+    // Distribute in a large sphere, biased toward outer regions
+    const radius = 25 + Math.pow(Math.random(), 0.6) * 140;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+
+    positions[idx] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[idx + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[idx + 2] = radius * Math.cos(phi);
+
+    // Varied sizes — mostly tiny, a few slightly larger
+    sizes[i] = 0.3 + Math.random() * 0.5;
+
+    // Most particles very dim
+    opacities[i] = 0.08 + Math.random() * 0.18;
+  }
+
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+  // Single muted color — no bright cyan/purple
+  const particleMaterial = new THREE.PointsMaterial({
+    size: isMobile ? 0.6 : 0.8,
+    color: 0xc8cdd8,
     transparent: true,
-    opacity: 0.65,
-    blending: THREE.AdditiveBlending
+    opacity: 0.14,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
   });
 
-  const particleMesh = new THREE.Points(geometry, material);
+  const particleMesh = new THREE.Points(particleGeometry, particleMaterial);
   scene.add(particleMesh);
 
-  // Gentle Floating Wireframe Geometry
-  const geoIcosahedron = new THREE.IcosahedronGeometry(14, 1);
-  const wireMat = new THREE.MeshBasicMaterial({
-    color: 0x00f0ff,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.08
-  });
-  const mesh1 = new THREE.Mesh(geoIcosahedron, wireMat);
-  mesh1.position.set(45, -15, 10);
-  scene.add(mesh1);
+  // --- SECONDARY PARTICLE LAYER (very sparse, slightly brighter accents) ---
+  const accentCount = isMobile ? 30 : 60;
+  const accentGeometry = new THREE.BufferGeometry();
+  const accentPositions = new Float32Array(accentCount * 3);
 
+  for (let i = 0; i < accentCount; i++) {
+    const idx = i * 3;
+    const radius = 40 + Math.random() * 100;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    accentPositions[idx] = radius * Math.sin(phi) * Math.cos(theta);
+    accentPositions[idx + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    accentPositions[idx + 2] = radius * Math.cos(phi);
+  }
+
+  accentGeometry.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
+
+  const accentMaterial = new THREE.PointsMaterial({
+    size: isMobile ? 0.9 : 1.2,
+    color: 0xdfe4ee,
+    transparent: true,
+    opacity: 0.08,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const accentMesh = new THREE.Points(accentGeometry, accentMaterial);
+  scene.add(accentMesh);
+
+  // --- MOUSE TRACKING ---
   let mouseX = 0;
   let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
+  let smoothMouseX = 0;
+  let smoothMouseY = 0;
 
-  window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX - window.innerWidth / 2) * 0.0005;
-    mouseY = (e.clientY - window.innerHeight / 2) * 0.0005;
+  window.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
 
+  // --- ACTIVE SECTION ---
+  let activeSection = 0;
+  let targetWorldX = 0;
+  let targetWorldY = 0;
+
+  // Section-specific subtle atmosphere changes
+  const sectionAtmosphere = [
+    { fogDensity: 0.006, particleOpacity: 0.14 },  // Home
+    { fogDensity: 0.005, particleOpacity: 0.12 },  // Moments
+    { fogDensity: 0.007, particleOpacity: 0.16 },  // Projects
+    { fogDensity: 0.008, particleOpacity: 0.10 },  // About
+    { fogDensity: 0.006, particleOpacity: 0.13 },  // Certificates
+    { fogDensity: 0.009, particleOpacity: 0.08 }   // Contact
+  ];
+
+  function setActiveSection(index) {
+    if (index < 0 || index >= sectionOffsets.length) return;
+    activeSection = index;
+
+    const offset = sectionOffsets[index];
+    targetWorldX = offset.x;
+    targetWorldY = offset.y;
+  }
+
+  setActiveSection(0);
+
+  // --- OBSERVE SCREEN NAVIGATION ---
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll('.screen-pane').forEach((screen, index) => {
+      if (screen.classList.contains('active')) {
+        setActiveSection(index);
+      }
+    });
+  });
+
+  document.querySelectorAll('.screen-pane').forEach((screen) => {
+    observer.observe(screen, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  });
+
+  // --- RESIZE ---
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   });
+
+  // --- ANIMATION ---
+  const clock = new THREE.Clock();
 
   function animate() {
     requestAnimationFrame(animate);
+    const elapsed = clock.getElapsedTime();
 
-    targetX += (mouseX - targetX) * 0.04;
-    targetY += (mouseY - targetY) * 0.04;
+    // Very slow, smooth mouse interpolation
+    smoothMouseX += (mouseX - smoothMouseX) * 0.015;
+    smoothMouseY += (mouseY - smoothMouseY) * 0.015;
 
-    camera.position.x = targetX * 30;
-    camera.position.y = -targetY * 30;
-    camera.lookAt(scene.position);
+    // Camera: barely perceptible parallax
+    const desiredCamX = smoothMouseX * 2.0;
+    const desiredCamY = -smoothMouseY * 1.2;
+    camera.position.x += (desiredCamX - camera.position.x) * 0.012;
+    camera.position.y += (desiredCamY - camera.position.y) * 0.012;
+    camera.position.z += (65 - camera.position.z) * 0.01;
+    camera.lookAt(0, 0, 0);
 
-    particleMesh.rotation.y += 0.0005;
-    mesh1.rotation.x += 0.003;
-    mesh1.rotation.y += 0.004;
+    // Particles: extremely slow rotation
+    particleMesh.rotation.y = elapsed * 0.002;
+    particleMesh.rotation.x = Math.sin(elapsed * 0.03) * 0.008;
+
+    // Accent particles: slightly different slow drift
+    accentMesh.rotation.y = -elapsed * 0.0015;
+    accentMesh.rotation.x = Math.cos(elapsed * 0.025) * 0.006;
+
+    // World parallax: gentle drift based on section
+    world.position.x += (targetWorldX - world.position.x) * 0.012;
+    world.position.y += (targetWorldY - world.position.y) * 0.012;
+
+    // Very subtle breathing/floating
+    world.position.z = Math.sin(elapsed * 0.15) * 0.3;
+
+    // Gradually interpolate fog and opacity for section transitions
+    const atm = sectionAtmosphere[activeSection] || sectionAtmosphere[0];
+    scene.fog.density += (atm.fogDensity - scene.fog.density) * 0.008;
+    particleMaterial.opacity += (atm.particleOpacity - particleMaterial.opacity) * 0.008;
 
     renderer.render(scene, camera);
   }
 
   animate();
-}
 
-// ==========================================================================
-// 4. PHOTO LIGHTBOX MODAL
+  // --- EXPOSE CONTROLLER ---
+  window.aayush3D = {
+    setSection: setActiveSection,
+    scene: scene,
+    camera: camera,
+    renderer: renderer
+  };
+
+  console.log(
+    '%c AAYUSH 3D ENVIRONMENT ONLINE ',
+    'background:#050710;color:#6b7280;padding:6px 12px;border:1px solid rgba(107,114,128,0.3);font-size:10px;'
+  );
+}
 // ==========================================================================
 const PHOTO_DATA = [
   {
@@ -1120,14 +1258,14 @@ function initCursor() {
 
   document.querySelectorAll('a, button, .moment-item, .project-card, .cert-card').forEach(el => {
     el.addEventListener('mouseenter', () => {
-      ring.style.width = '48px';
-      ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(0, 240, 255, 0.8)';
+      ring.style.width = '42px';
+      ring.style.height = '42px';
+      ring.style.borderColor = 'rgba(255, 255, 255, 0.25)';
     });
     el.addEventListener('mouseleave', () => {
-      ring.style.width = '36px';
-      ring.style.height = '36px';
-      ring.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(255, 255, 255, 0.12)';
     });
   });
 }
