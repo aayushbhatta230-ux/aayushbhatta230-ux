@@ -645,151 +645,532 @@ function initThreeJS() {
   const canvas = document.getElementById('webgl-canvas');
 
   if (!canvas || typeof THREE === 'undefined') {
-    console.warn('Three.js canvas or library not found.');
+    console.warn('Three.js canvas or library not found — falling back to the CSS atmosphere.');
+    document.documentElement.classList.add('no-webgl');
     return;
   }
 
-  // --- SCENE ---
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050710, 0.006);
+  // ==========================================================================
+  // DEVICE PROFILE — one pass that decides how heavy this scene is allowed to be
+  // ==========================================================================
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const cores = navigator.hardwareConcurrency || 4;
+  const memory = navigator.deviceMemory || 4;
+  const shortEdge = Math.min(window.innerWidth, window.innerHeight);
+  const lightDevice = coarsePointer || shortEdge < 720 || cores <= 4 || memory <= 4;
 
-  // --- CAMERA ---
+  const profile = lightDevice
+    ? { dpr: 1.2, stars: 700, antialias: false, ripples: 2, grid: 22, trail: 96 }
+    : { dpr: 1.75, stars: 1700, antialias: true, ripples: 3, grid: 30, trail: 128 };
+
+  if (reduceMotion) profile.stars = Math.round(profile.stars * 0.45);
+
+  // ==========================================================================
+  // SCENES — orthographic backdrop (1 draw call) + a real 3D depth scene
+  // ==========================================================================
+  const bgScene = new THREE.Scene();
+  const bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+  bgCamera.position.z = 1;
+
+  const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     50,
     window.innerWidth / window.innerHeight,
     0.1,
-    1200
+    1400
   );
-  camera.position.set(0, 0, 65);
+  camera.position.set(0, 0, 62);
 
   // --- RENDERER ---
   const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     alpha: true,
-    antialias: true,
+    antialias: profile.antialias,
+    stencil: false,
     powerPreference: 'high-performance'
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const maxDpr = Math.min(window.devicePixelRatio || 1, profile.dpr);
+  renderer.setPixelRatio(maxDpr);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  if (THREE.sRGBEncoding && 'outputEncoding' in renderer) {
+    renderer.outputEncoding = THREE.sRGBEncoding;
+  }
+  renderer.autoClear = false;
 
-  // --- WORLD GROUP ---
-  const world = new THREE.Group();
-  scene.add(world);
+  // ==========================================================================
+  // LAYER 1 — POINTER TRAIL TEXTURE
+  // A tiny canvas painted with soft blobs and slowly faded, sampled by the
+  // backdrop shader. It makes the entire background react to the cursor for
+  // the price of a 128px 2D draw.
+  // ==========================================================================
+  const trailCanvas = document.createElement('canvas');
+  trailCanvas.width = trailCanvas.height = profile.trail;
+  const trailCtx = trailCanvas.getContext('2d');
+  trailCtx.fillStyle = '#000000';
+  trailCtx.fillRect(0, 0, profile.trail, profile.trail);
 
-  // --- SECTION CONFIGURATION (used for subtle world movement) ---
-  const sectionOffsets = [
-    { x: 0, y: 0 },        // Home: centered, calm
-    { x: -1.2, y: 0.6 },   // Moments: slight drift
-    { x: 1.0, y: 0.4 },    // Projects: slight structure
-    { x: -0.5, y: -0.8 },  // About: intimate
-    { x: 0.7, y: -0.5 },   // Certificates: subtle shift
-    { x: 0, y: 0.3 }       // Contact: quiet return
-  ];
+  const trailTexture = new THREE.CanvasTexture(trailCanvas);
+  trailTexture.minFilter = THREE.LinearFilter;
+  trailTexture.magFilter = THREE.LinearFilter;
+  trailTexture.generateMipmaps = false;
 
-  // --- PARTICLE FIELD (the only visible 3D element) ---
-  const isMobile = window.innerWidth < 700;
-  const particleCount = isMobile ? 280 : 520;
-  const particleGeometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const sizes = new Float32Array(particleCount);
-  const opacities = new Float32Array(particleCount);
+  let trailDirty = true;
 
-  for (let i = 0; i < particleCount; i++) {
+  function paintTrail(nx, ny, strength) {
+    const size = profile.trail;
+    const x = nx * size;
+    const y = (1 - ny) * size;
+    const radius = size * (0.09 + strength * 0.08);
+    const gradient = trailCtx.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.55)');
+    gradient.addColorStop(0.55, 'rgba(255,255,255,0.16)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    trailCtx.fillStyle = gradient;
+    trailCtx.beginPath();
+    trailCtx.arc(x, y, radius, 0, Math.PI * 2);
+    trailCtx.fill();
+    trailDirty = true;
+  }
+
+  function fadeTrail() {
+    trailCtx.globalCompositeOperation = 'destination-out';
+    trailCtx.fillStyle = 'rgba(0,0,0,0.05)';
+    trailCtx.fillRect(0, 0, profile.trail, profile.trail);
+    trailCtx.globalCompositeOperation = 'source-over';
+    trailDirty = true;
+  }
+
+  // ==========================================================================
+  // LAYER 2 — BACKDROP SHADER
+  // Nebula fbm + breathing core light + cursor keylight + pointer trail glow +
+  // SDF dot grid + vignette + film grain + dithering. One quad, one draw call.
+  // ==========================================================================
+  const bgUniforms = {
+    uTime: { value: 0 },
+    uPointer: { value: new THREE.Vector2(0, 0) },
+    uTrail: { value: trailTexture },
+    uAspect: { value: window.innerWidth / window.innerHeight },
+    uColorA: { value: new THREE.Color(0x05070f) },
+    uColorB: { value: new THREE.Color(0x10233d) },
+    uColorC: { value: new THREE.Color(0x35d6ff) },
+    uIntensity: { value: 1.0 },
+    uGrid: { value: profile.grid }
+  };
+
+  const bgMaterial = new THREE.ShaderMaterial({
+    uniforms: bgUniforms,
+    depthTest: false,
+    depthWrite: false,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+
+      uniform float uTime;
+      uniform vec2 uPointer;
+      uniform sampler2D uTrail;
+      uniform vec3 uColorA;
+      uniform vec3 uColorB;
+      uniform vec3 uColorC;
+      uniform float uIntensity;
+      uniform float uAspect;
+      uniform float uGrid;
+
+      varying vec2 vUv;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+      }
+
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float amp = 0.5;
+        mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+        for (int i = 0; i < 4; i++) {
+          v += amp * noise(p);
+          p = rot * p * 2.03;
+          amp *= 0.5;
+        }
+        return v;
+      }
+
+      void main() {
+        vec2 uv = vUv;
+        vec2 suv = (uv - 0.5) * vec2(uAspect, 1.0) + 0.5;
+
+        // --- flowing nebula ---
+        float t = uTime * 0.017;
+        float n1 = fbm(suv * 1.55 + vec2(t * 1.5, -t * 0.9));
+        float n2 = fbm(suv * 2.45 - vec2(t * 0.8, t * 1.15));
+        float plasma = smoothstep(0.05, 0.95, n1 * 0.72 + n2 * 0.42);
+        vec3 col = mix(uColorA, uColorB, plasma);
+        col = mix(col, uColorC, smoothstep(0.58, 1.0, n2) * 0.34 * uIntensity);
+
+        // --- breathing core light ---
+        float cd = length((suv - vec2(0.68, 0.38)) * vec2(uAspect, 1.0));
+        col += uColorB * exp(-cd * 2.7) * (0.5 + 0.16 * sin(uTime * 0.3)) * uIntensity;
+
+        // --- cursor keylight + trail bloom ---
+        vec2 lightUv = uPointer * 0.5 + 0.5;
+        float pd = length((suv - lightUv) * vec2(uAspect, 1.0));
+        col += uColorC * exp(-pd * pd * 6.5) * 0.24;
+        float trail = texture2D(uTrail, uv).r;
+        col += mix(uColorC, vec3(1.0), 0.2) * trail * 0.3;
+
+        // --- SDF dot grid that swells where the pointer has been ---
+        vec2 gridUv = fract(suv * uGrid) - 0.5;
+        float dotMask = smoothstep(0.085 + trail * 0.15, 0.0, length(gridUv));
+        col += vec3(0.7, 0.85, 1.0) * dotMask * (0.026 + trail * 0.26);
+
+        // --- vignette, grain, dithering ---
+        float vig = smoothstep(1.45, 0.33, length((uv - 0.5) * vec2(uAspect, 1.0)));
+        col *= mix(0.42, 1.0, vig);
+        col += (hash(gl_FragCoord.xy + fract(uTime) * 91.7) - 0.5) * 0.05;
+        col += (hash(gl_FragCoord.xy * 0.5) - 0.5) / 255.0 * 1.5;
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+
+  const bgQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bgMaterial);
+  bgQuad.frustumCulled = false;
+  bgScene.add(bgQuad);
+
+  // ==========================================================================
+  // LAYER 3 — GPU STAR FIELD
+  // Depth-of-field point cloud: size + alpha follow the distance to a focus
+  // plane (the trick Phantom.land uses for volumetric depth), plus twinkle,
+  // slow drift and cursor shear. All animation lives in the vertex shader.
+  // ==========================================================================
+  const starCount = profile.stars;
+  const starPositions = new Float32Array(starCount * 3);
+  const starSeeds = new Float32Array(starCount);
+  const starSizes = new Float32Array(starCount);
+  const starTints = new Float32Array(starCount);
+
+  for (let i = 0; i < starCount; i++) {
     const idx = i * 3;
-    // Distribute in a large sphere, biased toward outer regions
-    const radius = 25 + Math.pow(Math.random(), 0.6) * 140;
+    // Shell distribution — keeps the centre of the frame clear for content
+    const radius = 24 + Math.pow(Math.random(), 0.55) * 210;
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
 
-    positions[idx] = radius * Math.sin(phi) * Math.cos(theta);
-    positions[idx + 1] = radius * Math.sin(phi) * Math.sin(theta);
-    positions[idx + 2] = radius * Math.cos(phi);
+    starPositions[idx] = radius * Math.sin(phi) * Math.cos(theta);
+    starPositions[idx + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    starPositions[idx + 2] = radius * Math.cos(phi);
 
-    // Varied sizes — mostly tiny, a few slightly larger
-    sizes[i] = 0.3 + Math.random() * 0.5;
-
-    // Most particles very dim
-    opacities[i] = 0.08 + Math.random() * 0.18;
+    starSeeds[i] = Math.random();
+    starSizes[i] = 0.7 + Math.random() * 1.9;
+    starTints[i] = Math.random();
   }
 
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const starGeometry = new THREE.BufferGeometry();
+  starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  starGeometry.setAttribute('aSeed', new THREE.BufferAttribute(starSeeds, 1));
+  starGeometry.setAttribute('aSize', new THREE.BufferAttribute(starSizes, 1));
+  starGeometry.setAttribute('aTint', new THREE.BufferAttribute(starTints, 1));
 
-  // Single muted color — no bright cyan/purple
-  const particleMaterial = new THREE.PointsMaterial({
-    size: isMobile ? 0.6 : 0.8,
-    color: 0xc8cdd8,
+  const starUniforms = {
+    uTime: { value: 0 },
+    uPointer: { value: new THREE.Vector2(0, 0) },
+    uPixelRatio: { value: maxDpr },
+    uFocus: { value: 78.0 },
+    uOpacity: { value: 0.85 },
+    uColorCool: { value: new THREE.Color(0xdce8ff) },
+    uColorWarm: { value: new THREE.Color(0x8fd8ff) }
+  };
+
+  const starMaterial = new THREE.ShaderMaterial({
+    uniforms: starUniforms,
     transparent: true,
-    opacity: 0.14,
     blending: THREE.AdditiveBlending,
-    depthWrite: false
+    depthWrite: false,
+    vertexShader: `
+      attribute float aSeed;
+      attribute float aSize;
+      attribute float aTint;
+
+      uniform float uTime;
+      uniform vec2 uPointer;
+      uniform float uPixelRatio;
+      uniform float uFocus;
+      uniform float uOpacity;
+      uniform vec3 uColorCool;
+      uniform vec3 uColorWarm;
+
+      varying float vAlpha;
+      varying vec3 vColor;
+
+      void main() {
+        vec3 p = position;
+        p.x += sin(uTime * 0.06 + aSeed * 6.2831) * 2.4;
+        p.y += cos(uTime * 0.05 + aSeed * 4.1888) * 2.0;
+
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+
+        // cursor shear: closer stars react more strongly
+        mv.xy += uPointer * (5.0 + aSeed * 9.0) * 0.32;
+
+        float dist = max(-mv.z, 1.0);
+
+        // depth of field — particles off the focus plane soften and dim
+        float dof = 1.0 - clamp(abs(dist - uFocus) / 250.0, 0.0, 1.0);
+
+        // twinkle
+        float twinkle = 0.42 + 0.58 * sin(uTime * (1.1 + aSeed * 2.2) + aSeed * 22.0);
+
+        vAlpha = uOpacity * dof * mix(0.32, 1.0, twinkle);
+        vColor = mix(uColorCool, uColorWarm, aTint);
+
+        gl_Position = projectionMatrix * mv;
+        gl_PointSize = aSize * uPixelRatio * (130.0 / dist) * (0.7 + dof * 0.6);
+      }
+    `,
+    fragmentShader: `
+      precision mediump float;
+      varying float vAlpha;
+      varying vec3 vColor;
+
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        float core = smoothstep(0.5, 0.05, d);
+        float halo = smoothstep(0.5, 0.0, d) * 0.35;
+        gl_FragColor = vec4(vColor, (core + halo) * vAlpha);
+      }
+    `
   });
 
-  const particleMesh = new THREE.Points(particleGeometry, particleMaterial);
-  scene.add(particleMesh);
+  const starField = new THREE.Points(starGeometry, starMaterial);
+  starField.frustumCulled = false;
+  scene.add(starField);
 
-  // --- SECONDARY PARTICLE LAYER (very sparse, slightly brighter accents) ---
-  const accentCount = isMobile ? 30 : 60;
-  const accentGeometry = new THREE.BufferGeometry();
-  const accentPositions = new Float32Array(accentCount * 3);
+  // ==========================================================================
+  // LAYER 4 — WIREFRAME ENERGY CORE
+  // A low-poly structure drifting behind the glass cards, relocating and
+  // re-tinting per section. The glassmorphic cards blur it → instant depth.
+  // ==========================================================================
+  const coreGroup = new THREE.Group();
 
-  for (let i = 0; i < accentCount; i++) {
-    const idx = i * 3;
-    const radius = 40 + Math.random() * 100;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    accentPositions[idx] = radius * Math.sin(phi) * Math.cos(theta);
-    accentPositions[idx + 1] = radius * Math.sin(phi) * Math.sin(theta);
-    accentPositions[idx + 2] = radius * Math.cos(phi);
+  const coreShell = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(9.2, 1),
+    new THREE.MeshBasicMaterial({
+      color: 0x8fd8ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.13,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    })
+  );
+
+  const corePulse = new THREE.Mesh(
+    new THREE.OctahedronGeometry(4.4, 0),
+    new THREE.MeshBasicMaterial({
+      color: 0x00e5ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.2,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    })
+  );
+
+  const coreRing = new THREE.Mesh(
+    new THREE.TorusGeometry(13.4, 0.05, 3, 96),
+    new THREE.MeshBasicMaterial({
+      color: 0xa855f7,
+      transparent: true,
+      opacity: 0.26,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    })
+  );
+  coreRing.rotation.x = Math.PI * 0.42;
+  coreRing.rotation.y = Math.PI * 0.18;
+
+  coreGroup.add(coreShell, corePulse, coreRing);
+  coreGroup.position.set(17, 3, -16);
+  scene.add(coreGroup);
+
+  // ==========================================================================
+  // LAYER 5 — RIPPLE SHOCKWAVES
+  // A small pool of camera-facing ring quads fired on clicks and section jumps.
+  // ==========================================================================
+  const rippleGeometry = new THREE.PlaneGeometry(1, 1);
+  const ripples = [];
+
+  for (let i = 0; i < profile.ripples; i++) {
+    const rippleMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uProgress: { value: 1 },
+        uOpacity: { value: 0 },
+        uColor: { value: new THREE.Color(0x6ee7ff) }
+      },
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: false,
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision mediump float;
+        uniform float uProgress;
+        uniform float uOpacity;
+        uniform vec3 uColor;
+        varying vec2 vUv;
+        void main() {
+          float d = length(vUv - 0.5) * 2.0;
+          float ring = smoothstep(0.1, 0.0, abs(d - uProgress));
+          float fade = (1.0 - smoothstep(0.55, 1.0, uProgress)) * uOpacity;
+          gl_FragColor = vec4(uColor, ring * fade * 0.85);
+        }
+      `
+    });
+
+    const rippleMesh = new THREE.Mesh(rippleGeometry, rippleMaterial);
+    rippleMesh.visible = false;
+    scene.add(rippleMesh);
+    ripples.push({ mesh: rippleMesh, material: rippleMaterial, life: 0, duration: 1.15 });
   }
 
-  accentGeometry.setAttribute('position', new THREE.BufferAttribute(accentPositions, 3));
+  function spawnRippleAt(clientX, clientY, colorHex, size) {
+    if (reduceMotion || ripples.length === 0) return;
 
-  const accentMaterial = new THREE.PointsMaterial({
-    size: isMobile ? 0.9 : 1.2,
-    color: 0xdfe4ee,
-    transparent: true,
-    opacity: 0.08,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false
-  });
+    camera.updateMatrixWorld();
+    const ndcX = (clientX / window.innerWidth) * 2 - 1;
+    const ndcY = -((clientY / window.innerHeight) * 2 - 1);
+    const point = new THREE.Vector3(ndcX, ndcY, 0.5).unproject(camera);
+    const direction = point.sub(camera.position).normalize();
+    const travel = -camera.position.z / (direction.z || -1);
+    const worldPosition = camera.position.clone().add(direction.multiplyScalar(travel));
 
-  const accentMesh = new THREE.Points(accentGeometry, accentMaterial);
-  scene.add(accentMesh);
+    const slot = ripples.find((entry) => !entry.mesh.visible) || ripples[0];
+    slot.mesh.visible = true;
+    slot.mesh.position.copy(worldPosition);
+    slot.mesh.scale.setScalar(size);
+    slot.material.uniforms.uColor.value.setHex(colorHex);
+    slot.life = 0;
+    slot.duration = 1.15;
+  }
 
-  // --- MOUSE TRACKING ---
-  let mouseX = 0;
-  let mouseY = 0;
-  let smoothMouseX = 0;
-  let smoothMouseY = 0;
+  // ==========================================================================
+  // POINTER RIG — cursor, gyroscope and the interactive trail
+  // ==========================================================================
+  const pointer = { x: 0, y: 0 };
+  const smoothPointer = { x: 0, y: 0 };
+  let lastTrailPaint = 0;
 
-  window.addEventListener('mousemove', (event) => {
-    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+  function updatePointer(clientX, clientY) {
+    const nx = clientX / window.innerWidth;
+    const ny = clientY / window.innerHeight;
+
+    pointer.x = nx * 2 - 1;
+    pointer.y = -(ny * 2 - 1);
+
+    // backdrop expects top-down y, the star field follows the same sign
+    bgUniforms.uPointer.value.set(pointer.x, ny * 2 - 1);
+
+    if (!reduceMotion) {
+      const now = performance.now();
+      if (now - lastTrailPaint > 24) {
+        lastTrailPaint = now;
+        paintTrail(nx, ny, 0.55);
+      }
+    }
+  }
+
+  window.addEventListener('pointermove', (event) => {
+    updatePointer(event.clientX, event.clientY);
   }, { passive: true });
 
-  // --- ACTIVE SECTION ---
-  let activeSection = 0;
-  let targetWorldX = 0;
-  let targetWorldY = 0;
+  window.addEventListener('pointerdown', (event) => {
+    updatePointer(event.clientX, event.clientY);
+    const mood = SECTION_MOODS[activeSection] || SECTION_MOODS[0];
+    spawnRippleAt(event.clientX, event.clientY, mood.ripple, 30);
+  }, { passive: true });
 
-  // Section-specific subtle atmosphere changes
-  const sectionAtmosphere = [
-    { fogDensity: 0.006, particleOpacity: 0.14 },  // Home
-    { fogDensity: 0.005, particleOpacity: 0.12 },  // Moments
-    { fogDensity: 0.007, particleOpacity: 0.16 },  // Projects
-    { fogDensity: 0.008, particleOpacity: 0.10 },  // About
-    { fogDensity: 0.006, particleOpacity: 0.13 },  // Certificates
-    { fogDensity: 0.009, particleOpacity: 0.08 }   // Contact
+  // Mobile: device orientation drives the parallax instead of the mouse
+  window.addEventListener('deviceorientation', (event) => {
+    if (event.gamma === null || event.beta === null) return;
+    pointer.x = Math.max(-1, Math.min(1, event.gamma / 32));
+    pointer.y = Math.max(-1, Math.min(1, -(event.beta - 45) / 32));
+    bgUniforms.uPointer.value.set(pointer.x, -pointer.y);
+  }, { passive: true });
+
+  // ==========================================================================
+  // SECTION MOODS — palette, camera dolly, core placement and ripple tint
+  // ==========================================================================
+  const SECTION_MOODS = [
+    { colorA: new THREE.Color(0x05070f), colorB: new THREE.Color(0x10233d), colorC: new THREE.Color(0x35d6ff), intensity: 1.00, starOpacity: 0.90, core: [17, 3, -16], dolly: 0, ripple: 0x6ee7ff },  // Home
+    { colorA: new THREE.Color(0x06070f), colorB: new THREE.Color(0x241a3d), colorC: new THREE.Color(0xb07cff), intensity: 0.86, starOpacity: 0.76, core: [-19, -2, -15], dolly: -4, ripple: 0xc084fc },  // Moments
+    { colorA: new THREE.Color(0x04070e), colorB: new THREE.Color(0x07293a), colorC: new THREE.Color(0x22d3ee), intensity: 1.05, starOpacity: 0.95, core: [16, -5, -19], dolly: 3, ripple: 0x22d3ee },   // Projects
+    { colorA: new THREE.Color(0x050810), colorB: new THREE.Color(0x1b2440), colorC: new THREE.Color(0x7dd3fc), intensity: 0.78, starOpacity: 0.70, core: [-16, 4, -13], dolly: -6, ripple: 0x7dd3fc },  // About
+    { colorA: new THREE.Color(0x060710), colorB: new THREE.Color(0x2a2112), colorC: new THREE.Color(0xf2b544), intensity: 0.88, starOpacity: 0.80, core: [18, 5, -16], dolly: 2, ripple: 0xfbbf24 },   // Certificates
+    { colorA: new THREE.Color(0x040610), colorB: new THREE.Color(0x0f2033), colorC: new THREE.Color(0x38bdf8), intensity: 0.72, starOpacity: 0.66, core: [0, -8, -22], dolly: -3, ripple: 0x38bdf8 }   // Contact
   ];
 
-  function setActiveSection(index) {
-    if (index < 0 || index >= sectionOffsets.length) return;
-    activeSection = index;
+  let activeSection = 0;
+  let punch = 0;              // 0..1 impulse fired on every section change
 
-    const offset = sectionOffsets[index];
-    targetWorldX = offset.x;
-    targetWorldY = offset.y;
+  const coreTarget = new THREE.Vector3(17, 3, -16);
+
+  // A portrait phone squeezes the horizontal field of view, so the decorative
+  // wireframe core would otherwise drift half off the left or right edge. Inset
+  // it toward the middle on narrow viewports and leave wide screens untouched.
+  function coreInset(aspect) {
+    return Math.min(1, Math.max(0.3, aspect / 1.35));
+  }
+
+  // ...and it reads as a lighter accent when the screen is this narrow
+  function coreScale(aspect) {
+    return Math.min(1, Math.max(0.68, 0.68 + (aspect - 0.46) * 0.45));
+  }
+
+  let coreScaleFactor = 1;
+
+  function applyCoreTarget(mood) {
+    const aspect = camera.aspect || 1;
+    const inset = coreInset(aspect);
+    coreScaleFactor = coreScale(aspect);
+    coreTarget.set(mood.core[0] * inset, mood.core[1], mood.core[2]);
+  }
+
+  function setActiveSection(index) {
+    if (index < 0 || index >= SECTION_MOODS.length) return;
+
+    activeSection = index;
+    punch = 1;
+
+    const mood = SECTION_MOODS[index];
+    applyCoreTarget(mood);
+
+    // Shockwave ring fired roughly where the wireframe core sits
+    const rippleX = window.innerWidth * (0.5 + mood.core[0] / 90);
+    spawnRippleAt(rippleX, window.innerHeight * 0.42, mood.ripple, 38);
   }
 
   setActiveSection(0);
@@ -810,54 +1191,151 @@ function initThreeJS() {
     });
   });
 
-  // --- RESIZE ---
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  // --- RESIZE (keeps camera aspect, backdrop aspect and point size in sync) ---
+  let resolutionScale = 1;
+
+  function handleResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // rotation / resize changes the usable horizontal room for the core
+    applyCoreTarget(SECTION_MOODS[activeSection] || SECTION_MOODS[0]);
+
+    const dpr = Math.min(window.devicePixelRatio || 1, profile.dpr * resolutionScale);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(width, height);
+
+    bgUniforms.uAspect.value = width / height;
+    starUniforms.uPixelRatio.value = dpr;
+  }
+
+  window.addEventListener('resize', handleResize);
+  window.addEventListener('orientationchange', handleResize);
+
+  // ==========================================================================
+  // RENDER LOOP — backdrop first, then the depth layers, plus a watchdog that
+  // steps quality down the moment a device starts to struggle.
+  // ==========================================================================
+  const clock = new THREE.Clock();
+  const lookTarget = new THREE.Vector3(0, 0, 0);
+  const timeScale = reduceMotion ? 0.25 : 1;
+
+  let paused = false;
+  let frameCount = 0;
+  let frameTime = 0;
+  let qualityLevel = 0;   // 0 = full, 1 = softer, 2 = minimum
+
+  document.addEventListener('visibilitychange', () => {
+    paused = document.hidden;
+    if (!paused) clock.getDelta();
   });
 
-  // --- ANIMATION ---
-  const clock = new THREE.Clock();
+  function degradeQuality() {
+    if (qualityLevel >= 2) return;
+    qualityLevel++;
+
+    if (qualityLevel === 1) {
+      document.documentElement.classList.add('perf-low');
+      resolutionScale = 0.85;
+      starGeometry.setDrawRange(0, Math.floor(starCount * 0.6));
+    } else {
+      resolutionScale = 0.72;
+      starGeometry.setDrawRange(0, Math.floor(starCount * 0.4));
+      coreShell.visible = false;
+      coreRing.visible = false;
+    }
+
+    handleResize();
+  }
 
   function animate() {
     requestAnimationFrame(animate);
-    const elapsed = clock.getElapsedTime();
+    if (paused) return;
 
-    // Very slow, smooth mouse interpolation
-    smoothMouseX += (mouseX - smoothMouseX) * 0.015;
-    smoothMouseY += (mouseY - smoothMouseY) * 0.015;
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const elapsed = clock.getElapsedTime() * timeScale;
 
-    // Camera: barely perceptible parallax
-    const desiredCamX = smoothMouseX * 2.0;
-    const desiredCamY = -smoothMouseY * 1.2;
-    camera.position.x += (desiredCamX - camera.position.x) * 0.012;
-    camera.position.y += (desiredCamY - camera.position.y) * 0.012;
-    camera.position.z += (65 - camera.position.z) * 0.01;
-    camera.lookAt(0, 0, 0);
+    // ---- smoothed pointer + decay of the section punch ----
+    smoothPointer.x += (pointer.x - smoothPointer.x) * 0.05;
+    smoothPointer.y += (pointer.y - smoothPointer.y) * 0.05;
+    punch *= 0.94;
 
-    // Particles: extremely slow rotation
-    particleMesh.rotation.y = elapsed * 0.002;
-    particleMesh.rotation.x = Math.sin(elapsed * 0.03) * 0.008;
+    const mood = SECTION_MOODS[activeSection] || SECTION_MOODS[0];
 
-    // Accent particles: slightly different slow drift
-    accentMesh.rotation.y = -elapsed * 0.0015;
-    accentMesh.rotation.x = Math.cos(elapsed * 0.025) * 0.006;
+    // ---- camera rig: parallax + section dolly + punch kick ----
+    const camX = smoothPointer.x * 3.4 + punch * 1.6;
+    const camY = smoothPointer.y * 2.2 - punch * 1.2;
+    camera.position.x += (camX - camera.position.x) * 0.03;
+    camera.position.y += (camY - camera.position.y) * 0.03;
+    camera.position.z += ((62 - mood.dolly - punch * 9) - camera.position.z) * 0.035;
+    lookTarget.x += (smoothPointer.x * 1.2 - lookTarget.x) * 0.03;
+    lookTarget.y += (smoothPointer.y * 0.8 - lookTarget.y) * 0.03;
+    camera.lookAt(lookTarget);
 
-    // World parallax: gentle drift based on section
-    world.position.x += (targetWorldX - world.position.x) * 0.012;
-    world.position.y += (targetWorldY - world.position.y) * 0.012;
+    // ---- backdrop: palette grading, time and the pointer trail ----
+    bgUniforms.uTime.value = elapsed;
+    bgUniforms.uIntensity.value += (mood.intensity - bgUniforms.uIntensity.value) * 0.02;
+    bgUniforms.uColorA.value.lerp(mood.colorA, 0.02);
+    bgUniforms.uColorB.value.lerp(mood.colorB, 0.02);
+    bgUniforms.uColorC.value.lerp(mood.colorC, 0.02);
 
-    // Very subtle breathing/floating
-    world.position.z = Math.sin(elapsed * 0.15) * 0.3;
+    if (trailDirty && !reduceMotion) {
+      fadeTrail();
+      trailTexture.needsUpdate = true;
+    }
 
-    // Gradually interpolate fog and opacity for section transitions
-    const atm = sectionAtmosphere[activeSection] || sectionAtmosphere[0];
-    scene.fog.density += (atm.fogDensity - scene.fog.density) * 0.008;
-    particleMaterial.opacity += (atm.particleOpacity - particleMaterial.opacity) * 0.008;
+    // ---- star field (twinkle + shear live entirely in the shader) ----
+    starUniforms.uTime.value = elapsed;
+    starUniforms.uPointer.value.set(smoothPointer.x, -smoothPointer.y);
+    starUniforms.uOpacity.value += (mood.starOpacity - starUniforms.uOpacity.value) * 0.02;
+    starField.rotation.y = elapsed * 0.008;
+    starField.rotation.x = Math.sin(elapsed * 0.05) * 0.03;
 
+    // ---- energy core: relocates, breathes and flashes on section change ----
+    coreGroup.position.x += (coreTarget.x - coreGroup.position.x) * 0.02;
+    coreGroup.position.y += (coreTarget.y - coreGroup.position.y) * 0.02;
+    coreGroup.position.z += (coreTarget.z - coreGroup.position.z) * 0.02;
+    coreGroup.scale.setScalar((1 + Math.sin(elapsed * 0.6) * 0.02 + punch * 0.08) * coreScaleFactor);
+    coreGroup.rotation.y = elapsed * 0.07;
+    coreShell.rotation.x = Math.sin(elapsed * 0.11) * 0.2;
+    corePulse.rotation.y = -elapsed * 0.24;
+    corePulse.rotation.z = elapsed * 0.16;
+    coreRing.rotation.z = elapsed * 0.05;
+    coreShell.material.opacity = 0.13 + punch * 0.14;
+    corePulse.material.opacity = 0.2 + punch * 0.18;
+    coreRing.material.opacity = 0.26 + punch * 0.16;
+
+    // ---- ripple shockwaves ----
+    for (let i = 0; i < ripples.length; i++) {
+      const ripple = ripples[i];
+      if (!ripple.mesh.visible) continue;
+
+      ripple.life += dt;
+      const progress = Math.min(ripple.life / ripple.duration, 1);
+      ripple.material.uniforms.uProgress.value = progress;
+      ripple.material.uniforms.uOpacity.value = 1 - progress;
+      ripple.mesh.quaternion.copy(camera.quaternion);
+
+      if (progress >= 1) ripple.mesh.visible = false;
+    }
+
+    // ---- draw: backdrop quad, then the 3D depth scene ----
+    renderer.clear();
+    renderer.render(bgScene, bgCamera);
     renderer.render(scene, camera);
+
+    // ---- quality watchdog ----
+    frameCount++;
+    frameTime += dt;
+    if (frameCount >= 80) {
+      const fps = frameCount / Math.max(frameTime, 0.001);
+      if (fps < 42) degradeQuality();
+      frameCount = 0;
+      frameTime = 0;
+    }
   }
 
   animate();
@@ -865,14 +1343,21 @@ function initThreeJS() {
   // --- EXPOSE CONTROLLER ---
   window.aayush3D = {
     setSection: setActiveSection,
+    pulse: (x, y, colorHex) => spawnRippleAt(x, y, colorHex || 0x6ee7ff, 30),
+    profile: profile,
     scene: scene,
+    bgScene: bgScene,
     camera: camera,
     renderer: renderer
   };
 
   console.log(
     '%c AAYUSH 3D ENVIRONMENT ONLINE ',
-    'background:#050710;color:#6b7280;padding:6px 12px;border:1px solid rgba(107,114,128,0.3);font-size:10px;'
+    'background:#050710;color:#22d3ee;padding:6px 12px;border:1px solid rgba(34,211,238,0.35);font-size:10px;'
+  );
+  console.log(
+    `%c atmosphere tier: ${lightDevice ? 'lite' : 'full'} · ${starCount} stars · ${profile.trail}px trail`,
+    'color:#64748b;font-size:10px;'
   );
 }
 // ==========================================================================
@@ -1525,10 +2010,226 @@ function initScratchReveal() {
 }
 
 // ==========================================================================
+// 13. ENTRANCE CHOREOGRAPHY — boot curtain, masked headlines, staggered cards
+// ==========================================================================
+function initBootSequence() {
+  const overlay = document.getElementById('boot-overlay');
+  if (!overlay) return;
+
+  const statusEl = document.getElementById('boot-status');
+  const steps = ['booting spatial engine', 'compiling shaders', 'calibrating atmosphere', 'ready'];
+  let step = 0;
+
+  const stepTimer = window.setInterval(() => {
+    step = Math.min(step + 1, steps.length - 1);
+    if (statusEl) statusEl.innerText = steps[step];
+  }, 300);
+
+  let finished = false;
+  function finishBoot() {
+    if (finished) return;
+    finished = true;
+    window.clearInterval(stepTimer);
+    if (statusEl) statusEl.innerText = 'ready';
+    overlay.classList.add('boot-done');
+    window.setTimeout(() => { overlay.style.display = 'none'; }, 1400);
+  }
+
+  window.setTimeout(finishBoot, 1050);
+  window.addEventListener('load', finishBoot, { once: true });
+}
+
+function initWordReveal() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let wordIndex = 0;
+
+  function makeWord(content) {
+    const outer = document.createElement('span');
+    outer.className = 'reveal-word';
+    outer.style.setProperty('--wi', String(wordIndex % 12));
+    wordIndex++;
+
+    const inner = document.createElement('span');
+    if (typeof content === 'string') {
+      inner.textContent = content;
+    } else {
+      inner.appendChild(content);
+    }
+
+    outer.appendChild(inner);
+    return outer;
+  }
+
+  document.querySelectorAll('.hero-heading, .section-title').forEach((heading) => {
+    const fragment = document.createDocumentFragment();
+
+    Array.from(heading.childNodes).forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.textContent.split(/(\s+)/).forEach((chunk) => {
+          if (chunk.trim() === '') {
+            fragment.appendChild(document.createTextNode(chunk));
+          } else {
+            fragment.appendChild(makeWord(chunk));
+          }
+        });
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        fragment.appendChild(makeWord(node));
+      }
+    });
+
+    heading.innerHTML = '';
+    heading.appendChild(fragment);
+  });
+}
+
+function initStaggerTargets() {
+  [
+    '.hero-tags',
+    '.hero-buttons',
+    '.section-title-wrap',
+    '.moments-grid',
+    '.projects-grid',
+    '.about-grid',
+    '.credentials-grid',
+    '.contact-links-grid'
+  ].forEach((selector) => {
+    document.querySelectorAll(selector).forEach((el) => el.classList.add('stagger'));
+  });
+}
+
+// ==========================================================================
+// 14. POINTER-TRACKING SPOTLIGHT ON CARDS
+// ==========================================================================
+function initCardSpotlight() {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+
+  document
+    .querySelectorAll('.project-card, .moment-item, .cert-card, .about-card, .contact-btn')
+    .forEach((card) => {
+      card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${(event.clientX - rect.left).toFixed(1)}px`);
+        card.style.setProperty('--my', `${(event.clientY - rect.top).toFixed(1)}px`);
+      }, { passive: true });
+    });
+}
+
+// ==========================================================================
+// 15. MAGNETIC BUTTONS
+// ==========================================================================
+function initMagneticUI() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const magneticItems = document.querySelectorAll(
+    '.btn-main, .btn-sub, .screen-arrow-btn, .contact-btn, #nav-terminal-btn, .cert-view-btn'
+  );
+
+  magneticItems.forEach((item) => {
+    item.classList.add('magnetic');
+
+    item.addEventListener('pointermove', (event) => {
+      const rect = item.getBoundingClientRect();
+      const dx = (event.clientX - (rect.left + rect.width / 2)) / (rect.width || 1);
+      const dy = (event.clientY - (rect.top + rect.height / 2)) / (rect.height || 1);
+      item.style.transform = `translate3d(${(dx * 10).toFixed(2)}px, ${(dy * 7).toFixed(2)}px, 0)`;
+    });
+
+    item.addEventListener('pointerleave', () => {
+      item.style.transform = '';
+    });
+  });
+}
+
+// ==========================================================================
+// 16. SLIDING NAV INDICATOR
+// ==========================================================================
+function initNavPill() {
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks) return;
+
+  const pill = document.createElement('span');
+  pill.className = 'nav-pill';
+  navLinks.insertBefore(pill, navLinks.firstChild);
+
+  const buttons = Array.from(navLinks.querySelectorAll('.nav-link-btn'));
+
+  function movePill() {
+    const active = navLinks.querySelector('.nav-link-btn.active');
+    if (!active) {
+      pill.style.opacity = '0';
+      return;
+    }
+
+    const navRect = navLinks.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    pill.style.width = `${activeRect.width}px`;
+    pill.style.transform = `translate3d(${(activeRect.left - navRect.left).toFixed(1)}px, 0, 0)`;
+    pill.style.opacity = '1';
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => window.setTimeout(movePill, 40));
+  });
+
+  const observer = new MutationObserver(movePill);
+  buttons.forEach((btn) => observer.observe(btn, { attributes: true, attributeFilter: ['class'] }));
+
+  window.addEventListener('resize', movePill);
+  window.addEventListener('load', movePill);
+
+  movePill();
+  window.setTimeout(movePill, 150);
+}
+
+// ==========================================================================
+// 17. AURORA PARALLAX (colour layer drifting against cursor + gyroscope)
+// ==========================================================================
+function initAuroraParallax() {
+  const aurora = document.querySelector('.bg-aurora');
+  if (!aurora) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+
+  window.addEventListener('pointermove', (event) => {
+    targetX = (event.clientX / window.innerWidth - 0.5) * 2;
+    targetY = (event.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive: true });
+
+  window.addEventListener('deviceorientation', (event) => {
+    if (event.gamma === null || event.beta === null) return;
+    targetX = Math.max(-1, Math.min(1, event.gamma / 32));
+    targetY = Math.max(-1, Math.min(1, -(event.beta - 45) / 32));
+  }, { passive: true });
+
+  function tick() {
+    currentX += (targetX - currentX) * 0.045;
+    currentY += (targetY - currentY) * 0.045;
+    aurora.style.transform =
+      `translate3d(${(-currentX * 26).toFixed(2)}px, ${(-currentY * 18).toFixed(2)}px, 0)`;
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ==========================================================================
 // DOM READY INITIALIZATION
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initThreeJS();
+  // A WebGL failure must never take the rest of the interface down with it
+  try {
+    initThreeJS();
+  } catch (error) {
+    console.warn('Atmosphere layer skipped:', error);
+    document.documentElement.classList.add('no-webgl');
+  }
+
   window.origamiEngine = new OrigamiTransitionEngine();
   initLightbox();
   initCertificateModal();
@@ -1540,4 +2241,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initSoundToggle();
   initDepthParallax();
   initScratchReveal();
+
+  // --- Motion & atmosphere layer (added: entrance, reveals, magnetism) ---
+  initBootSequence();
+  initStaggerTargets();
+  initWordReveal();
+  initCardSpotlight();
+  initMagneticUI();
+  initNavPill();
+  initAuroraParallax();
 });

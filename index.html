@@ -74,13 +74,41 @@
   <!-- Screen Reader Skip Link -->
   <a href="#screen-hero" class="skip-link">Skip to main content</a>
 
+  <!-- Cinematic Boot Curtain (auto-hides after 2.4s even if JS never runs) -->
+  <div id="boot-overlay" class="boot-overlay" aria-hidden="true">
+    <div class="boot-inner">
+      <div class="boot-mark">
+        <span class="boot-orbit"></span>
+        <span class="boot-letter">A</span>
+      </div>
+      <div class="boot-name">AAYUSH BHATTA</div>
+      <div class="boot-meta">@aayushifty · Kathmandu, Nepal</div>
+      <div class="boot-bar"><span class="boot-bar-fill"></span></div>
+      <div class="boot-status" id="boot-status">booting spatial engine</div>
+    </div>
+    <div class="boot-curtain-left"></div>
+    <div class="boot-curtain-right"></div>
+  </div>
+
   <!-- Custom Cursor -->
   <div class="cursor-dot"></div>
   <div class="cursor-ring"></div>
 
-  <!-- Cosmic Particle Background -->
+  <!-- ==========================================================================
+       ATMOSPHERIC BACKGROUND STACK (z-ordered: particles → colour → grid → matte)
+       ========================================================================== -->
   <canvas id="webgl-canvas"></canvas>
-  <div class="cyber-grid-overlay"></div>
+
+  <div class="bg-aurora" aria-hidden="true">
+    <span class="aurora-blob blob-cyan"></span>
+    <span class="aurora-blob blob-violet"></span>
+    <span class="aurora-blob blob-amber"></span>
+    <span class="aurora-sweep"></span>
+  </div>
+
+  <div class="cyber-grid-overlay" aria-hidden="true"></div>
+  <div class="bg-vignette" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
 
   <!-- Navigation Bar -->
   <header class="nav-hud">

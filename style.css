@@ -1935,3 +1935,491 @@ body {
   }
 }
 
+/* ==========================================================================
+   13. CINEMATIC BOOT CURTAIN — the first second of the experience
+   ========================================================================== */
+.boot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-deep);
+  overflow: hidden;
+  transition: background-color 0.7s ease 0.45s;
+  /* CSS-only safety net: if script.js never runs, the curtain still lifts */
+  animation: bootFallbackHide 1s ease 2.9s forwards;
+}
+
+.boot-overlay.boot-done {
+  background-color: rgba(7, 9, 14, 0);
+  pointer-events: none;
+  animation: none;
+}
+
+.boot-inner {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  transition: opacity 0.4s ease, transform 0.55s var(--ease-elastic);
+}
+
+.boot-overlay.boot-done .boot-inner {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.94);
+}
+
+.boot-mark {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+
+.boot-letter {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 26px rgba(0, 240, 255, 0.5);
+}
+
+.boot-orbit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-top-color: transparent;
+  border-left-color: rgba(168, 85, 247, 0.5);
+  animation: bootSpin 1.05s linear infinite;
+}
+
+.boot-orbit::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--cyan-accent);
+  box-shadow: 0 0 12px var(--cyan-accent);
+}
+
+.boot-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #f8fafc;
+}
+
+.boot-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.boot-bar {
+  width: 210px;
+  height: 2px;
+  border-radius: 999px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.boot-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--cyan-accent), var(--purple-accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bootLoad 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+}
+
+.boot-status {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.boot-curtain-left,
+.boot-curtain-right {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50.5%;
+  z-index: 2;
+  transition: transform 0.9s cubic-bezier(0.72, 0, 0.18, 1) 0.12s;
+}
+
+.boot-curtain-left {
+  left: 0;
+  background: linear-gradient(90deg, rgba(11, 16, 32, 0.92), rgba(7, 9, 14, 0.99));
+  border-right: 1px solid rgba(0, 240, 255, 0.16);
+}
+
+.boot-curtain-right {
+  right: 0;
+  background: linear-gradient(270deg, rgba(11, 16, 32, 0.92), rgba(7, 9, 14, 0.99));
+  border-left: 1px solid rgba(168, 85, 247, 0.16);
+}
+
+.boot-overlay.boot-done .boot-curtain-left { transform: translateX(-102%); }
+.boot-overlay.boot-done .boot-curtain-right { transform: translateX(102%); }
+
+@keyframes bootSpin { to { transform: rotate(360deg); } }
+@keyframes bootLoad { to { transform: scaleX(1); } }
+@keyframes bootFallbackHide { to { opacity: 0; visibility: hidden; } }
+
+/* ==========================================================================
+   14. ATMOSPHERIC BACKGROUND STACK
+   Layer order → WebGL canvas (0) · aurora colour (1) · grid (2) · matte (3-4)
+   ========================================================================== */
+.bg-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.aurora-blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  opacity: 0.9;
+  will-change: transform;
+}
+
+/* Pure radial gradients instead of blur filters — keeps compositing cheap */
+.blob-cyan {
+  width: 66vw;
+  height: 66vw;
+  top: -28vw;
+  left: -18vw;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 42%, transparent 72%);
+  animation: blobDriftA 30s ease-in-out infinite alternate;
+}
+
+.blob-violet {
+  width: 58vw;
+  height: 58vw;
+  bottom: -26vw;
+  right: -16vw;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.16) 0%, rgba(168, 85, 247, 0.05) 45%, transparent 74%);
+  animation: blobDriftB 38s ease-in-out infinite alternate;
+}
+
+.blob-amber {
+  width: 42vw;
+  height: 42vw;
+  top: 40%;
+  left: 44%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.09) 0%, rgba(245, 158, 11, 0.03) 46%, transparent 72%);
+  animation: blobDriftC 26s ease-in-out infinite alternate;
+}
+
+/* Slow diagonal light band sweeping across the void */
+.aurora-sweep {
+  position: absolute;
+  top: -60%;
+  left: -30%;
+  width: 42vw;
+  height: 220vh;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 240, 255, 0.055) 34%,
+    rgba(168, 85, 247, 0.06) 56%,
+    transparent 100%
+  );
+  animation: auroraSweep 18s ease-in-out infinite;
+}
+
+@keyframes blobDriftA {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(6vw, 5vh, 0) scale(1.1); }
+  100% { transform: translate3d(-3vw, 8vh, 0) scale(0.96); }
+}
+
+@keyframes blobDriftB {
+  0%   { transform: translate3d(0, 0, 0) scale(1.04); }
+  50%  { transform: translate3d(-7vw, -6vh, 0) scale(0.95); }
+  100% { transform: translate3d(4vw, -3vh, 0) scale(1.12); }
+}
+
+@keyframes blobDriftC {
+  0%   { transform: translate3d(0, 0, 0) scale(0.94); }
+  100% { transform: translate3d(-9vw, -7vh, 0) scale(1.16); }
+}
+
+@keyframes auroraSweep {
+  0%   { transform: translate3d(-45vw, 0, 0) rotate(16deg); opacity: 0; }
+  14%  { opacity: 1; }
+  86%  { opacity: 1; }
+  100% { transform: translate3d(150vw, 0, 0) rotate(16deg); opacity: 0; }
+}
+
+/* Dual-density engineering grid, drifting diagonally on the compositor */
+.cyber-grid-overlay {
+  top: -48px;
+  left: -48px;
+  width: calc(100vw + 192px);
+  height: calc(100vh + 192px);
+  z-index: 2;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+    linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 384px 384px, 384px 384px;
+  opacity: 0.9;
+  mask-image: radial-gradient(ellipse 64% 54% at 50% 47%, #000 0%, rgba(0, 0, 0, 0.4) 58%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 64% 54% at 50% 47%, #000 0%, rgba(0, 0, 0, 0.4) 58%, transparent 90%);
+  animation: gridDrift 14s linear infinite;
+}
+
+@keyframes gridDrift {
+  to { transform: translate3d(96px, 96px, 0); }
+}
+
+/* Cinematic matte: vignette + edge falloff */
+.bg-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 78% 68% at 50% 42%, transparent 40%, rgba(3, 5, 10, 0.5) 76%, rgba(3, 5, 10, 0.92) 100%),
+    linear-gradient(180deg, rgba(3, 5, 10, 0.6) 0%, transparent 20%, transparent 76%, rgba(3, 5, 10, 0.78) 100%);
+}
+
+/* Film grain — animated on the compositor via steps() */
+.bg-grain {
+  position: fixed;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: grainShift 5.5s steps(5) infinite;
+}
+
+@keyframes grainShift {
+  0%   { transform: translate3d(0, 0, 0); }
+  20%  { transform: translate3d(-4%, 3%, 0); }
+  40%  { transform: translate3d(3%, -4%, 0); }
+  60%  { transform: translate3d(-3%, -3%, 0); }
+  80%  { transform: translate3d(4%, 2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* ==========================================================================
+   15. MICRO-MOTION LAYER — masked word reveals, staggers, spotlights, magnetism
+   ========================================================================== */
+
+/* --- Masked word reveal (headings rise out of their own baseline mask) --- */
+.reveal-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+}
+
+.reveal-word > span {
+  display: inline-block;
+  transform: translate3d(0, 108%, 0) rotate(5deg);
+  opacity: 0;
+}
+
+.screen-pane.active .reveal-word > span {
+  animation: wordRise 0.8s var(--ease-elastic) both;
+  animation-delay: calc(var(--wi, 0) * 55ms + 90ms);
+}
+
+@keyframes wordRise {
+  from { transform: translate3d(0, 108%, 0) rotate(5deg); opacity: 0; }
+  to   { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
+}
+
+/* --- Staggered card / pill entrances (fill-mode: backwards so inline
+       tilt transforms keep working once the animation completes) --- */
+.screen-pane.active .stagger > * {
+  animation: riseIn 0.72s var(--ease-elastic) backwards;
+}
+
+.screen-pane.active .stagger > *:nth-child(1) { animation-delay: 0.10s; }
+.screen-pane.active .stagger > *:nth-child(2) { animation-delay: 0.16s; }
+.screen-pane.active .stagger > *:nth-child(3) { animation-delay: 0.22s; }
+.screen-pane.active .stagger > *:nth-child(4) { animation-delay: 0.28s; }
+.screen-pane.active .stagger > *:nth-child(5) { animation-delay: 0.34s; }
+.screen-pane.active .stagger > *:nth-child(6) { animation-delay: 0.40s; }
+.screen-pane.active .stagger > *:nth-child(7) { animation-delay: 0.46s; }
+.screen-pane.active .stagger > *:nth-child(8) { animation-delay: 0.52s; }
+.screen-pane.active .stagger > *:nth-child(n + 9) { animation-delay: 0.58s; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.97); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* --- Pointer-tracking spotlight baked into the card backgrounds --- */
+@property --spot-op {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.project-card,
+.moment-item,
+.cert-card,
+.about-card,
+.contact-btn {
+  --spot: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(0, 240, 255, calc(0.14 * var(--spot-op, 0))),
+    rgba(168, 85, 247, calc(0.09 * var(--spot-op, 0))) 42%,
+    transparent 72%
+  );
+  background-image: var(--spot);
+  transition: --spot-op 0.45s ease, transform 0.3s var(--ease-elastic),
+              border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Card shells keep their original depth gradient underneath the spotlight */
+.project-card,
+.cert-card,
+.about-card {
+  background-image: var(--spot),
+    linear-gradient(145deg, rgba(16, 24, 40, 0.75) 0%, rgba(9, 14, 26, 0.88) 100%);
+}
+
+.project-card:hover,
+.moment-item:hover,
+.cert-card:hover,
+.about-card:hover,
+.contact-btn:hover {
+  --spot-op: 1;
+}
+
+/* --- Magnetic elements (JS nudges the transform, CSS smooths it) --- */
+.magnetic {
+  transition: transform 0.4s var(--ease-elastic);
+  will-change: transform;
+}
+
+/* --- Sliding active indicator inside the nav --- */
+.nav-links { position: relative; }
+
+.nav-pill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 30px;
+  margin-top: -15px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.5s var(--ease-elastic), width 0.5s var(--ease-elastic), opacity 0.3s ease;
+}
+
+.nav-link-btn { position: relative; z-index: 1; }
+
+/* --- Breathing hairline under every section title --- */
+.section-title::after {
+  content: '';
+  display: block;
+  width: 58px;
+  height: 2px;
+  margin-top: 12px;
+  border-radius: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--cyan-accent), rgba(168, 85, 247, 0.65), transparent);
+  animation: lineSweep 3.6s ease-in-out infinite;
+}
+
+@keyframes lineSweep {
+  0%, 100% { transform: scaleX(0.5); opacity: 0.55; }
+  50%      { transform: scaleX(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   16. DEVICE RESPONSIVENESS, PERFORMANCE TIERS & MOTION SAFETY
+   ========================================================================== */
+@media (max-width: 900px) {
+  .blob-cyan,
+  .blob-violet { opacity: 0.7; }
+  .bg-grain { opacity: 0.035; }
+}
+
+@media (max-width: 640px) {
+  .bg-grain,
+  .aurora-sweep { display: none; }
+  .cyber-grid-overlay {
+    background-size: 64px 64px, 64px 64px, 256px 256px, 256px 256px;
+  }
+  .blob-cyan { width: 96vw; height: 96vw; }
+  .blob-violet { width: 88vw; height: 88vw; }
+  .boot-name { letter-spacing: 4px; font-size: 0.92rem; }
+  .boot-bar { width: 170px; }
+}
+
+@media (max-width: 480px) {
+  .blob-amber { display: none; }
+}
+
+/* Adaptive tier: toggled by the FPS watchdog in script.js */
+html.perf-low .bg-grain,
+html.perf-low .aurora-sweep { display: none; }
+
+html.perf-low .nav-hud {
+  backdrop-filter: blur(12px) saturate(1.05);
+  -webkit-backdrop-filter: blur(12px) saturate(1.05);
+}
+
+html.perf-low .human-tag { backdrop-filter: blur(4px); }
+
+/* Respect the OS-level motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .bg-grain,
+  .aurora-blob,
+  .aurora-sweep,
+  .cyber-grid-overlay,
+  .boot-orbit,
+  .section-title::after { animation: none !important; }
+
+  .reveal-word > span {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .screen-pane.active .stagger > * { animation: none !important; }
+  .screen-pane { transition-duration: 0.05s; }
+}
+
+
+
+
