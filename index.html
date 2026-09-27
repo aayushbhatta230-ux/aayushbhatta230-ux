@@ -110,6 +110,17 @@
   <div class="bg-vignette" aria-hidden="true"></div>
   <div class="bg-grain" aria-hidden="true"></div>
 
+  <!-- Reading progress inside the current section -->
+  <div class="read-progress-track" aria-hidden="true">
+    <span id="read-progress" class="read-progress-bar"></span>
+  </div>
+
+  <!-- Affordance: sections are read top-to-bottom before the next transition -->
+  <div class="scroll-cue" aria-hidden="true">
+    <span class="scroll-cue-label">scroll to read</span>
+    <span class="scroll-cue-line"></span>
+  </div>
+
   <!-- Navigation Bar -->
   <header class="nav-hud">
     <a href="#hero" class="nav-brand nav-screen-btn" data-screen="0">
@@ -191,14 +202,25 @@
     <section id="screen-hero" class="screen-pane active" data-index="0" aria-label="Introduction and overview">
       <div class="screen-content hero-layout">
         <div class="hero-text-block">
-          <div class="location-pill">
-            <span class="pulse-green"></span>
-            <span>Kathmandu, Nepal</span>
+          <div class="hero-eyebrow-row">
+            <span class="section-index" aria-hidden="true">01</span>
+            <div class="location-pill">
+              <span class="pulse-green"></span>
+              <span>Kathmandu, Nepal · 27.71°N 85.32°E</span>
+            </div>
           </div>
 
+          <span class="hero-greeting">Hi, I'm</span>
           <h1 class="hero-heading">
-            Hi, I'm <span class="highlight-name">Aayush</span>.
+            Aayush Bhatta<span class="hero-heading-dot">.</span>
           </h1>
+
+          <p class="hero-role">
+            <span>Software engineer</span>
+            <span>Systems builder</span>
+            <span>Musician</span>
+            <span>Athlete</span>
+          </p>
 
           <p class="hero-subtext">
             High school senior, software builder, and athlete based in Kathmandu. I focus on developing local AI companions, real-time computer vision interfaces, and embedded IoT systems—balanced with competitive basketball, acoustic &amp; electric guitar, and dance.
@@ -226,14 +248,35 @@
               <span>Certificates</span>
             </button>
           </div>
+
+          <dl class="hero-meta-rail">
+            <div class="meta-item">
+              <dt>Availability</dt>
+              <dd><span class="status-dot" aria-hidden="true"></span>Open to internships &amp; collaboration</dd>
+            </div>
+            <div class="meta-item">
+              <dt>Currently building</dt>
+              <dd>JARVIS — a local-first AI companion</dd>
+            </div>
+            <div class="meta-item">
+              <dt>Core stack</dt>
+              <dd>Python · JavaScript · C++ · ESP32</dd>
+            </div>
+          </dl>
         </div>
 
         <!-- Hero Photo Card -->
-        <div class="hero-photo-wrapper">
-          <div class="photo-card-tilt" data-index="0">
+        <figure class="hero-photo-wrapper">
+          <div class="photo-card-tilt" data-index="0" role="button" tabindex="0" aria-label="Open photograph viewer">
             <img src="assets/images/spiderman.png" alt="Aayush Bhatta" class="hero-card-img" loading="eager" fetchpriority="high" decoding="async" />
+            <span class="frame-ticks" aria-hidden="true"></span>
           </div>
-        </div>
+          <figcaption class="hero-photo-caption">
+            <span class="mono-tag">fig. 01</span>
+            <span class="caption-text">Kathmandu, Nepal</span>
+            <span class="mono-tag caption-cue">open viewer ↗</span>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
@@ -241,7 +284,10 @@
     <section id="screen-moments" class="screen-pane" data-index="1" aria-label="Photography and visual moments">
       <div class="screen-content">
         <div class="section-title-wrap">
-          <span class="section-kicker">Snapshots</span>
+          <div class="section-head">
+            <span class="section-index" aria-hidden="true">02</span>
+            <span class="section-kicker">Snapshots</span>
+          </div>
           <h2 class="section-title">Moments</h2>
           <p class="section-subtitle">
             A few photos from daily life, workouts, hiking the hills around Kathmandu, and creating content.
@@ -250,39 +296,59 @@
 
         <div class="moments-grid">
           <!-- Photo 0 -->
-          <div class="moment-item" data-index="0">
+          <figure class="moment-item" data-index="0" role="button" tabindex="0" aria-label="Open photograph: Kathmandu Valley">
             <div class="moment-img-box">
               <img src="assets/images/spiderman.png" alt="Aayush" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <figcaption class="moment-caption">
+              <span class="mono-tag">01 — cover</span>
+              <span class="caption-text">Kathmandu Valley</span>
+            </figcaption>
+          </figure>
 
           <!-- Photo 1 -->
-          <div class="moment-item" data-index="1">
+          <figure class="moment-item" data-index="1" role="button" tabindex="0" aria-label="Open photograph: Hills at Golden Hour">
             <div class="moment-img-box">
               <img src="assets/images/golden_sunset.png" alt="Kathmandu Hills at Sunset" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <figcaption class="moment-caption">
+              <span class="mono-tag">02</span>
+              <span class="caption-text">Hills at Golden Hour</span>
+            </figcaption>
+          </figure>
 
           <!-- Photo 2 -->
-          <div class="moment-item" data-index="2">
+          <figure class="moment-item" data-index="2" role="button" tabindex="0" aria-label="Open photograph: Mountain Altitude">
             <div class="moment-img-box">
               <img src="assets/images/mountain_bw.png" alt="Mountain Trek" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <figcaption class="moment-caption">
+              <span class="mono-tag">03</span>
+              <span class="caption-text">Mountain Altitude</span>
+            </figcaption>
+          </figure>
 
           <!-- Photo 3 -->
-          <div class="moment-item" data-index="3">
+          <figure class="moment-item" data-index="3" role="button" tabindex="0" aria-label="Open photograph: Nature Trails">
             <div class="moment-img-box">
               <img src="assets/images/forest_nature.png" alt="Pine Forest and River" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <figcaption class="moment-caption">
+              <span class="mono-tag">04</span>
+              <span class="caption-text">Nature Trails</span>
+            </figcaption>
+          </figure>
 
           <!-- Photo 4 -->
-          <div class="moment-item" data-index="4">
+          <figure class="moment-item" data-index="4" role="button" tabindex="0" aria-label="Open photograph: Late Night Coding">
             <div class="moment-img-box">
               <img src="assets/images/mirror_candid.png" alt="Candid" loading="lazy" decoding="async" />
             </div>
-          </div>
+            <figcaption class="moment-caption">
+              <span class="mono-tag">05</span>
+              <span class="caption-text">Late Night Coding</span>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -291,86 +357,241 @@
     <section id="screen-projects" class="screen-pane" data-index="2" aria-label="Featured engineering projects">
       <div class="screen-content">
         <div class="section-title-wrap">
-          <span class="section-kicker">What I Build</span>
+          <div class="section-head">
+            <span class="section-index" aria-hidden="true">03</span>
+            <span class="section-kicker">What I Build</span>
+          </div>
           <h2 class="section-title">Projects</h2>
           <p class="section-subtitle">
-            Software, AI prototypes, and hardware experiments I've built recently.
+            Software, AI prototypes, and hardware experiments I've built recently — each one a problem I wanted solved on my own terms.
           </p>
         </div>
 
         <div class="projects-grid">
           <!-- Project 1: JARVIS -->
-          <div class="project-card">
-            <div class="project-header">
+          <article class="project-card" data-project="jarvis">
+            <header class="project-head">
+              <span class="project-index" aria-hidden="true">01</span>
               <span class="project-badge">Local AI</span>
-              <a href="https://github.com/aayushbhatta230-ux/jarvis-ai-agent" target="_blank" class="project-link-icon" title="View on GitHub">↗</a>
-            </div>
+              <span class="project-meta">Windows · Zero-cloud · Active build</span>
+            </header>
+
             <h3 class="project-title">JARVIS AI Assistant</h3>
-            <p class="project-desc">
+            <p class="project-lede">
               A private, zero-cloud desktop companion for Windows running local Ollama (Llama 3.2). Handles native OS automation, Spotify media control, speech recognition, and secure mobile streaming over Cloudflare tunnels.
             </p>
+
             <!-- Reactive audio wave simulation -->
-            <canvas id="jarvis-wave" class="jarvis-wave-canvas"></canvas>
-            <div class="project-tech-tags">
-              <span>Python</span>
-              <span>Ollama</span>
-              <span>FastAPI</span>
-              <span>Cloudflare</span>
+            <div class="project-visual">
+              <canvas id="jarvis-wave" class="jarvis-wave-canvas"></canvas>
+              <span class="visual-label">local inference · llm stream</span>
             </div>
-          </div>
+
+            <dl class="project-specs">
+              <div>
+                <dt>Problem</dt>
+                <dd>Cloud assistants route your voice through someone else's servers and die the moment the connection does.</dd>
+              </div>
+              <div>
+                <dt>Build</dt>
+                <dd>A local Llama 3.2 instance on Ollama driving native OS automation, Spotify control and on-device speech recognition.</dd>
+              </div>
+              <div>
+                <dt>Engineering</dt>
+                <dd>A Python service behind FastAPI, reachable from my phone through a secure Cloudflare tunnel — no third party in the loop.</dd>
+              </div>
+            </dl>
+
+            <footer class="project-foot">
+              <div class="project-tech-tags">
+                <span>Python</span>
+                <span>Ollama</span>
+                <span>FastAPI</span>
+                <span>Cloudflare</span>
+              </div>
+              <a href="https://github.com/aayushbhatta230-ux/jarvis-ai-agent" target="_blank" rel="noopener" class="project-action">
+                <span>Repository</span>
+                <span class="action-arrow" aria-hidden="true">↗</span>
+              </a>
+            </footer>
+          </article>
 
           <!-- Project 2: HandChord -->
-          <div class="project-card">
-            <div class="project-header">
+          <article class="project-card" data-project="handchord">
+            <header class="project-head">
+              <span class="project-index" aria-hidden="true">02</span>
               <span class="project-badge">Computer Vision</span>
-              <a href="https://github.com/aayushbhatta230-ux/handchord" target="_blank" class="project-link-icon" title="View on GitHub">↗</a>
-            </div>
+              <span class="project-meta">Browser · Real-time</span>
+            </header>
+
             <h3 class="project-title">HandChord</h3>
-            <p class="project-desc">
+            <p class="project-lede">
               A touchless musical instrument that tracks 21-point hand landmarks using Google MediaPipe and synthesizes dynamic polyphonic chords and arpeggios directly in the browser via the Web Audio API.
             </p>
-            <div class="project-tech-tags">
-              <span>JavaScript</span>
-              <span>MediaPipe</span>
-              <span>Web Audio API</span>
-              <span>Vite</span>
+
+            <div class="project-visual">
+              <svg class="cv-hand" viewBox="0 0 220 180" role="img" aria-label="Wireframe of 21 tracked hand landmarks">
+                <g class="cv-lines">
+                  <line x1="110" y1="168" x2="72" y2="140" /><line x1="72" y1="140" x2="62" y2="118" /><line x1="62" y1="118" x2="56" y2="100" /><line x1="56" y1="100" x2="54" y2="86" />
+                  <line x1="110" y1="168" x2="92" y2="108" /><line x1="92" y1="108" x2="88" y2="80" /><line x1="88" y1="80" x2="86" y2="58" /><line x1="86" y1="58" x2="85" y2="40" />
+                  <line x1="110" y1="168" x2="110" y2="104" /><line x1="110" y1="104" x2="110" y2="74" /><line x1="110" y1="74" x2="110" y2="52" /><line x1="110" y1="52" x2="110" y2="34" />
+                  <line x1="110" y1="168" x2="128" y2="106" /><line x1="128" y1="106" x2="132" y2="78" /><line x1="132" y1="78" x2="134" y2="58" /><line x1="134" y1="58" x2="135" y2="42" />
+                  <line x1="110" y1="168" x2="145" y2="112" /><line x1="145" y1="112" x2="154" y2="90" /><line x1="154" y1="90" x2="160" y2="74" /><line x1="160" y1="74" x2="164" y2="62" />
+                  <line x1="92" y1="108" x2="110" y2="104" /><line x1="110" y1="104" x2="128" y2="106" /><line x1="128" y1="106" x2="145" y2="112" />
+                </g>
+                <g class="cv-points">
+                  <circle cx="110" cy="168" r="3" />
+                  <circle cx="72" cy="140" r="3" /><circle cx="62" cy="118" r="3" /><circle cx="56" cy="100" r="3" /><circle cx="54" cy="86" r="3" />
+                  <circle cx="92" cy="108" r="3" /><circle cx="88" cy="80" r="3" /><circle cx="86" cy="58" r="3" /><circle cx="85" cy="40" r="3" />
+                  <circle cx="110" cy="104" r="3" /><circle cx="110" cy="74" r="3" /><circle cx="110" cy="52" r="3" /><circle cx="110" cy="34" r="3" />
+                  <circle cx="128" cy="106" r="3" /><circle cx="132" cy="78" r="3" /><circle cx="134" cy="58" r="3" /><circle cx="135" cy="42" r="3" />
+                  <circle cx="145" cy="112" r="3" /><circle cx="154" cy="90" r="3" /><circle cx="160" cy="74" r="3" /><circle cx="164" cy="62" r="3" />
+                </g>
+              </svg>
+              <span class="visual-label">21 landmarks · per frame</span>
             </div>
-          </div>
+
+            <dl class="project-specs">
+              <div>
+                <dt>Problem</dt>
+                <dd>Instruments need physical strings or keys — I wanted chords that come out of a gesture, with nothing in your hands.</dd>
+              </div>
+              <div>
+                <dt>Build</dt>
+                <dd>Webcam input mapped through MediaPipe landmarks into polyphonic chords and arpeggios that respond as you move.</dd>
+              </div>
+              <div>
+                <dt>Engineering</dt>
+                <dd>Web Audio API synthesis in the browser with a Vite build — inference and sound stay client-side, so latency stays playable.</dd>
+              </div>
+            </dl>
+
+            <footer class="project-foot">
+              <div class="project-tech-tags">
+                <span>JavaScript</span>
+                <span>MediaPipe</span>
+                <span>Web Audio API</span>
+                <span>Vite</span>
+              </div>
+              <a href="https://github.com/aayushbhatta230-ux/handchord" target="_blank" rel="noopener" class="project-action">
+                <span>Repository</span>
+                <span class="action-arrow" aria-hidden="true">↗</span>
+              </a>
+            </footer>
+          </article>
 
           <!-- Project 3: KrishiTrust -->
-          <div class="project-card">
-            <div class="project-header">
+          <article class="project-card" data-project="krishitrust">
+            <header class="project-head">
+              <span class="project-index" aria-hidden="true">03</span>
               <span class="project-badge">Hardware &amp; IoT</span>
-              <a href="https://github.com/aayushbhatta230-ux/KrishiPath" target="_blank" class="project-link-icon" title="View on GitHub">↗</a>
-            </div>
+              <span class="project-meta">ESP32 · Working prototype</span>
+            </header>
+
             <h3 class="project-title">KrishiTrust / KrishiPath</h3>
-            <p class="project-desc">
+            <p class="project-lede">
               An IoT agricultural telematics prototype combining an ESP32 microcontroller, 6-axis accelerometer/gyroscope (MPU-6050), and GPS to log transit vibration and protect produce across mountain transport routes.
             </p>
-            <div class="project-tech-tags">
-              <span>ESP32</span>
-              <span>MPU6050</span>
-              <span>C++</span>
-              <span>React</span>
+
+            <div class="project-visual">
+              <svg class="iot-route" viewBox="0 0 240 150" role="img" aria-label="Transit vibration logged along a mountain route">
+                <path class="route-line" d="M12 122 C 62 118, 80 96, 120 100 S 198 120, 228 104" />
+                <g class="vib-bars">
+                  <line x1="34" y1="121" x2="34" y2="107" />
+                  <line x1="58" y1="117" x2="58" y2="93" />
+                  <line x1="82" y1="105" x2="82" y2="74" />
+                  <line x1="106" y1="100" x2="106" y2="90" />
+                  <line x1="130" y1="100" x2="130" y2="62" />
+                  <line x1="154" y1="107" x2="154" y2="86" />
+                  <line x1="178" y1="114" x2="178" y2="68" />
+                  <line x1="202" y1="114" x2="202" y2="99" />
+                </g>
+                <circle class="route-node" cx="12" cy="122" r="3.5" />
+                <circle class="route-node" cx="228" cy="104" r="3.5" />
+              </svg>
+              <span class="visual-label">vibration score · gps roadDNA</span>
             </div>
-          </div>
+
+            <dl class="project-specs">
+              <div>
+                <dt>Problem</dt>
+                <dd>Produce is damaged on rough mountain transport routes, and the damage is invisible until the goods arrive.</dd>
+              </div>
+              <div>
+                <dt>Build</dt>
+                <dd>An ESP32 logger pairing an MPU-6050 accelerometer/gyroscope with GPS to record transit shock the whole way down.</dd>
+              </div>
+              <div>
+                <dt>Engineering</dt>
+                <dd>Six-axis I²C sampling turned into a vibration score tied to GPS position, so bad road segments can be identified precisely.</dd>
+              </div>
+            </dl>
+
+            <footer class="project-foot">
+              <div class="project-tech-tags">
+                <span>ESP32</span>
+                <span>MPU6050</span>
+                <span>C++</span>
+                <span>React</span>
+              </div>
+              <a href="https://github.com/aayushbhatta230-ux/KrishiPath" target="_blank" rel="noopener" class="project-action">
+                <span>Repository</span>
+                <span class="action-arrow" aria-hidden="true">↗</span>
+              </a>
+            </footer>
+          </article>
 
           <!-- Project 4: TikTok Creator -->
-          <div class="project-card creator-card">
-            <div class="project-header">
+          <article class="project-card creator-card" data-project="aayushifty">
+            <header class="project-head">
+              <span class="project-index" aria-hidden="true">04</span>
               <span class="project-badge tiktok-badge">Digital Creator</span>
-              <a href="https://www.tiktok.com/@aayushifty" target="_blank" class="project-link-icon" title="Visit TikTok">↗</a>
-            </div>
+              <span class="project-meta">Ongoing · @aayushifty</span>
+            </header>
+
             <h3 class="project-title">@aayushifty</h3>
-            <p class="project-desc">
+            <p class="project-lede">
               Sharing technical experiments, guitar sessions, and student life across TikTok—cultivating an engaged community centered around authentic engineering, music, and creative storytelling.
             </p>
-            <div class="project-tech-tags">
-              <span>Creative Tech</span>
-              <span>Guitar &amp; Vocals</span>
-              <span>Community</span>
+
+            <div class="project-visual creator-visual" aria-hidden="true">
+              <div class="creator-strip">
+                <span class="strip-bar"></span><span class="strip-bar"></span><span class="strip-bar"></span>
+                <span class="strip-bar"></span><span class="strip-bar"></span><span class="strip-bar"></span>
+                <span class="strip-bar"></span><span class="strip-bar"></span><span class="strip-bar"></span>
+                <span class="strip-bar"></span><span class="strip-bar"></span><span class="strip-bar"></span>
+                <span class="strip-bar"></span><span class="strip-bar"></span>
+              </div>
+              <span class="visual-label">build logs · guitar · student life</span>
             </div>
-          </div>
+
+            <dl class="project-specs">
+              <div>
+                <dt>Angle</dt>
+                <dd>Authentic engineering and student life — the process as it actually happens, not a highlight reel.</dd>
+              </div>
+              <div>
+                <dt>Content</dt>
+                <dd>Guitar sessions, technical experiments and build breakdowns filmed from Kathmandu.</dd>
+              </div>
+              <div>
+                <dt>Craft</dt>
+                <dd>Creative storytelling and editing that keeps an engaged community coming back.</dd>
+              </div>
+            </dl>
+
+            <footer class="project-foot">
+              <div class="project-tech-tags">
+                <span>Creative Tech</span>
+                <span>Guitar &amp; Vocals</span>
+                <span>Community</span>
+              </div>
+              <a href="https://www.tiktok.com/@aayushifty" target="_blank" rel="noopener" class="project-action">
+                <span>TikTok</span>
+                <span class="action-arrow" aria-hidden="true">↗</span>
+              </a>
+            </footer>
+          </article>
         </div>
       </div>
     </section>
@@ -379,54 +600,97 @@
     <section id="screen-about" class="screen-pane" data-index="3" aria-label="Personal background and disciplines">
       <div class="screen-content">
         <div class="section-title-wrap">
-          <span class="section-kicker">Background &amp; Passions</span>
+          <div class="section-head">
+            <span class="section-index" aria-hidden="true">04</span>
+            <span class="section-kicker">Background &amp; Passions</span>
+          </div>
           <h2 class="section-title">About Me</h2>
+          <p class="section-subtitle">
+            Four disciplines that shape how I build, compete and collaborate.
+          </p>
         </div>
 
         <div class="about-grid four-cards">
-          <div class="about-card">
-            <div class="about-card-icon">💻</div>
-            <h3>Software Engineering &amp; Systems</h3>
+          <article class="about-card pillar" data-pillar="engineering">
+            <header class="pillar-head">
+              <span class="pillar-icon" aria-hidden="true">💻</span>
+              <span class="pillar-index" aria-hidden="true">01 — engineering</span>
+            </header>
+            <h3 class="pillar-title">Software Engineering &amp; Systems</h3>
+            <p class="pillar-lede">Offline-first prototypes, from microcontroller registers to browser synthesis.</p>
             <p>
               High school senior in Nepal studying Physics, Mathematics, and Computer Science. My engineering focus centers on building practical, offline-first prototypes: developing Python-based voice and screen automation agents with local LLMs, training real-time browser vision models with MediaPipe, and assembling telematics sensors on ESP32 microcontrollers.
             </p>
             <p>
               I prioritize understanding software from the ground up—from microcontroller I2C registers to responsive Web Audio synthesis.
             </p>
-          </div>
+            <ul class="pillar-facts">
+              <li>Python</li>
+              <li>Local LLMs</li>
+              <li>MediaPipe</li>
+              <li>ESP32 / I²C</li>
+            </ul>
+          </article>
 
-          <div class="about-card">
-            <div class="about-card-icon">🎸</div>
-            <h3>Performing Arts &amp; Music</h3>
+          <article class="about-card pillar" data-pillar="music">
+            <header class="pillar-head">
+              <span class="pillar-icon" aria-hidden="true">🎸</span>
+              <span class="pillar-index" aria-hidden="true">02 — performance</span>
+            </header>
+            <h3 class="pillar-title">Performing Arts &amp; Music</h3>
+            <p class="pillar-lede">Rhythm and improvisation as a counterweight to systems work.</p>
             <p>
               Singer, multi-instrumentalist (acoustic and electric guitar), and dancer. Creative rhythm and improvisational discipline provide a vital cognitive counterweight to systems engineering.
             </p>
             <p>
               Whether exploring chord progressions, phrasing vocal melodies, or feeling cadence through dance, musical expression sharpens pattern recognition and intuitive interface design.
             </p>
-          </div>
+            <ul class="pillar-facts">
+              <li>Vocals</li>
+              <li>Acoustic &amp; electric guitar</li>
+              <li>Dance</li>
+            </ul>
+          </article>
 
-          <div class="about-card">
-            <div class="about-card-icon">🏀</div>
-            <h3>Competitive Athletics &amp; Endurance</h3>
+          <article class="about-card pillar" data-pillar="athletics">
+            <header class="pillar-head">
+              <span class="pillar-icon" aria-hidden="true">🏀</span>
+              <span class="pillar-index" aria-hidden="true">03 — endurance</span>
+            </header>
+            <h3 class="pillar-title">Competitive Athletics &amp; Endurance</h3>
+            <p class="pillar-lede">Conditioning as the foundation the rest of the week is built on.</p>
             <p>
               National competitor and athlete with a focused background in basketball and high-altitude trail conditioning across the Kathmandu valley.
             </p>
             <p>
               Athleticism is the cornerstone of my daily discipline. Physical conditioning fosters cognitive clarity, mental endurance, and the patience needed to debug complex architectures without fatigue.
             </p>
-          </div>
+            <ul class="pillar-facts">
+              <li>Basketball</li>
+              <li>High-altitude trails</li>
+              <li>National competitor</li>
+            </ul>
+          </article>
 
-          <div class="about-card">
-            <div class="about-card-icon">🎙️</div>
-            <h3>Executive Leadership &amp; Diplomacy</h3>
+          <article class="about-card pillar" data-pillar="leadership">
+            <header class="pillar-head">
+              <span class="pillar-icon" aria-hidden="true">🎙️</span>
+              <span class="pillar-index" aria-hidden="true">04 — diplomacy</span>
+            </header>
+            <h3 class="pillar-title">Executive Leadership &amp; Diplomacy</h3>
+            <p class="pillar-lede">Negotiation and public discourse, practised under pressure.</p>
             <p>
               Served two consecutive terms as School Captain and Prefect at Baba School, coordinating school-wide student governance, inter-school tournaments, and academic events.
             </p>
             <p>
               Competed across 13 Model United Nations conferences (earning 6× Best Delegate and 3× Outstanding Delegate honors) and the 9th MahaKumbha National Debating Championship, building deep proficiency in negotiation and public discourse under pressure.
             </p>
-          </div>
+            <ul class="pillar-facts">
+              <li>School Captain ×2</li>
+              <li>13 MUN conferences</li>
+              <li>6× Best Delegate</li>
+            </ul>
+          </article>
         </div>
       </div>
     </section>
@@ -435,10 +699,13 @@
     <section id="screen-credentials" class="screen-pane" data-index="4" aria-label="Verified certifications and credentials">
       <div class="screen-content">
         <div class="section-title-wrap">
-          <span class="section-kicker">Verified Record</span>
+          <div class="section-head">
+            <span class="section-index" aria-hidden="true">05</span>
+            <span class="section-kicker">Verified Record</span>
+          </div>
           <h2 class="section-title">Certifications &amp; Achievements</h2>
           <p class="section-subtitle">
-            Participating in national competitions, diplomacy assemblies, and debating championships has shaped my communication and competitive edge. Click any card to inspect the details.
+            Participating in national competitions, diplomacy assemblies, and debating championships has shaped my communication and competitive edge. Open any card to inspect the credential.
           </p>
         </div>
 
@@ -546,10 +813,16 @@
     <section id="screen-contact" class="screen-pane" data-index="5" aria-label="Contact information and social profiles">
       <div class="screen-content contact-layout">
         <div class="contact-box">
-          <span class="section-kicker">Say Hello</span>
+          <div class="section-head">
+            <span class="section-index" aria-hidden="true">06</span>
+            <span class="section-kicker">Say Hello</span>
+          </div>
           <h2 class="section-title">Get in Touch</h2>
           <p class="contact-intro">
             Whether you want to collaborate on an open-source project, team up for a hackathon, or just chat about AI, basketball, or tech, I'd love to hear from you.
+          </p>
+          <p class="contact-closing">
+            I'd rather ship one small real thing than describe a large hypothetical one. If that's how you work too, my inbox is open.
           </p>
 
           <div class="contact-links-grid">
@@ -561,22 +834,28 @@
             </button>
 
             <!-- GitHub -->
-            <a href="https://github.com/aayushbhatta230-ux" target="_blank" class="contact-btn">
+            <a href="https://github.com/aayushbhatta230-ux" target="_blank" rel="noopener" class="contact-btn">
               <span class="contact-icon">🐙</span>
               <span class="contact-text">github.com/aayushbhatta230-ux</span>
             </a>
 
             <!-- TikTok -->
-            <a href="https://www.tiktok.com/@aayushifty" target="_blank" class="contact-btn tiktok">
+            <a href="https://www.tiktok.com/@aayushifty" target="_blank" rel="noopener" class="contact-btn tiktok">
               <span class="contact-icon">🎵</span>
               <span class="contact-text">tiktok.com/@aayushifty</span>
             </a>
 
             <!-- Instagram -->
-            <a href="https://instagram.com/aayushifty" target="_blank" class="contact-btn">
+            <a href="https://instagram.com/aayushifty" target="_blank" rel="noopener" class="contact-btn">
               <span class="contact-icon">📸</span>
               <span class="contact-text">instagram.com/@aayushifty</span>
             </a>
+          </div>
+
+          <div class="contact-foot">
+            <span class="mono-tag">Kathmandu, Nepal</span>
+            <span class="mono-tag">27.7172° N, 85.3240° E</span>
+            <span class="mono-tag">Local time <span id="local-time">—</span></span>
           </div>
         </div>
       </div>

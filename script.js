@@ -508,50 +508,116 @@ class OrigamiTransitionEngine {
       this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
     });
 
-    // Mouse wheel / trackpad swipe
-    let lastWheelTime = 0;
-    window.addEventListener('wheel', (e) => {
-      const now = performance.now();
-      if (now - lastWheelTime < 1700) return; // Debounce transition for smooth completion
-      if (this.isModalActive()) return;
+    // ----------------------------------------------------------------------
+    // READING MODEL — scroll first, travel only at the edge of a section.
+    // A section pane is a document: the wheel, keyboard and swipe scroll it
+    // from top to bottom. Only once the reader reaches that section's actual
+    // end does the next screen transition begin. This is what keeps long
+    // sections (Projects, About, Certificates) legible instead of launching a
+    // full-screen animation on the very first scroll tick.
+    // ----------------------------------------------------------------------
+    const EDGE_SLACK = 2;   // px tolerance when testing for a scroll edge
+    const EDGE_PUSH = 80;   // px of deliberate intent required past an edge
+    let wheelLock = 0;      // cooldown window after a screen change
+    let edgePush = 0;       // accumulated intent past the current edge
 
-      if (e.deltaY > 35) {
-        lastWheelTime = now;
-        this.goToScreen((this.currentScreen + 1) % this.totalScreens);
-      } else if (e.deltaY < -35) {
-        lastWheelTime = now;
-        this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
+    const maxScroll = () =>
+      Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const atBottom = () => window.scrollY >= maxScroll() - EDGE_SLACK;
+    const atTop = () => window.scrollY <= EDGE_SLACK;
+
+    const travel = (index) => {
+      wheelLock = performance.now() + 1100;
+      edgePush = 0;
+      this.goToScreen(index);
+    };
+
+    // Mouse wheel / trackpad
+    window.addEventListener('wheel', (e) => {
+      if (this.isModalActive()) return;
+      if (performance.now() < wheelLock) return;
+
+      const delta = e.deltaY;
+      if (Math.abs(delta) < 4) return;
+
+      // Still content left to read in this direction? Then it's a page scroll.
+      if ((delta > 0 && !atBottom()) || (delta < 0 && !atTop())) {
+        edgePush = 0;
+        return;
       }
+
+      // Pinned to an edge — require a conscious push before moving on.
+      edgePush += Math.abs(delta);
+      if (edgePush < EDGE_PUSH) return;
+
+      travel(delta > 0
+        ? (this.currentScreen + 1) % this.totalScreens
+        : (this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
     }, { passive: true });
 
-    // Keyboard navigation
+    // Keyboard: numbers jump, arrows read, edges travel
     window.addEventListener('keydown', (e) => {
       if (this.isModalActive()) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+
+      if (/^[1-6]$/.test(e.key)) {
+        const target = Number(e.key) - 1;
+        if (target < this.totalScreens && target !== this.currentScreen) {
+          e.preventDefault();
+          travel(target);
+        }
+        return;
+      }
+
+      if (e.key === 'Home') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      if (e.key === 'End') {
+        e.preventDefault();
+        window.scrollTo({ top: maxScroll(), behavior: 'smooth' });
+        return;
+      }
+
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        if (!atBottom()) return; // native scroll does the work
         e.preventDefault();
-        this.goToScreen((this.currentScreen + 1) % this.totalScreens);
-      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        travel((this.currentScreen + 1) % this.totalScreens);
+        return;
+      }
+
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        if (!atTop()) return;
         e.preventDefault();
-        this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
+        travel((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
       }
     });
 
-    // Touch swipe for mobile
+    // Touch: swipe travels, but only from a real edge and never mid-scroll
     let touchStartY = 0;
+    let touchStartScroll = 0;
+
     window.addEventListener('touchstart', (e) => {
+      if (this.isModalActive()) return;
       touchStartY = e.changedTouches[0].screenY;
+      touchStartScroll = window.scrollY;
     }, { passive: true });
 
     window.addEventListener('touchend', (e) => {
       if (this.isModalActive()) return;
-      const touchEndY = e.changedTouches[0].screenY;
-      const diffY = touchStartY - touchEndY;
-      if (Math.abs(diffY) > 60) {
-        if (diffY > 0) {
-          this.goToScreen((this.currentScreen + 1) % this.totalScreens);
-        } else {
-          this.goToScreen((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
-        }
+      if (performance.now() < wheelLock) return;
+
+      const diffY = touchStartY - e.changedTouches[0].screenY;
+      const scrolled = Math.abs(window.scrollY - touchStartScroll);
+      if (Math.abs(diffY) < 70 || scrolled > 24) return; // that was a scroll, not a swipe
+
+      if (diffY > 0 && atBottom()) {
+        travel((this.currentScreen + 1) % this.totalScreens);
+      } else if (diffY < 0 && atTop()) {
+        travel((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
       }
     }, { passive: true });
   }
@@ -624,9 +690,15 @@ class OrigamiTransitionEngine {
       this.screenNumEl.innerText = String(index + 1).padStart(2, '0');
     }
 
-    // Update nav buttons
+    // Update nav buttons (aria-current keeps assistive tech in sync too)
     this.navBtns.forEach((btn, i) => {
-      btn.classList.toggle('active', i === index);
+      const isActive = i === index;
+      btn.classList.toggle('active', isActive);
+      if (isActive) {
+        btn.setAttribute('aria-current', 'true');
+      } else {
+        btn.removeAttribute('aria-current');
+      }
     });
 
     // Update dots
@@ -1430,6 +1502,14 @@ function initLightbox() {
       const idx = parseInt(item.getAttribute('data-index') || "0", 10);
       openLightbox(idx);
     });
+
+    // These are card-shaped controls (role="button"), so they answer the
+    // keyboard exactly like a real button.
+    item.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      openLightbox(parseInt(item.getAttribute('data-index') || '0', 10));
+    });
   });
 
   closeBtn?.addEventListener('click', closeLightbox);
@@ -1529,7 +1609,22 @@ function initCertificateModal() {
   }
 
   document.querySelectorAll('.cert-card').forEach(card => {
+    // Expose the inspector as a real control to keyboard and AT users.
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute(
+      'aria-label',
+      `Inspect credential: ${card.querySelector('.cert-name')?.innerText || 'certificate'}`
+    );
+
     card.addEventListener('click', () => {
+      const key = card.getAttribute('data-cert');
+      if (key) openCert(key);
+    });
+
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
       const key = card.getAttribute('data-cert');
       if (key) openCert(key);
     });
@@ -1600,12 +1695,44 @@ function initTerminal() {
     help: () => `
 <div>Available commands:</div>
 <div>• <span class="cmd-hl">about</span> - Brief intro</div>
+<div>• <span class="cmd-hl">whoami</span> - Identity, in one line</div>
+<div>• <span class="cmd-hl">stack</span> - Tools and languages I use</div>
 <div>• <span class="cmd-hl">projects</span> - What I'm building</div>
-<div>• <span class="cmd-hl">next</span> - Navigate to next section</div>
-<div>• <span class="cmd-hl">certificates</span> - Verified certifications & achievements</div>
+<div>• <span class="cmd-hl">moments</span> - Where the photos live</div>
+<div>• <span class="cmd-hl">certificates</span> - Verified achievements</div>
 <div>• <span class="cmd-hl">contact</span> - Email & socials</div>
+<div>• <span class="cmd-hl">goto 1-6</span> - Jump to a section</div>
+<div>• <span class="cmd-hl">next</span> - Advance one section</div>
+<div>• <span class="cmd-hl">github</span> - Open my GitHub</div>
 <div>• <span class="cmd-hl">clear</span> - Clear terminal</div>
 <div>• <span class="cmd-hl">exit</span> - Close terminal</div>`,
+
+    whoami: () => `<div>Aayush Bhatta — builder of local-first software, competitive student, musician and athlete. Kathmandu, Nepal (UTC+5:45).</div>`,
+
+    stack: () => `
+<div>• Languages: Python, JavaScript, C++</div>
+<div>• Systems: FastAPI, Ollama (Llama 3.2), Web Audio API</div>
+<div>• Vision &amp; hardware: MediaPipe, ESP32, MPU-6050 (I²C)</div>
+<div>• Front end: vanilla JS, React, Vite</div>`,
+
+    moments: () => {
+      if (window.origamiEngine) window.origamiEngine.goToScreen(1);
+      return `<div>Opening Moments — five photos, filterable by eye only.</div>`;
+    },
+
+    goto: (args) => {
+      const target = parseInt((args && args[0]) || '', 10);
+      if (Number.isNaN(target) || target < 1 || target > 6) {
+        return `<div>Usage: <span class="cmd-hl">goto 1-6</span> — 1 home, 2 moments, 3 projects, 4 about, 5 certificates, 6 contact.</div>`;
+      }
+      if (window.origamiEngine) window.origamiEngine.goToScreen(target - 1);
+      return `<div>Opening section ${target}...</div>`;
+    },
+
+    github: () => {
+      window.open('https://github.com/aayushbhatta230-ux', '_blank', 'noopener');
+      return `<div>Opening github.com/aayushbhatta230-ux ...</div>`;
+    },
 
     about: () => `<div>Aayush Bhatta (@aayushifty) — Student, Developer, Athlete (Basketball), Musician (Singer & Guitarist), and Dancer from Kathmandu, Nepal.</div>`,
 
@@ -1648,18 +1775,22 @@ function initTerminal() {
   };
 
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const val = input.value.trim().toLowerCase();
-      input.value = '';
-      if (!val) return;
+    if (e.key !== 'Enter') return;
 
-      appendLog(`<div><span class="cmd-hl">aayush:~$</span> ${val}</div>`);
-      if (commands[val]) {
-        const res = commands[val]();
-        if (res) appendLog(res);
-      } else {
-        appendLog(`<div>Command not found: '${val}'. Type <span class="cmd-hl">help</span>.</div>`);
-      }
+    const raw = input.value.trim();
+    input.value = '';
+    if (!raw) return;
+
+    const [name, ...args] = raw.toLowerCase().split(/\s+/);
+
+    appendLog(`<div><span class="cmd-hl">aayush:~$</span> ${raw}</div>`);
+
+    const command = commands[name];
+    if (typeof command === 'function') {
+      const result = command(args);
+      if (result) appendLog(result);
+    } else {
+      appendLog(`<div>Command not found: '${name}'. Type <span class="cmd-hl">help</span>.</div>`);
     }
   });
 }
@@ -1869,144 +2000,53 @@ function initDepthParallax() {
 }
 
 // ==========================================================================
-// 12. SCRATCH-REVEAL FOG OVERLAY
+// 12. READING PROGRESS — how far through the current section the reader is
 // ==========================================================================
-function initScratchReveal() {
-  // Sections that get a fog overlay (indices: 1=Moments, 3=About)
-  const fogSections = [1, 3];
-  const canvases = new Map();
-  let activeFogIndex = -1;
+// Sections are read like documents, so the interface reports progress inside
+// the current one and, at its end, quietly offers the next section. Nothing is
+// ever hidden behind an interaction: this only observes scroll position.
+function initSectionProgress() {
+  const bar = document.getElementById('read-progress');
+  const cue = document.querySelector('.scroll-cue');
+  const nextBtn = document.getElementById('btn-next-screen');
+  if (!bar) return;
 
-  fogSections.forEach(idx => {
-    const pane = document.querySelector(`.screen-pane[data-index="${idx}"]`);
-    if (!pane) return;
+  const panes = document.querySelectorAll('.screen-pane');
+  let frame = 0;
+  let lastKey = '';
 
-    const canvas = document.createElement('canvas');
-    canvas.className = 'scratch-fog-canvas';
-    canvas.style.cssText = `
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 50; pointer-events: auto; cursor: crosshair;
-      border-radius: inherit; touch-action: none;
-    `;
-    pane.style.position = 'relative';
-    pane.appendChild(canvas);
+  function measure() {
+    frame = 0;
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+    const key = `${Math.round(progress * 100)}|${max}`;
+    if (key === lastKey) return;
+    lastKey = key;
 
-    canvases.set(idx, {
-      canvas,
-      ctx: null,
-      revealed: 0,
-      done: false,
-      drawn: false
-    });
-  });
-
-  function setupCanvas(idx) {
-    const data = canvases.get(idx);
-    if (!data || data.done) return;
-    const { canvas } = data;
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width * Math.min(window.devicePixelRatio, 2);
-    canvas.height = rect.height * Math.min(window.devicePixelRatio, 2);
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
-
-    const ctx = canvas.getContext('2d');
-    ctx.scale(Math.min(window.devicePixelRatio, 2), Math.min(window.devicePixelRatio, 2));
-
-    // Draw fog — dark gradient veil
-    const grad = ctx.createRadialGradient(
-      rect.width / 2, rect.height / 2, 0,
-      rect.width / 2, rect.height / 2, Math.max(rect.width, rect.height) * 0.7
-    );
-    grad.addColorStop(0, 'rgba(5, 7, 16, 0.85)');
-    grad.addColorStop(0.5, 'rgba(7, 9, 14, 0.7)');
-    grad.addColorStop(1, 'rgba(7, 9, 14, 0.55)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, rect.width, rect.height);
-
-    // Add subtle noise texture
-    for (let i = 0; i < 3000; i++) {
-      const x = Math.random() * rect.width;
-      const y = Math.random() * rect.height;
-      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.03})`;
-      ctx.fillRect(x, y, 1, 1);
-    }
-
-    data.ctx = ctx;
-    data.revealed = 0;
-    data.drawn = true;
-    data.w = rect.width;
-    data.h = rect.height;
+    bar.style.transform = `scaleX(${progress})`;
+    document.documentElement.classList.toggle('at-section-end', progress > 0.985 && max > 0);
+    if (cue) cue.classList.toggle('is-hidden', progress > 0.015 || max === 0);
+    if (nextBtn) nextBtn.classList.toggle('is-ready', progress > 0.88);
   }
 
-  function scratch(idx, clientX, clientY) {
-    const data = canvases.get(idx);
-    if (!data || data.done || !data.ctx) return;
-
-    const rect = data.canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    const r = 45 + Math.random() * 20;
-
-    data.ctx.globalCompositeOperation = 'destination-out';
-    // Soft circular eraser
-    const grad = data.ctx.createRadialGradient(x, y, 0, x, y, r);
-    grad.addColorStop(0, 'rgba(0,0,0,1)');
-    grad.addColorStop(0.6, 'rgba(0,0,0,0.6)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    data.ctx.fillStyle = grad;
-    data.ctx.beginPath();
-    data.ctx.arc(x, y, r, 0, Math.PI * 2);
-    data.ctx.fill();
-    data.ctx.globalCompositeOperation = 'source-over';
-
-    data.revealed += (r * r * 0.6) / (data.w * data.h);
-
-    // Auto-complete at ~35% scratched
-    if (data.revealed > 0.35 && !data.done) {
-      completeFog(idx);
-    }
+  function schedule() {
+    if (!frame) frame = window.requestAnimationFrame(measure);
   }
 
-  function completeFog(idx) {
-    const data = canvases.get(idx);
-    if (!data || data.done) return;
-    data.done = true;
-    data.canvas.style.transition = 'opacity 0.8s ease';
-    data.canvas.style.opacity = '0';
-    data.canvas.style.pointerEvents = 'none';
-    setTimeout(() => {
-      data.canvas.remove();
-      canvases.delete(idx);
-    }, 900);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  window.addEventListener('load', schedule);
+
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(schedule);
+    panes.forEach((pane) => ro.observe(pane));
   }
 
-  // Event handlers
-  function onMove(e) {
-    if (activeFogIndex < 0) return;
-    const touch = e.touches ? e.touches[0] : e;
-    scratch(activeFogIndex, touch.clientX, touch.clientY);
-  }
+  // A new section means a new reading position
+  const observer = new MutationObserver(schedule);
+  panes.forEach((pane) => observer.observe(pane, { attributes: true, attributeFilter: ['class'] }));
 
-  window.addEventListener('mousemove', onMove, { passive: true });
-  window.addEventListener('touchmove', onMove, { passive: true });
-
-  // Watch section changes to activate fog
-  const observer = new MutationObserver(() => {
-    document.querySelectorAll('.screen-pane').forEach((screen, index) => {
-      if (screen.classList.contains('active') && fogSections.includes(index)) {
-        const data = canvases.get(index);
-        if (data && !data.done) {
-          if (!data.drawn) setupCanvas(index);
-          activeFogIndex = index;
-        }
-      }
-    });
-  });
-
-  document.querySelectorAll('.screen-pane').forEach((screen) => {
-    observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
-  });
+  measure();
 }
 
 // ==========================================================================
@@ -2087,15 +2127,78 @@ function initStaggerTargets() {
   [
     '.hero-tags',
     '.hero-buttons',
+    '.hero-meta-rail',
     '.section-title-wrap',
     '.moments-grid',
     '.projects-grid',
     '.about-grid',
     '.credentials-grid',
-    '.contact-links-grid'
+    '.contact-links-grid',
+    '.contact-closing'
   ].forEach((selector) => {
     document.querySelectorAll(selector).forEach((el) => el.classList.add('stagger'));
   });
+}
+
+// --------------------------------------------------------------------------
+// 13b. ENTRANCE LIFECYCLE — one bounded pass, then guaranteed legibility
+// --------------------------------------------------------------------------
+// Every pane is "settled" (fully visible, no transforms) by default. The
+// entrance animation runs only while `is-entering` is present, and that class
+// is removed on a timer whether or not the animation frames ever ran. Content
+// therefore can never be left mid-reveal or hidden — the failure mode of the
+// previous scroll-linked reveal.
+function initEntranceChoreography() {
+  const panes = Array.from(document.querySelectorAll('.screen-pane'));
+  if (!panes.length) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Longest possible entrance: 11 words × 24ms stagger + 580ms rise ≈ 844ms.
+  // The class is always dropped at this deadline, so nothing stays hidden.
+  const ENTRANCE_MS = 900;
+  let timers = [];
+  let currentPane = null;
+
+  function settle(pane) {
+    if (!pane) return;
+    pane.classList.remove('is-entering');
+    pane.classList.add('motion-settled');
+  }
+
+  function play(pane) {
+    timers.forEach((id) => window.clearTimeout(id));
+    timers = [];
+
+    panes.forEach((other) => { if (other !== pane) settle(other); });
+    if (!pane) return;
+
+    if (reduceMotion) {
+      settle(pane);
+      return;
+    }
+
+    pane.classList.remove('motion-settled', 'is-entering');
+    void pane.offsetWidth; // restart the keyframes from a clean slate
+    pane.classList.add('is-entering');
+
+    timers.push(window.setTimeout(() => settle(pane), ENTRANCE_MS));
+  }
+
+  panes.forEach((pane) => pane.classList.add('motion-settled'));
+
+  const observer = new MutationObserver(() => {
+    panes.forEach((pane) => {
+      const isActive = pane.classList.contains('active');
+      if (!isActive || pane === currentPane) return;
+      currentPane = pane;
+      play(pane);
+    });
+  });
+
+  panes.forEach((pane) => observer.observe(pane, { attributes: true, attributeFilter: ['class'] }));
+
+  currentPane = panes[0];
+  window.setTimeout(() => play(panes[0]), 520);
 }
 
 // ==========================================================================
@@ -2219,6 +2322,37 @@ function initAuroraParallax() {
 }
 
 // ==========================================================================
+// 18. LOCAL TIME — a small, honest signal that the site is a person's
+// ==========================================================================
+function initLocalTime() {
+  const el = document.getElementById('local-time');
+  if (!el) return;
+
+  let formatter = null;
+  try {
+    formatter = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kathmandu',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  } catch (error) {
+    formatter = null;
+  }
+
+  function render() {
+    if (!formatter) {
+      el.innerText = 'UTC+5:45';
+      return;
+    }
+    el.innerText = `${formatter.format(new Date())} NPT`;
+  }
+
+  render();
+  window.setInterval(render, 30000);
+}
+
+// ==========================================================================
 // DOM READY INITIALIZATION
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -2240,12 +2374,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initEmailCopy();
   initSoundToggle();
   initDepthParallax();
-  initScratchReveal();
+  initSectionProgress();
+  initLocalTime();
 
-  // --- Motion & atmosphere layer (added: entrance, reveals, magnetism) ---
+  // Keep the initially-active navigation entry announced correctly
+  document.querySelector('.nav-link-btn.active')?.setAttribute('aria-current', 'true');
+
+  // --- Motion & atmosphere layer (entrance, reveals, magnetism) ---
   initBootSequence();
   initStaggerTargets();
   initWordReveal();
+  initEntranceChoreography();
   initCardSpotlight();
   initMagneticUI();
   initNavPill();
