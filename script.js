@@ -1328,6 +1328,203 @@ function initSoundToggle() {
 }
 
 // ==========================================================================
+// 11. DEPTH PARALLAX SYSTEM (Cursor + Gyroscope)
+// ==========================================================================
+function initDepthParallax() {
+  let px = 0, py = 0;   // target
+  let cx = 0, cy = 0;   // current (smoothed)
+  const strength = 12;   // max pixel shift
+  const ease = 0.06;
+
+  // Desktop: mouse
+  window.addEventListener('mousemove', (e) => {
+    px = ((e.clientX / window.innerWidth) - 0.5) * 2;
+    py = ((e.clientY / window.innerHeight) - 0.5) * 2;
+  }, { passive: true });
+
+  // Mobile: device orientation (gyroscope tilt)
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', (e) => {
+      if (e.gamma !== null) px = Math.max(-1, Math.min(1, e.gamma / 30));
+      if (e.beta !== null)  py = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    }, { passive: true });
+  }
+
+  // Assign depth layers to elements
+  const layers = [
+    { sel: '.hero-text-block', z: 1.0 },
+    { sel: '.hero-photo-wrapper', z: -0.6 },
+    { sel: '.section-title-wrap', z: 0.8 },
+    { sel: '.moments-grid', z: -0.4 },
+    { sel: '.projects-grid', z: -0.5 },
+    { sel: '.about-grid', z: -0.3 },
+    { sel: '.credentials-grid', z: -0.4 },
+    { sel: '.contact-box', z: 0.5 },
+    { sel: '.location-pill', z: 1.4 },
+    { sel: '.hero-tags', z: 0.6 },
+    { sel: '.screen-indicator', z: 0.3 },
+  ];
+
+  function tick() {
+    cx += (px - cx) * ease;
+    cy += (py - cy) * ease;
+
+    layers.forEach(({ sel, z }) => {
+      const els = document.querySelectorAll(sel);
+      const dx = cx * strength * z;
+      const dy = cy * strength * z * 0.6;
+      els.forEach(el => {
+        el.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      });
+    });
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ==========================================================================
+// 12. SCRATCH-REVEAL FOG OVERLAY
+// ==========================================================================
+function initScratchReveal() {
+  // Sections that get a fog overlay (indices: 1=Moments, 3=About)
+  const fogSections = [1, 3];
+  const canvases = new Map();
+  let activeFogIndex = -1;
+
+  fogSections.forEach(idx => {
+    const pane = document.querySelector(`.screen-pane[data-index="${idx}"]`);
+    if (!pane) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'scratch-fog-canvas';
+    canvas.style.cssText = `
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 50; pointer-events: auto; cursor: crosshair;
+      border-radius: inherit; touch-action: none;
+    `;
+    pane.style.position = 'relative';
+    pane.appendChild(canvas);
+
+    canvases.set(idx, {
+      canvas,
+      ctx: null,
+      revealed: 0,
+      done: false,
+      drawn: false
+    });
+  });
+
+  function setupCanvas(idx) {
+    const data = canvases.get(idx);
+    if (!data || data.done) return;
+    const { canvas } = data;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * Math.min(window.devicePixelRatio, 2);
+    canvas.height = rect.height * Math.min(window.devicePixelRatio, 2);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(Math.min(window.devicePixelRatio, 2), Math.min(window.devicePixelRatio, 2));
+
+    // Draw fog — dark gradient veil
+    const grad = ctx.createRadialGradient(
+      rect.width / 2, rect.height / 2, 0,
+      rect.width / 2, rect.height / 2, Math.max(rect.width, rect.height) * 0.7
+    );
+    grad.addColorStop(0, 'rgba(5, 7, 16, 0.85)');
+    grad.addColorStop(0.5, 'rgba(7, 9, 14, 0.7)');
+    grad.addColorStop(1, 'rgba(7, 9, 14, 0.55)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    // Add subtle noise texture
+    for (let i = 0; i < 3000; i++) {
+      const x = Math.random() * rect.width;
+      const y = Math.random() * rect.height;
+      ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.03})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    data.ctx = ctx;
+    data.revealed = 0;
+    data.drawn = true;
+    data.w = rect.width;
+    data.h = rect.height;
+  }
+
+  function scratch(idx, clientX, clientY) {
+    const data = canvases.get(idx);
+    if (!data || data.done || !data.ctx) return;
+
+    const rect = data.canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const r = 45 + Math.random() * 20;
+
+    data.ctx.globalCompositeOperation = 'destination-out';
+    // Soft circular eraser
+    const grad = data.ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, 'rgba(0,0,0,1)');
+    grad.addColorStop(0.6, 'rgba(0,0,0,0.6)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    data.ctx.fillStyle = grad;
+    data.ctx.beginPath();
+    data.ctx.arc(x, y, r, 0, Math.PI * 2);
+    data.ctx.fill();
+    data.ctx.globalCompositeOperation = 'source-over';
+
+    data.revealed += (r * r * 0.6) / (data.w * data.h);
+
+    // Auto-complete at ~35% scratched
+    if (data.revealed > 0.35 && !data.done) {
+      completeFog(idx);
+    }
+  }
+
+  function completeFog(idx) {
+    const data = canvases.get(idx);
+    if (!data || data.done) return;
+    data.done = true;
+    data.canvas.style.transition = 'opacity 0.8s ease';
+    data.canvas.style.opacity = '0';
+    data.canvas.style.pointerEvents = 'none';
+    setTimeout(() => {
+      data.canvas.remove();
+      canvases.delete(idx);
+    }, 900);
+  }
+
+  // Event handlers
+  function onMove(e) {
+    if (activeFogIndex < 0) return;
+    const touch = e.touches ? e.touches[0] : e;
+    scratch(activeFogIndex, touch.clientX, touch.clientY);
+  }
+
+  window.addEventListener('mousemove', onMove, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: true });
+
+  // Watch section changes to activate fog
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll('.screen-pane').forEach((screen, index) => {
+      if (screen.classList.contains('active') && fogSections.includes(index)) {
+        const data = canvases.get(index);
+        if (data && !data.done) {
+          if (!data.drawn) setupCanvas(index);
+          activeFogIndex = index;
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.screen-pane').forEach((screen) => {
+    observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+  });
+}
+
+// ==========================================================================
 // DOM READY INITIALIZATION
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1341,4 +1538,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCardTilt();
   initEmailCopy();
   initSoundToggle();
+  initDepthParallax();
+  initScratchReveal();
 });
