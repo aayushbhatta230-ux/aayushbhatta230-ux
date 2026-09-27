@@ -1472,8 +1472,8 @@ function initThreeJS() {
 // ==========================================================================
 const PHOTO_DATA = [
   {
-    title: "Kathmandu Valley",
-    src: "assets/images/spiderman.png"
+    title: "Candid Mirror Selfie",
+    src: "assets/images/mirror_candid.png"
   },
   {
     title: "Hills at Golden Hour",
@@ -1488,8 +1488,8 @@ const PHOTO_DATA = [
     src: "assets/images/forest_nature.png"
   },
   {
-    title: "Late Night Coding",
-    src: "assets/images/mirror_candid.png"
+    title: "Spider-Man Portrait",
+    src: "assets/images/spiderman.png"
   }
 ];
 
