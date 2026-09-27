@@ -3,7 +3,7 @@
  * Enables offline browsing, fast asset caching, and standalone homescreen experience.
  */
 
-const CACHE_NAME = 'aayush-portfolio-v1';
+const CACHE_NAME = 'aayush-portfolio-v2';
 
 const STATIC_PRECACHE = [
   './',
