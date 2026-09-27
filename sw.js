@@ -3,7 +3,11 @@
  * Enables offline browsing, fast asset caching, and standalone homescreen experience.
  */
 
-const CACHE_NAME = 'aayush-portfolio-v3';
+const CACHE_NAME = 'aayush-portfolio-v4';
+
+// Bump when image assets change so returning visitors are never served stale bytes
+const ASSET_V = 'v4';
+const ASSET = (path) => `${path}?v=${ASSET_V}`;
 
 const STATIC_PRECACHE = [
   './',
@@ -12,18 +16,18 @@ const STATIC_PRECACHE = [
   './script.js',
   './site.webmanifest',
   './favicon.ico',
-  './assets/images/icon-192.png',
-  './assets/images/icon-512.png',
-  './assets/images/icon-maskable-192.png',
-  './assets/images/icon-maskable-512.png',
-  './assets/images/apple-touch-icon.png',
-  './assets/images/favicon-32x32.png',
-  './assets/images/favicon-16x16.png',
-  './assets/images/spiderman.png',
-  './assets/images/mirror_candid.png',
-  './assets/images/golden_sunset.png',
-  './assets/images/mountain_bw.png',
-  './assets/images/forest_nature.png'
+  ASSET('./assets/images/icon-192.png'),
+  ASSET('./assets/images/icon-512.png'),
+  ASSET('./assets/images/icon-maskable-192.png'),
+  ASSET('./assets/images/icon-maskable-512.png'),
+  ASSET('./assets/images/apple-touch-icon.png'),
+  ASSET('./assets/images/favicon-32x32.png'),
+  ASSET('./assets/images/favicon-16x16.png'),
+  ASSET('./assets/images/spiderman.png'),
+  ASSET('./assets/images/mirror_candid.png'),
+  ASSET('./assets/images/golden_sunset.png'),
+  ASSET('./assets/images/mountain_bw.png'),
+  ASSET('./assets/images/forest_nature.png')
 ];
 
 // Install: Pre-cache core portfolio assets for instant offline availability
@@ -59,6 +63,25 @@ self.addEventListener('fetch', (event) => {
 
   // Exclude unsupported schemes
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+  // Documents must be network-first, otherwise visitors keep seeing a stale index.html
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Offline: fall back to the cached shell
+        return caches.match('./index.html') || caches.match('./');
+      })
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

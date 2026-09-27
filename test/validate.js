@@ -57,7 +57,8 @@ console.log('\n[4/5] Media & Image References Validation');
 const imgMatches = [...htmlContent.matchAll(/src="(assets\/images\/[^"]+)"/g)];
 assert(imgMatches.length > 0, `Found ${imgMatches.length} referenced local images`);
 imgMatches.forEach(m => {
-  const relPath = m[1];
+  // Strip cache-busting query strings (e.g. "?v=v4") before hitting the filesystem
+  const relPath = m[1].split('?')[0];
   const fullPath = path.join(ROOT_DIR, relPath);
   assert(fs.existsSync(fullPath), `Image asset exists: ${relPath}`);
 });
