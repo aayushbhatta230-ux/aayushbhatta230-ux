@@ -388,8 +388,8 @@ const TRANSITIONS = [
     key: 'aeroplane',
     outClass: 'anim-plane-takeoff',
     inClass: 'anim-plane-landing',
-    duration: 1250,
-    switchTime: 480,
+    duration: 1550,
+    switchTime: 750,
     playStart: () => {
       Sound.playPaperFold();
       setTimeout(() => Sound.playWhoosh(), 350);
@@ -402,8 +402,8 @@ const TRANSITIONS = [
     key: 'cube',
     outClass: 'anim-cube-takeoff',
     inClass: 'anim-cube-landing',
-    duration: 1180,
-    switchTime: 440,
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playCubeRotate();
     },
@@ -415,8 +415,8 @@ const TRANSITIONS = [
     key: 'origami',
     outClass: 'anim-origami-takeoff',
     inClass: 'anim-origami-landing',
-    duration: 1180,
-    switchTime: 440,
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playPaperFold();
       setTimeout(() => Sound.playWhoosh(), 300);
@@ -429,8 +429,8 @@ const TRANSITIONS = [
     key: 'warp',
     outClass: 'anim-warp-takeoff',
     inClass: 'anim-warp-landing',
-    duration: 1180,
-    switchTime: 440,
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playWarpZoom();
     },
@@ -442,8 +442,8 @@ const TRANSITIONS = [
     key: 'peel',
     outClass: 'anim-peel-takeoff',
     inClass: 'anim-peel-landing',
-    duration: 1180,
-    switchTime: 440,
+    duration: 1450,
+    switchTime: 700,
     playStart: () => {
       Sound.playPeelSound();
     },
@@ -635,14 +635,9 @@ class OrigamiTransitionEngine {
     const outgoingScreen = this.screens[this.currentScreen];
     const incomingScreen = this.screens[index];
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const lowTier = document.documentElement.classList.contains('perf-low') || reduceMotion;
-
-    // Select the next transition in rotation (low tier always lifts: cheap + smooth)
-    const t = lowTier
-      ? { key: 'lift', outClass: 'anim-lift-takeoff', inClass: 'anim-lift-landing', duration: 1000, switchTime: 300, playStart: () => {}, playTouchdown: () => { Sound.playTouchdown(); } }
-      : TRANSITIONS[this.transitionIndex % TRANSITIONS.length];
-    if (!lowTier) this.transitionIndex++;
+    // Select the next transition in rotation
+    const t = TRANSITIONS[this.transitionIndex % TRANSITIONS.length];
+    this.transitionIndex++;
 
     // Stage setup: trigger craft elements
     if (this.stageEl) {
@@ -659,9 +654,7 @@ class OrigamiTransitionEngine {
     t.playStart();
     outgoingScreen.classList.add(t.outClass);
 
-    // Step 2: Switch active screen and trigger incoming landing approach.
-    // The incoming pane lands as a whole first; its entrance choreography
-    // (words/cards) starts ~120ms later so both ease together — nothing pops.
+    // Step 2: Switch active screen and trigger incoming landing approach
     setTimeout(() => {
       outgoingScreen.classList.remove('active', t.outClass);
       incomingScreen.classList.add('active', t.inClass);
@@ -671,30 +664,24 @@ class OrigamiTransitionEngine {
 
       // Cleanly scroll viewport to top of new section
       window.scrollTo({ top: 0, behavior: 'instant' });
-      incomingScreen.style.willChange = 'transform, opacity';
     }, t.switchTime);
 
     // Step 3: Touchdown impact sound on landing arrival
     setTimeout(() => {
       t.playTouchdown();
-    }, t.switchTime + 420);
+    }, t.switchTime + 280);
 
-    // Step 4: Completion: clean up stage and play arrival chime.
-    // Settling is delayed 120ms past the pane animation so the choreography
-    // finishes its ease instead of being cut mid-landing.
+    // Step 4: Completion: clean up stage and play arrival chime
     setTimeout(() => {
       incomingScreen.classList.remove(t.inClass);
-      incomingScreen.style.willChange = '';
-      window.setTimeout(() => {
-        if (this.stageEl) {
-          this.stageEl.className = 'transition-stage';
-          if (this.takeoffCraft) this.takeoffCraft.innerHTML = '';
-          if (this.landingCraft) this.landingCraft.innerHTML = '';
-        }
-      }, 120);
+      if (this.stageEl) {
+        this.stageEl.className = 'transition-stage';
+        if (this.takeoffCraft) this.takeoffCraft.innerHTML = '';
+        if (this.landingCraft) this.landingCraft.innerHTML = '';
+      }
       Sound.playChime(659.25);
       this.isTransitioning = false;
-    }, t.duration + 120);
+    }, t.duration);
   }
 
   updateHUD(index) {
@@ -743,14 +730,11 @@ function initThreeJS() {
   const cores = navigator.hardwareConcurrency || 4;
   const memory = navigator.deviceMemory || 4;
   const shortEdge = Math.min(window.innerWidth, window.innerHeight);
-  const saveData = navigator.connection && navigator.connection.saveData === true;
-  const lightDevice = coarsePointer || shortEdge < 720 || cores <= 4 || memory <= 4 || saveData;
+  const lightDevice = coarsePointer || shortEdge < 720 || cores <= 4 || memory <= 4;
 
   const profile = lightDevice
-    ? { dpr: 1, stars: 420, antialias: false, ripples: 1, grid: 18, trail: 64 }
+    ? { dpr: 1.2, stars: 700, antialias: false, ripples: 2, grid: 22, trail: 96 }
     : { dpr: 1.75, stars: 1700, antialias: true, ripples: 3, grid: 30, trail: 128 };
-
-  if (lightDevice) document.documentElement.classList.add('perf-low');
 
   if (reduceMotion) profile.stars = Math.round(profile.stars * 0.45);
 
@@ -1327,11 +1311,11 @@ function initThreeJS() {
 
     if (qualityLevel === 1) {
       document.documentElement.classList.add('perf-low');
-      resolutionScale = 0.8;
-      starGeometry.setDrawRange(0, Math.floor(starCount * 0.5));
+      resolutionScale = 0.85;
+      starGeometry.setDrawRange(0, Math.floor(starCount * 0.6));
     } else {
-      resolutionScale = 0.6;
-      starGeometry.setDrawRange(0, Math.floor(starCount * 0.3));
+      resolutionScale = 0.72;
+      starGeometry.setDrawRange(0, Math.floor(starCount * 0.4));
       coreShell.visible = false;
       coreRing.visible = false;
     }
@@ -1339,32 +1323,9 @@ function initThreeJS() {
     handleResize();
   }
 
-  // Low tier never spins the full 3D scene: one still frame, then it sleeps.
-  let liteFrameRendered = false;
-  function renderLiteFrame() {
-    renderer.clear();
-    renderer.render(bgScene, bgCamera);
-    renderer.render(scene, camera);
-    liteFrameRendered = true;
-  }
-
-  let frameSkip = 0;
   function animate() {
     requestAnimationFrame(animate);
     if (paused) return;
-
-    // Low tier: hold a nearly-still canvas (re-render ~2fps for trail decay).
-    if (document.documentElement.classList.contains('perf-low')) {
-      frameSkip++;
-      if (!liteFrameRendered || frameSkip % 30 === 0) renderLiteFrame();
-      if (frameSkip % 30 === 0) {
-        frameCount += 30;
-        frameTime += 30 / 60;
-        frameCount = 0;
-        frameTime = 0;
-      }
-      return;
-    }
 
     const dt = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.getElapsedTime() * timeScale;
@@ -1837,11 +1798,9 @@ function initTerminal() {
 // ==========================================================================
 // 7. JARVIS WAVE OSCILLOSCOPE
 // ==========================================================================
-// Only animate while the tab is visible AND the pane behind the wave is shown
 function initJARVISWave() {
   const canvas = document.getElementById('jarvis-wave');
   if (!canvas) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const ctx = canvas.getContext('2d');
   let width = canvas.width = canvas.parentElement.offsetWidth || 300;
@@ -1853,20 +1812,9 @@ function initJARVISWave() {
   });
 
   let phase = 0;
-  let raf = 0;
-
-  function frameVisible() {
-    if (document.hidden) return false;
-    const rect = canvas.getBoundingClientRect();
-    return rect.bottom > 0 && rect.top < window.innerHeight;
-  }
 
   function draw() {
-    raf = 0;
-    if (!frameVisible()) {
-      raf = window.setTimeout(() => { raf = requestAnimationFrame(draw); }, 500);
-      return;
-    }
+    requestAnimationFrame(draw);
     ctx.clearRect(0, 0, width, height);
 
     ctx.lineWidth = 2;
@@ -1892,7 +1840,6 @@ function initJARVISWave() {
 
     ctx.stroke();
     phase += 0.04;
-    raf = requestAnimationFrame(draw);
   }
 
   draw();
@@ -1902,7 +1849,6 @@ function initJARVISWave() {
 // 8. CURSOR & CARD TILT
 // ==========================================================================
 function initCursor() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
   const dot = document.querySelector('.cursor-dot');
   const ring = document.querySelector('.cursor-ring');
   if (!dot || !ring) return;
@@ -2001,8 +1947,6 @@ function initSoundToggle() {
 // 11. DEPTH PARALLAX SYSTEM (Cursor + Gyroscope)
 // ==========================================================================
 function initDepthParallax() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (document.documentElement.classList.contains('perf-low')) return;
   let px = 0, py = 0;   // target
   let cx = 0, cy = 0;   // current (smoothed)
   const strength = 12;   // max pixel shift
@@ -2349,7 +2293,6 @@ function initAuroraParallax() {
   const aurora = document.querySelector('.bg-aurora');
   if (!aurora) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (document.documentElement.classList.contains('perf-low')) return;
 
   let targetX = 0;
   let targetY = 0;
