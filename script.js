@@ -620,6 +620,43 @@ class OrigamiTransitionEngine {
         travel((this.currentScreen - 1 + this.totalScreens) % this.totalScreens);
       }
     }, { passive: true });
+
+    // Auto-travel: dwelling at the true bottom advances on its own — no extra
+    // push or Next click required. Short (non-scrollable) sections are left
+    // alone so they never skip past before being read.
+    const AUTO_DWELL = 650;
+    let bottomTimer = 0;
+    const cancelAuto = () => {
+      if (bottomTimer) {
+        window.clearTimeout(bottomTimer);
+        bottomTimer = 0;
+      }
+    };
+    const armAuto = () => {
+      cancelAuto();
+      if (maxScroll() <= 4 || !atBottom()) return;
+      bottomTimer = window.setTimeout(() => {
+        bottomTimer = 0;
+        if (this.isModalActive() || this.isTransitioning) return;
+        if (performance.now() < wheelLock) {
+          armAuto();
+          return;
+        }
+        if (!atBottom() || maxScroll() <= 4) return;
+        travel((this.currentScreen + 1) % this.totalScreens);
+      }, AUTO_DWELL);
+    };
+    window.addEventListener('scroll', () => {
+      if (this.isModalActive() || this.isTransitioning) {
+        cancelAuto();
+        return;
+      }
+      if (!atBottom() || maxScroll() <= 4) {
+        cancelAuto();
+        return;
+      }
+      if (!bottomTimer) armAuto();
+    }, { passive: true });
   }
 
   isModalActive() {
