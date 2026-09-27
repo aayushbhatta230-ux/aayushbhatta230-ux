@@ -1473,23 +1473,27 @@ function initThreeJS() {
 const PHOTO_DATA = [
   {
     title: "Candid Mirror Selfie",
-    src: "assets/images/mirror_candid.png?v=v4"
+    src: "assets/images/mirror_candid.png?v=v5"
+  },
+  {
+    title: "Second Mirror Selfie",
+    src: "assets/images/mirror_selfie_2.png?v=v5"
   },
   {
     title: "Hills at Golden Hour",
-    src: "assets/images/golden_sunset.png?v=v4"
+    src: "assets/images/golden_sunset.png?v=v5"
   },
   {
     title: "Mountain Altitude",
-    src: "assets/images/mountain_bw.png?v=v4"
+    src: "assets/images/mountain_bw.png?v=v5"
   },
   {
     title: "Nature Trails",
-    src: "assets/images/forest_nature.png?v=v4"
+    src: "assets/images/forest_nature.png?v=v5"
   },
   {
     title: "Spider-Man Portrait",
-    src: "assets/images/spiderman.png?v=v4"
+    src: "assets/images/spiderman.png?v=v5"
   }
 ];
 
