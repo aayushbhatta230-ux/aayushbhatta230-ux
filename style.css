@@ -959,6 +959,105 @@ body {
   }
 }
 
+/* --- Buttery landings + low-end FPS safety ---------------------------------
+   Every 3D landing shares one soft arrival curve so the final third eases in
+   instead of snapping. `lift` is the GPU-cheap pair (opacity + translateY
+   only: no clip-path, no blur, no drop-shadow) played on low-tier devices.
+   Content still reveals promptly: word/stagger delays below only wait ~120ms
+   for the pane to almost land, then rise while it settles. */
+.screen-pane.anim-plane-landing,
+.screen-pane.anim-plane-emerge,
+.screen-pane.anim-cube-landing,
+.screen-pane.anim-cube-in,
+.screen-pane.anim-origami-landing,
+.screen-pane.anim-origami-fold-in,
+.screen-pane.anim-warp-landing,
+.screen-pane.anim-warp-in,
+.screen-pane.anim-peel-landing,
+.screen-pane.anim-peel-in {
+  animation-timing-function: cubic-bezier(0.22, 0.9, 0.24, 1) !important;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.screen-pane.anim-plane-takeoff,
+.screen-pane.anim-plane-squeeze,
+.screen-pane.anim-cube-takeoff,
+.screen-pane.anim-cube-out,
+.screen-pane.anim-origami-takeoff,
+.screen-pane.anim-origami-fold-out,
+.screen-pane.anim-warp-takeoff,
+.screen-pane.anim-warp-out,
+.screen-pane.anim-peel-takeoff,
+.screen-pane.anim-peel-out {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.screen-pane[class*='anim-'] { pointer-events: none; }
+
+@keyframes liftOut {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to   { opacity: 0; transform: translate3d(0, -18px, 0) scale(0.985); }
+}
+
+@keyframes liftIn {
+  0%   { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.982); }
+  55%  { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  78%  { opacity: 1; transform: translate3d(0, -5px, 0) scale(1); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.screen-pane.anim-lift-takeoff {
+  display: flex !important;
+  animation: liftOut 0.38s ease-in forwards !important;
+  pointer-events: none;
+}
+
+.screen-pane.anim-lift-landing {
+  display: flex !important;
+  animation: liftIn 0.68s cubic-bezier(0.22, 0.9, 0.24, 1) both !important;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Craft SVGs finish inside the transition window so cleanup never pops them */
+.transition-stage .takeoff-craft { animation-duration: 0.8s !important; }
+.transition-stage .landing-craft { animation-delay: 0.4s !important; animation-duration: 0.8s !important; }
+.transition-stage.active .touchdown-ripple { animation-delay: 0.55s !important; animation-duration: 0.7s !important; }
+
+/* Low tier: every 3D variant becomes lift; ambient loops freeze; stage hides */
+html.perf-low .transition-stage { display: none !important; }
+html.perf-low .screen-pane.anim-plane-takeoff,
+html.perf-low .screen-pane.anim-plane-squeeze,
+html.perf-low .screen-pane.anim-cube-takeoff,
+html.perf-low .screen-pane.anim-cube-out,
+html.perf-low .screen-pane.anim-origami-takeoff,
+html.perf-low .screen-pane.anim-origami-fold-out,
+html.perf-low .screen-pane.anim-warp-takeoff,
+html.perf-low .screen-pane.anim-warp-out,
+html.perf-low .screen-pane.anim-peel-takeoff,
+html.perf-low .screen-pane.anim-peel-out {
+  animation: liftOut 0.32s ease-in forwards !important;
+}
+html.perf-low .screen-pane.anim-plane-landing,
+html.perf-low .screen-pane.anim-plane-emerge,
+html.perf-low .screen-pane.anim-cube-landing,
+html.perf-low .screen-pane.anim-cube-in,
+html.perf-low .screen-pane.anim-origami-landing,
+html.perf-low .screen-pane.anim-origami-fold-in,
+html.perf-low .screen-pane.anim-warp-landing,
+html.perf-low .screen-pane.anim-warp-in,
+html.perf-low .screen-pane.anim-peel-landing,
+html.perf-low .screen-pane.anim-peel-in {
+  animation: liftIn 0.6s cubic-bezier(0.22, 0.9, 0.24, 1) both !important;
+}
+html.perf-low .aurora-blob,
+html.perf-low .aurora-sweep,
+html.perf-low .cyber-grid-overlay,
+html.perf-low .bg-grain { animation: none !important; }
+html.perf-low .aurora-blob { will-change: auto; opacity: 0.55; }
+
 
 .screen-content {
   width: 100%;
@@ -2858,8 +2957,9 @@ body {
 }
 
 .screen-pane.is-entering .reveal-word > span {
-  animation: wordRise 0.58s var(--ease-editorial) both;
-  animation-delay: calc(var(--wi, 0) * 24ms);
+  animation: wordRise 0.62s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: calc(0.12s + var(--wi, 0) * 22ms);
+  will-change: transform, opacity;
 }
 
 @keyframes wordRise {
@@ -2873,19 +2973,22 @@ body {
 }
 
 .screen-pane.is-entering .stagger > * {
-  animation: riseIn 0.5s var(--ease-editorial) backwards;
+  animation: riseIn 0.55s cubic-bezier(0.22, 0.9, 0.24, 1) backwards;
+  will-change: transform, opacity;
 }
 
-.screen-pane.is-entering .stagger > *:nth-child(1) { animation-delay: 0.04s; }
-.screen-pane.is-entering .stagger > *:nth-child(2) { animation-delay: 0.08s; }
-.screen-pane.is-entering .stagger > *:nth-child(3) { animation-delay: 0.12s; }
-.screen-pane.is-entering .stagger > *:nth-child(4) { animation-delay: 0.16s; }
-.screen-pane.is-entering .stagger > *:nth-child(5) { animation-delay: 0.20s; }
-.screen-pane.is-entering .stagger > *:nth-child(6) { animation-delay: 0.24s; }
-.screen-pane.is-entering .stagger > *:nth-child(n + 7) { animation-delay: 0.28s; }
+.screen-pane.is-entering .stagger > *:nth-child(1) { animation-delay: 0.14s; }
+.screen-pane.is-entering .stagger > *:nth-child(2) { animation-delay: 0.17s; }
+.screen-pane.is-entering .stagger > *:nth-child(3) { animation-delay: 0.20s; }
+.screen-pane.is-entering .stagger > *:nth-child(4) { animation-delay: 0.23s; }
+.screen-pane.is-entering .stagger > *:nth-child(5) { animation-delay: 0.26s; }
+.screen-pane.is-entering .stagger > *:nth-child(6) { animation-delay: 0.29s; }
+.screen-pane.is-entering .stagger > *:nth-child(n + 7) { animation-delay: 0.32s; }
 
 @keyframes riseIn {
-  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  60%  { opacity: 1; transform: translate3d(0, 0, 0); }
+  80%  { opacity: 1; transform: translate3d(0, -4px, 0); }
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
@@ -3454,6 +3557,32 @@ input:focus-visible,
 
 /* --- Motion safety: the reduced-motion contract, stated once, at the end --- */
 @media (prefers-reduced-motion: reduce) {
+  .screen-pane.anim-plane-takeoff,
+  .screen-pane.anim-plane-squeeze,
+  .screen-pane.anim-cube-takeoff,
+  .screen-pane.anim-cube-out,
+  .screen-pane.anim-origami-takeoff,
+  .screen-pane.anim-origami-fold-out,
+  .screen-pane.anim-warp-takeoff,
+  .screen-pane.anim-warp-out,
+  .screen-pane.anim-peel-takeoff,
+  .screen-pane.anim-peel-out {
+    animation: liftOut 0.2s ease-in forwards !important;
+  }
+  .screen-pane.anim-plane-landing,
+  .screen-pane.anim-plane-emerge,
+  .screen-pane.anim-cube-landing,
+  .screen-pane.anim-cube-in,
+  .screen-pane.anim-origami-landing,
+  .screen-pane.anim-origami-fold-in,
+  .screen-pane.anim-warp-landing,
+  .screen-pane.anim-warp-in,
+  .screen-pane.anim-peel-landing,
+  .screen-pane.anim-peel-in,
+  .screen-pane.anim-lift-landing {
+    animation: liftIn 0.4s ease-out both !important;
+  }
+  .transition-stage { display: none !important; }
   .reveal-word > span,
   .stagger > *,
   .screen-pane.is-entering .reveal-word > span,
