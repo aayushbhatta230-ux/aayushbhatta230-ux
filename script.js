@@ -2390,6 +2390,23 @@ function initLocalTime() {
 }
 
 // ==========================================================================
+// 19. SERVICE WORKER (Offline PWA & Homescreen Support)
+// ==========================================================================
+function initServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('[PWA] ServiceWorker registered with scope:', registration.scope);
+        })
+        .catch((err) => {
+          console.warn('[PWA] ServiceWorker registration skipped/failed:', err);
+        });
+    });
+  }
+}
+
+// ==========================================================================
 // DOM READY INITIALIZATION
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -2413,6 +2430,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDepthParallax();
   initSectionProgress();
   initLocalTime();
+  initServiceWorker();
 
   // Keep the initially-active navigation entry announced correctly
   document.querySelector('.nav-link-btn.active')?.setAttribute('aria-current', 'true');

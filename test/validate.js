@@ -22,7 +22,7 @@ console.log('=== Running Portfolio Integrity Test Suite ===\n');
 
 // 1. Check core files exist
 console.log('[1/5] Core Assets Verification');
-const coreFiles = ['index.html', 'style.css', 'script.js', 'site.webmanifest', 'sitemap.xml', 'robots.txt'];
+const coreFiles = ['index.html', 'style.css', 'script.js', 'sw.js', 'site.webmanifest', 'favicon.ico', 'sitemap.xml', 'robots.txt'];
 coreFiles.forEach(file => {
   assert(fs.existsSync(path.join(ROOT_DIR, file)), `File exists: ${file}`);
 });
@@ -62,8 +62,8 @@ imgMatches.forEach(m => {
   assert(fs.existsSync(fullPath), `Image asset exists: ${relPath}`);
 });
 
-// 5. JavaScript syntax check
-console.log('\n[5/5] JavaScript Engine Syntax Verification');
+// 5. JavaScript & Service Worker syntax check
+console.log('\n[5/5] JavaScript Engine & PWA Validation');
 const { execSync } = require('child_process');
 try {
   execSync('node -c script.js', { cwd: ROOT_DIR });
@@ -71,6 +71,21 @@ try {
 } catch (err) {
   assert(false, `script.js syntax check failed: ${err.message}`);
 }
+try {
+  execSync('node -c sw.js', { cwd: ROOT_DIR });
+  assert(true, 'sw.js (Service Worker) compiles cleanly with zero syntax errors');
+} catch (err) {
+  assert(false, `sw.js syntax check failed: ${err.message}`);
+}
+
+// 6. Validate Web App Manifest and Icon Assets
+const manifestContent = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'site.webmanifest'), 'utf8'));
+assert(manifestContent.name && manifestContent.short_name, 'Manifest contains valid app name & short_name');
+assert(Array.isArray(manifestContent.icons) && manifestContent.icons.length >= 2, 'Manifest defines icon array');
+manifestContent.icons.forEach(icon => {
+  const iconPath = path.join(ROOT_DIR, icon.src);
+  assert(fs.existsSync(iconPath), `Manifest icon exists: ${icon.src} (${icon.sizes})`);
+});
 
 console.log('\n==============================================');
 if (failures === 0) {

@@ -1,8 +1,6 @@
-name: Portfolio CI & Integrity Verification
+name: Portfolio PR Verification
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
