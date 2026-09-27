@@ -3,17 +3,17 @@
  * Enables offline browsing, fast asset caching, and standalone homescreen experience.
  */
 
-const CACHE_NAME = 'aayush-portfolio-v5';
+const CACHE_NAME = 'aayush-portfolio-v6';
 
 // Bump when image assets change so returning visitors are never served stale bytes
-const ASSET_V = 'v5';
+const ASSET_V = 'v6';
 const ASSET = (path) => `${path}?v=${ASSET_V}`;
 
 const STATIC_PRECACHE = [
   './',
-  './index.html',
-  './style.css',
-  './script.js',
+  ASSET('./index.html'),
+  ASSET('./style.css'),
+  ASSET('./script.js'),
   './site.webmanifest',
   './favicon.ico',
   ASSET('./assets/images/icon-192.png'),
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       }).catch(() => {
         // Offline: fall back to the cached shell
-        return caches.match('./index.html') || caches.match('./');
+        return caches.match(ASSET('./index.html')) || caches.match('./index.html') || caches.match('./');
       })
     );
     return;

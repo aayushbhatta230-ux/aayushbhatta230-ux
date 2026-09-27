@@ -1472,12 +1472,12 @@ function initThreeJS() {
 // ==========================================================================
 const PHOTO_DATA = [
   {
-    title: "Candid Mirror Selfie",
-    src: "assets/images/mirror_candid.png?v=v5"
+    title: "Mirror Selfie",
+    src: "assets/images/mirror_selfie_2.png?v=v5"
   },
   {
-    title: "Second Mirror Selfie",
-    src: "assets/images/mirror_selfie_2.png?v=v5"
+    title: "Candid Mirror Selfie",
+    src: "assets/images/mirror_candid.png?v=v5"
   },
   {
     title: "Hills at Golden Hour",
@@ -1538,10 +1538,37 @@ function initLightbox() {
     openLightbox(currentPhotoIndex);
   }
 
+  // Resolve a clicked card to its photo by reading the image straight out of the
+  // DOM. Relying on a hand-maintained data-index alongside PHOTO_DATA let the two
+  // lists drift, which made a click open a neighbouring photo.
+  function resolveIndexFromElement(item) {
+    const img = item.querySelector('img');
+    if (!img) return -1;
+
+    const src = img.getAttribute('src') || '';
+
+    // Exact match on src
+    let idx = PHOTO_DATA.findIndex((p) => p.src === src);
+    if (idx !== -1) return idx;
+
+    // Fall back to matching on filename, ignoring any ?v= cache-buster
+    const file = src.split('?')[0].split('/').pop();
+    idx = PHOTO_DATA.findIndex((p) => p.src.split('?')[0].split('/').pop() === file);
+    if (idx !== -1) return idx;
+
+    // Last resort: trust the declared index
+    return parseInt(item.getAttribute('data-index') || '-1', 10);
+  }
+
+  function openFromElement(item) {
+    const idx = resolveIndexFromElement(item);
+    if (idx < 0 || !PHOTO_DATA[idx]) return;
+    openLightbox(idx);
+  }
+
   document.querySelectorAll('.moment-item, .photo-card-tilt').forEach((item) => {
     item.addEventListener('click', () => {
-      const idx = parseInt(item.getAttribute('data-index') || "0", 10);
-      openLightbox(idx);
+      openFromElement(item);
     });
 
     // These are card-shaped controls (role="button"), so they answer the
@@ -1549,7 +1576,7 @@ function initLightbox() {
     item.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();
-      openLightbox(parseInt(item.getAttribute('data-index') || '0', 10));
+      openFromElement(item);
     });
   });
 
