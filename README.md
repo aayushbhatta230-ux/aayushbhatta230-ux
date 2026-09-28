@@ -1,7 +1,7 @@
 # Aayush Bhatta (`@aayushifty`)
 
 <p align="center">
-  <img src="assets/images/spiderman.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <img src="assets/images/mirror_selfie_2.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
 </p>
 
 <p align="center">
