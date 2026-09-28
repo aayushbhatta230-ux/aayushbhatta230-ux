@@ -22,7 +22,7 @@
 
 I am a Grade 12 student in Kathmandu, Nepal, specializing in Physics, Mathematics, Chemistry, and Computer Science. My technical pursuits focus on building practical, offline-first systems: local LLM automation agents on Windows, touchless computer vision instruments, and sensor-driven telematics prototypes on ESP32 microcontrollers.
 
-Beyond engineering, I am a national competitive athlete (basketball and endurance trail conditioning), a performing musician (vocalist, acoustic and electric guitarist, dancer), and an experienced public speaker with 13 Model United Nations conferences and national debate championship selection.
+Beyond engineering, I am a competitive athlete (basketball and endurance trail conditioning), a performing musician (vocalist, acoustic and electric guitarist, dancer), and an experienced public speaker with 13 Model United Nations conferences and national debate championship selection.
 
 ---
 
