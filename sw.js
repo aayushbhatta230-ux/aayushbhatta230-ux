@@ -3,10 +3,10 @@
  * Enables offline browsing, fast asset caching, and standalone homescreen experience.
  */
 
-const CACHE_NAME = 'aayush-portfolio-v7';
+const CACHE_NAME = 'aayush-portfolio-v8';
 
 // Bump when image assets change so returning visitors are never served stale bytes
-const ASSET_V = 'v7';
+const ASSET_V = 'v8';
 const ASSET = (path) => `${path}?v=${ASSET_V}`;
 
 const STATIC_PRECACHE = [
