@@ -6,8 +6,8 @@
   <title>Aayush Bhatta (@aayushifty) — Developer, Musician &amp; Athlete</title>
   
   <!-- SEO & Identity -->
-  <meta name="description" content="Portfolio of Aayush Bhatta (@aayushifty) — Student, Developer, Musician (Singer & Guitarist), Dancer, and Athlete from Kathmandu, Nepal. Building local AI assistants, playing basketball, and creating on TikTok." />
-  <meta name="keywords" content="Aayush Bhatta, aayushifty, @aayushifty, Developer Nepal, Kathmandu, Student, Singer, Guitarist, Dancer, Basketball, Athlete, JARVIS AI, HandChord, TikTok, MahaKumbha, NYC MUN" />
+  <meta name="description" content="Portfolio of Aayush Bhatta (@aayushifty) — Student, Developer, Musician (Singer & Guitarist), Dancer, and Athlete from Kathmandu, Nepal. Building local AI assistants (JARVIS, AETHER), playing basketball, and creating on TikTok." />
+  <meta name="keywords" content="Aayush Bhatta, aayushifty, @aayushifty, Developer Nepal, Kathmandu, Student, Singer, Guitarist, Dancer, Basketball, Athlete, JARVIS AI, AETHER, HandChord, TikTok, MahaKumbha, NYC MUN" />
   <meta name="author" content="Aayush Bhatta" />
   <link rel="canonical" href="https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/" />
   
@@ -80,7 +80,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=v6" />
+  <link rel="stylesheet" href="style.css?v=v7" />
 </head>
 <body>
 
@@ -440,10 +440,69 @@
             </footer>
           </article>
 
-          <!-- Project 2: HandChord -->
-          <article class="project-card" data-project="handchord">
+          <!-- Project 2: AETHER -->
+          <article class="project-card" data-project="aether">
             <header class="project-head">
               <span class="project-index" aria-hidden="true">02</span>
+              <span class="project-badge">Ambient AI</span>
+              <span class="project-meta">Windows · Local-only · Zero-dependency core</span>
+            </header>
+
+            <h3 class="project-title">AETHER</h3>
+            <p class="project-lede">
+              A quiet local-first overlay that watches a redacted snapshot of what you're doing, asks a model on your own machine for one useful nudge, and disappears again. It observes — it never acts.
+            </p>
+
+            <div class="project-visual">
+              <svg class="ambient-card" viewBox="0 0 240 150" role="img" aria-label="An ambient suggestion card floating over a desktop, fading in and out">
+                <rect class="ambient-frame" x="52" y="26" width="136" height="66" rx="9" />
+                <line class="ambient-rule" x1="68" y1="46" x2="140" y2="46" />
+                <line class="ambient-rule dim" x1="68" y1="60" x2="172" y2="60" />
+                <line class="ambient-rule dim" x1="68" y1="72" x2="118" y2="72" />
+                <g class="ambient-pulse">
+                  <circle class="ambient-node" cx="172" cy="46" r="3.5" />
+                  <circle class="ambient-halo" cx="172" cy="46" r="9" />
+                </g>
+                <circle class="ambient-node ghost" cx="30" cy="112" r="2.5" />
+                <circle class="ambient-node ghost" cx="210" cy="116" r="2.5" />
+                <circle class="ambient-node ghost" cx="120" cy="132" r="2.5" />
+              </svg>
+              <span class="visual-label">redacted context · one nudge · auto-hide</span>
+            </div>
+
+            <dl class="project-specs">
+              <div>
+                <dt>Problem</dt>
+                <dd>Every "AI assistant" wants your screen, your clipboard, your keystrokes, and a monthly subscription.</dd>
+              </div>
+              <div>
+                <dt>Build</dt>
+                <dd>A frameless tkinter card samples coarse context — active app, window title, idle time, a clipboard <em>hash</em>, your git branch — then asks Ollama for a single suggestion.</dd>
+              </div>
+              <div>
+                <dt>Engineering</dt>
+                <dd>PII is scrubbed before the prompt is ever built, there is no execution path at all, and cooldowns plus an hourly budget mean it can't nag. The core runs on the standard library alone.</dd>
+              </div>
+            </dl>
+
+            <footer class="project-foot">
+              <div class="project-tech-tags">
+                <span>Python</span>
+                <span>Ollama</span>
+                <span>tkinter</span>
+                <span>SQLite</span>
+              </div>
+              <a href="https://github.com/aayushbhatta230-ux/aether-overlay" target="_blank" rel="noopener" class="project-action">
+                <span>Repository</span>
+                <span class="action-arrow" aria-hidden="true">↗</span>
+              </a>
+            </footer>
+          </article>
+
+          <!-- Project 3: HandChord -->
+          <article class="project-card" data-project="handchord">
+            <header class="project-head">
+              <span class="project-index" aria-hidden="true">03</span>
               <span class="project-badge">Computer Vision</span>
               <span class="project-meta">Browser · Real-time</span>
             </header>
@@ -504,10 +563,10 @@
             </footer>
           </article>
 
-          <!-- Project 3: KrishiTrust -->
+          <!-- Project 4: KrishiTrust -->
           <article class="project-card" data-project="krishitrust">
             <header class="project-head">
-              <span class="project-index" aria-hidden="true">03</span>
+              <span class="project-index" aria-hidden="true">04</span>
               <span class="project-badge">Hardware &amp; IoT</span>
               <span class="project-meta">ESP32 · Working prototype</span>
             </header>
@@ -565,10 +624,10 @@
             </footer>
           </article>
 
-          <!-- Project 4: TikTok Creator -->
+          <!-- Project 5: TikTok Creator -->
           <article class="project-card creator-card" data-project="aayushifty">
             <header class="project-head">
-              <span class="project-index" aria-hidden="true">04</span>
+              <span class="project-index" aria-hidden="true">05</span>
               <span class="project-badge tiktok-badge">Digital Creator</span>
               <span class="project-meta">Ongoing · @aayushifty</span>
             </header>
@@ -978,6 +1037,6 @@
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Application Script -->
-  <script src="script.js?v=v6"></script>
+  <script src="script.js?v=v7"></script>
 </body>
 </html>

@@ -1816,6 +1816,7 @@ function initTerminal() {
 
     projects: () => `
 <div>• JARVIS: Local voice and touch assistant running Llama 3.2.</div>
+<div>• AETHER: Ambient local-first overlay that observes but never acts.</div>
 <div>• HandChord: Webcam hand gesture musical chord player.</div>
 <div>• KrishiTrust: ESP32 produce shock monitoring vehicle prototype.</div>
 <div>• TikTok @aayushifty: Creative tech experiments, guitar jams, and student lifestyle.</div>`,

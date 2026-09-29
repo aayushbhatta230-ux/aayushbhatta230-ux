@@ -48,17 +48,26 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
   - **Cloudflare Edge Tunnel:** Instant phone-to-PC remote voice command bridge without port forwarding or dynamic IP drift.
 - **Stack:** `Python`, `Ollama`, `Llama 3.2`, `Nomic Embeddings`, `FastAPI`, `Web Speech API`, `Cloudflare Tunnels`
 
-### 2. [HandChord](https://github.com/aayushbhatta230-ux/handchord)
+### 2. [AETHER](https://github.com/aayushbhatta230-ux/aether-overlay)
+- **Architecture:** Ambient, local-first AI overlay for Windows that samples coarse desktop context, asks a local model for one useful nudge, and disappears again.
+- **Key Capabilities:**
+  - **Observe, never act:** There is no execution path. `high` risk is withheld entirely and `medium` requires human approval — asserted by the test suite.
+  - **Redacted before the model:** Emails, keys, cards, phones, IPs and user paths are scrubbed *before* any prompt is built; the clipboard is tracked as a hash, never as contents.
+  - **Cannot nag:** Per-fingerprint cooldown, a hard hourly suggestion budget, and auto-hide when you go idle.
+  - **Zero required dependencies:** The core runs on the standard library alone (`tkinter` + `urllib` + `sqlite3`), and the polling loop is isolated on a worker thread so the Tk main loop never blocks.
+- **Stack:** `Python`, `Ollama`, `tkinter`, `SQLite`, `pytest`
+
+### 3. [HandChord](https://github.com/aayushbhatta230-ux/handchord)
 - **Architecture:** Contactless in-air musical instrument translating webcam video into polyphonic audio synthesis in real-time.
 - **Key Capabilities:** Tracks 21 distinct hand landmarks with sub-30ms latency, mapping finger coordinates to dynamic chords and arpeggios via the browser's native Web Audio engine.
 - **Stack:** `JavaScript`, `Google MediaPipe`, `Web Audio API`, `Vite`
 
-### 3. [KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)
+### 4. [KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)
 - **Architecture:** Agricultural telematics & micro-sponsorship platform decoupling transit risk from smallholder farmer livelihoods in Nepal.
 - **Key Capabilities:** J1939 ECU & MPU-6050 vibration telemetry logging, cold-chain temperature monitoring, GIS mountain corridor risk mapping, and peer-to-peer micro-sponsorship.
 - **Stack:** `React 19`, `Vite`, `TailwindCSS`, `Leaflet GIS`, `ESP32`, `C++`
 
-### 4. Digital Creator & Tech Outreach ([@aayushifty](https://www.tiktok.com/@aayushifty))
+### 5. Digital Creator & Tech Outreach ([@aayushifty](https://www.tiktok.com/@aayushifty))
 - Creating authentic short-form engineering content, guitar jam sessions, and student lifestyle commentary.
 - Cultivating an engaged community centered around accessible tech experimentation and creative expression.
 

@@ -1666,6 +1666,57 @@ body {
   opacity: 0.8;
 }
 
+/* AETHER — an ambient suggestion card fading over a desktop */
+.ambient-card {
+  width: 100%;
+  height: auto;
+  max-height: 175px;
+}
+
+.ambient-frame {
+  fill: rgba(126, 214, 200, 0.05);
+  stroke: rgba(126, 214, 200, 0.34);
+  stroke-width: 1.2;
+}
+
+.ambient-rule {
+  stroke: rgba(244, 242, 236, 0.34);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ambient-rule.dim {
+  stroke: rgba(244, 242, 236, 0.15);
+  stroke-width: 1.4;
+}
+
+.ambient-node {
+  fill: var(--accent);
+}
+
+.ambient-node.ghost {
+  fill: rgba(244, 242, 236, 0.28);
+}
+
+.ambient-halo {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0.5;
+  animation: ambient-breathe 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes ambient-breathe {
+  0%, 100% { opacity: 0.14; transform: scale(0.72); }
+  50%      { opacity: 0.6;  transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-halo { animation: none; opacity: 0.35; }
+}
+
 /* KrishiTrust — vibration logged along a route */
 .iot-route {
   width: 100%;
@@ -3349,6 +3400,7 @@ html.at-section-end .screen-arrow-btn.next {
 @media (max-width: 420px) {
   .human-tag { font-size: 0.78rem; padding: 6px 11px; }
   .project-visual { padding: 12px 14px; }
+.ambient-card { max-height: 150px; }
   .cv-hand { max-height: 150px; }
   .iot-route { max-height: 140px; }
   .creator-strip { height: 62px; }
