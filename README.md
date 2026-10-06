@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>High School Senior &bull; Systems &amp; Local AI Developer &bull; National Competitor &amp; Athlete &bull; Musician</b><br>
-  Kathmandu, Nepal &bull; <a href="https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/">Live Portfolio</a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a>
+  Kathmandu, Nepal &bull; <a href="https://aayushbhatta230-ux.github.io/portfolio/"><b>Live 3D Portfolio</b></a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a>
 </p>
 
 <p align="center">
@@ -101,7 +101,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ## Contact & Profiles
 
-- **Interactive Portfolio:** [aayushbhatta230-ux.github.io/aayushbhatta230-ux/](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
+- **Interactive 3D Portfolio:** [aayushbhatta230-ux.github.io/portfolio/](https://aayushbhatta230-ux.github.io/portfolio/) (Source: [github.com/aayushbhatta230-ux/portfolio](https://github.com/aayushbhatta230-ux/portfolio))
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 - **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
