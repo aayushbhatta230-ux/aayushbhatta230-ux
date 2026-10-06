@@ -67,7 +67,23 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 - **Key Capabilities:** J1939 ECU & MPU-6050 vibration telemetry logging, cold-chain temperature monitoring, GIS mountain corridor risk mapping, and peer-to-peer micro-sponsorship.
 - **Stack:** `React 19`, `Vite`, `TailwindCSS`, `Leaflet GIS`, `ESP32`, `C++`
 
-### 5. Digital Creator & Tech Outreach ([@aayushifty](https://www.tiktok.com/@aayushifty))
+### 5. [Trinity Teaching](https://github.com/aayushbhatta230-ux/trinity-teaching-app)
+- **Architecture:** Offline-first Android & Windows classroom presentation platform tailored for interactive smartboards, tablets, and educator touchscreens at Trinity International College.
+- **Key Capabilities:**
+  - **Zero-Cloud Offline Reliability:** Runs completely standalone without requiring external network access during lectures.
+  - **Multi-Platform Distribution:** Packaged standalone Android APKs and automated Windows desktop installers (`.exe`) with auto-retained state across updates.
+  - **Touch & Presentation Optimization:** Designed for high-contrast viewing on classroom smartboards with intuitive slide gestures.
+- **Stack:** `Android (APK)`, `Electron / Windows Installer`, `JavaScript`, `CSS3`
+
+### 6. [Ullens Idea Lab](https://github.com/aayushbhatta230-ux/ullens-idea-lab)
+- **Architecture:** Autonomous multi-agent AI research and debate ecosystem built for the Ullens Hackathon, focusing on Financial Inclusion and Fintech in Nepal.
+- **Key Capabilities:**
+  - **Multi-Agent Specialist Swarm:** Orchestrates parallel domain agents (Nepal Economy, Fintech Rail Systems, Micro-Inclusion).
+  - **Automated Devil's Advocate:** Adversarial reviewer agent that stress-tests feasibility, regulatory friction, and financial sustainability before final synthesis.
+  - **Real-Time Streaming UI:** Live SSE browser cockpit visualizing inter-agent debates and generating downloadable structured Markdown briefs.
+- **Stack:** `Python`, `FreeLLMAPI Gateway`, `Multi-Agent Orchestration`, `SSE Web HUD`
+
+### 7. Digital Creator & Tech Outreach ([@aayushifty](https://www.tiktok.com/@aayushifty))
 - Creating authentic short-form engineering content, guitar jam sessions, and student lifestyle commentary.
 - Cultivating an engaged community centered around accessible tech experimentation and creative expression.
 
