@@ -1,4 +1,4 @@
-import{j,r as wt}from"./vendor-r3f-Dhay9ZSB.js";import{S as yt}from"./ScrollTrigger-CezCZ8EY.js";import{g as St}from"./vendor-gsap-UnPCydt8.js";import{a as xt}from"./index-BTWeD94d.js";/*!
+import{j,r as wt}from"./vendor-r3f-CekeHfoq.js";import{S as yt}from"./ScrollTrigger-CezCZ8EY.js";import{g as St}from"./vendor-gsap-B_iWSqSA.js";import{a as xt}from"./index-CP0SKSEB.js";/*!
  * SplitText 3.15.0
  * https://gsap.com
  *
