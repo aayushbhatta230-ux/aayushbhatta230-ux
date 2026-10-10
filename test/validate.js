@@ -55,7 +55,8 @@ const manifestContent = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'site.web
 assert(manifestContent.name && manifestContent.short_name, 'Manifest contains valid app name & short_name');
 assert(Array.isArray(manifestContent.icons) && manifestContent.icons.length >= 2, 'Manifest defines icon array');
 manifestContent.icons.forEach(icon => {
-  const iconPath = path.join(ROOT_DIR, icon.src);
+  const rel = icon.src.split('?')[0].replace(/^\/portfolio\//, '').replace(/^\.\//, '');
+  const iconPath = path.join(ROOT_DIR, rel);
   assert(fs.existsSync(iconPath), `Manifest icon exists: ${icon.src} (${icon.sizes})`);
 });
 
