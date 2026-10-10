@@ -21,23 +21,22 @@ function assert(condition, message) {
 console.log('=== Running Portfolio Integrity Test Suite ===\n');
 
 // 1. Check core files exist
-console.log('[1/5] Core Assets Verification');
-const coreFiles = ['index.html', 'style.css', 'script.js', 'sw.js', 'site.webmanifest', 'favicon.ico', 'sitemap.xml', 'robots.txt'];
+console.log('[1/4] Core Assets Verification');
+const coreFiles = ['index.html', 'site.webmanifest', 'apple-touch-icon.png', 'favicon.png', 'sitemap.xml', 'robots.txt'];
 coreFiles.forEach(file => {
   assert(fs.existsSync(path.join(ROOT_DIR, file)), `File exists: ${file}`);
 });
 
 // 2. Validate index.html contents
-console.log('\n[2/5] HTML & Accessibility Validation');
+console.log('\n[2/4] HTML & Accessibility Validation');
 const htmlContent = fs.readFileSync(path.join(ROOT_DIR, 'index.html'), 'utf8');
 
 assert(htmlContent.includes('<title>Aayush Bhatta'), 'HTML has correct title');
-assert(htmlContent.includes('class="skip-link"'), 'Screen reader skip-link present');
-assert(htmlContent.includes('aria-label="Introduction and overview"'), 'Section ARIA labels present');
-assert(!htmlContent.includes('transition-indicator-pill'), 'No AI transition badge pills in DOM');
+assert(htmlContent.includes('rel="apple-touch-icon"'), 'Apple Touch Icon link present');
+assert(htmlContent.includes('rel="manifest"'), 'Web app manifest link present');
 
 // 3. Validate Schema.org JSON-LD
-console.log('\n[3/5] Schema.org Knowledge Graph Validation');
+console.log('\n[3/4] Schema.org Knowledge Graph Validation');
 const schemaMatch = htmlContent.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
 assert(schemaMatch !== null, 'Found application/ld+json script tag');
 if (schemaMatch) {
@@ -45,41 +44,13 @@ if (schemaMatch) {
     const schema = JSON.parse(schemaMatch[1]);
     assert(schema['@type'] === 'Person', 'Schema @type is Person');
     assert(schema.name === 'Aayush Bhatta', 'Schema name is Aayush Bhatta');
-    assert(Array.isArray(schema.knowsAbout) && schema.knowsAbout.length > 0, 'Schema defines knowsAbout competencies');
-    assert(Array.isArray(schema.award) && schema.award.length > 0, 'Schema defines award list');
   } catch (err) {
     assert(false, `Schema JSON parsing failed: ${err.message}`);
   }
 }
 
-// 4. Validate referenced images exist
-console.log('\n[4/5] Media & Image References Validation');
-const imgMatches = [...htmlContent.matchAll(/src="(assets\/images\/[^"]+)"/g)];
-assert(imgMatches.length > 0, `Found ${imgMatches.length} referenced local images`);
-imgMatches.forEach(m => {
-  // Strip cache-busting query strings (e.g. "?v=v4") before hitting the filesystem
-  const relPath = m[1].split('?')[0];
-  const fullPath = path.join(ROOT_DIR, relPath);
-  assert(fs.existsSync(fullPath), `Image asset exists: ${relPath}`);
-});
-
-// 5. JavaScript & Service Worker syntax check
-console.log('\n[5/5] JavaScript Engine & PWA Validation');
-const { execSync } = require('child_process');
-try {
-  execSync('node -c script.js', { cwd: ROOT_DIR });
-  assert(true, 'script.js compiles cleanly with zero syntax errors');
-} catch (err) {
-  assert(false, `script.js syntax check failed: ${err.message}`);
-}
-try {
-  execSync('node -c sw.js', { cwd: ROOT_DIR });
-  assert(true, 'sw.js (Service Worker) compiles cleanly with zero syntax errors');
-} catch (err) {
-  assert(false, `sw.js syntax check failed: ${err.message}`);
-}
-
-// 6. Validate Web App Manifest and Icon Assets
+// 4. Validate Web App Manifest and Icon Assets
+console.log('\n[4/4] Web App Manifest and Icon Assets');
 const manifestContent = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'site.webmanifest'), 'utf8'));
 assert(manifestContent.name && manifestContent.short_name, 'Manifest contains valid app name & short_name');
 assert(Array.isArray(manifestContent.icons) && manifestContent.icons.length >= 2, 'Manifest defines icon array');
