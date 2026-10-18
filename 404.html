@@ -1,21 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Redirecting to Portfolio...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta property="og:image" content="./bilal/Assets/Meta/icon.png" />
+    <meta
+      name="description"
+      content="Aayush Bhatta (@aayushifty) is an AI enthusiast and local AI developer based in Kathmandu, Nepal, exploring engineering and AI robotics alongside Grade 12 Science education."
+    />
+    <meta
+      name="keywords"
+      content="Aayush Bhatta, aayushifty, ai developer, local ai, kathmandu nepal, ai robotics, engineering, grade 12 science, ollama, threejs"
+    />
+    <link rel="icon" href="./bilal/Assets/Meta/icon.png" />
+    <link rel="apple-touch-icon" href="./bilal/Assets/Meta/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Aayush Bhatta (@aayushifty) — AI Developer &amp; Robotics</title>
     <script>
-      (function() {
-        var path = window.location.pathname;
-        if (path.indexOf('aayushbhatta230-ux') !== -1) {
-          window.location.replace('/aayushbhatta230-ux/');
-        } else {
-          window.location.replace('/portfolio/');
-        }
-      })();
+      // Clear any legacy service workers and caches from previous portfolio builds
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var r of regs) r.unregister();
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          for (var k of keys) caches.delete(k);
+        });
+      }
     </script>
-    <meta http-equiv="refresh" content="0; url=/portfolio/" />
+    <script type="module" crossorigin src="./assets/index-zgSxc03X.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Ca5bRXdd.css">
   </head>
   <body>
-    <p>Loading portfolio... If not redirected, <a href="/portfolio/">click here</a>.</p>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
   </body>
 </html>
