@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>High School Senior &bull; Systems &amp; Local AI Developer &bull; National Competitor &amp; Athlete &bull; Musician</b><br>
-  Kathmandu, Nepal &bull; <a href="https://aayushbhatta230-ux.github.io/portfolio/"><b>Official Portfolio</b></a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a>
+  Kathmandu, Nepal &bull; <a href="[https://aayushbhatta230-ux.github.io/portfolio/](https://aayushifty.is-a.dev/)"><b>Official Portfolio</b></a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a>
 </p>
 
 <p align="center">
