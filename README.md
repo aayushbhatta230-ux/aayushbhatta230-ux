@@ -3,10 +3,9 @@
 <p align="center">
   <img src="assets/images/mirror_selfie_2.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
 </p>
-
-<p align="center">
-  <b>High School Senior &bull; Systems &amp; Local AI Developer &bull; National Competitor &amp; Athlete &bull; Musician</b><br>
-  Kathmandu, Nepal &bull; <a href="[https:[//aayushbhatta230-ux.github.io/portfolio/](https://aayushifty.is-a.dev/)](https://aayushifty.is-a.dev/)"><b>Official Portfolio</b></a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a>
+<p align="center"> 
+  <b>High School Senior &bull; Systems &amp; Local AI Developer &bull; National Competitor &amp; Athlete &bull; Musician</b><br> 
+  Kathmandu, Nepal &bull; <a href="https://aayushifty.is-a.dev/"><b>Official Portfolio</b></a> &bull; <a href="mailto:aayushbhatta230@gmail.com">aayushbhatta230@gmail.com</a> 
 </p>
 
 <p align="center">
