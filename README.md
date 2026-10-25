@@ -13,6 +13,7 @@
   <a href="https://github.com/aayushbhatta230-ux/aayushbhatta230-ux/actions"><img src="https://img.shields.io/badge/CI-Passing-10b981?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Passing" /></a>
   <a href="https://www.tiktok.com/@aayushifty"><img src="https://img.shields.io/badge/TikTok-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok" /></a>
   <a href="https://www.instagram.com/aayushshshhshifty/"><img src="https://img.shields.io/badge/Instagram-@aayushshshhshifty-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" /></a>
+  <a href="https://dev.to/aayushifty"><img src="https://img.shields.io/badge/DEV.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white" alt="DEV.to" /></a>
 </p>
 
 ---
@@ -29,6 +30,7 @@ When people search *"Who is Aayush Bhatta?"*, this profile serves as the officia
   - 📸 **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
   - 💻 **GitHub:** [@aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
   - 🎵 **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
+  - ✍️ **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
   - 🌐 **Interactive 3D Portfolio:** [aayushbhatta230-ux.github.io/portfolio/](https://aayushbhatta230-ux.github.io/portfolio/)
   - 📬 **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 
@@ -137,4 +139,5 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 - **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
+- **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
 - **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
