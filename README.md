@@ -22,16 +22,16 @@
 
 **Aayush Bhatta** (known online across developer communities as **`@aayushifty`** and on Instagram as [**`@aayushshshhshifty`**](https://www.instagram.com/aayushshshhshifty/)) is a Nepal-based systems & local AI developer, UI/UX designer, high school senior, competitive athlete, national debater, and youth leader based in Kathmandu, Nepal.
 
-When people search *"Who is Aayush Bhatta?"*, this profile serves as the official verified canonical identity representing:
+Highlights:
 - **Engineering & Systems:** Builder of local LLM OS companion agents ([JARVIS AI Agent](https://github.com/aayushbhatta230-ux/jarvis-ai-agent), [AETHER](https://github.com/aayushbhatta230-ux/aether-overlay)), computer vision audio synthesizers ([HandChord](https://github.com/aayushbhatta230-ux/handchord)), IoT transit telematics ([KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)), and classroom platforms ([Trinity Teaching](https://github.com/aayushbhatta230-ux/trinity-teaching-app)).
-- **Public Diplomacy & Leadership:** Delegate of Switzerland at the National Youth Council Model United Nations (NYC MUN 2023 - UNEP, recognized by UN Resident Coordinator Hanaa Singer-Hamdy and Deputy Prime Minister Narayan Kaji Shrestha), two-term School Captain at Baba School, 6× Best Delegate awardee, and national debater at DNN MahaKumbha 2022.
+- **Public Diplomacy & Leadership:** Delegate of Switzerland at the National Youth Council Model United Nations (NYC MUN 2023 - UNEP, certificate signed by UN Resident Coordinator Hanaa Singer-Hamdy and Deputy Prime Minister Narayan Kaji Shrestha), two-term School Captain at Baba School, 6× Best Delegate awardee, and national debater at DNN MahaKumbha 2022.
 - **Creative & Athletic Expression:** Competitive basketball player, trail conditioning athlete, vocalist and guitarist, and short-form tech creator.
-- **Official Verified Channels:**
+- **Profiles:**
   - 📸 **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
   - 💻 **GitHub:** [@aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
   - 🎵 **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
   - ✍️ **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
-  - 🌐 **Interactive 3D Portfolio:** [aayushbhatta230-ux.github.io/portfolio/](https://aayushbhatta230-ux.github.io/portfolio/)
+  - 🌐 **Website & 3D Portfolio:** [aayushbhatta230-ux.github.io/aayushbhatta230-ux](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
   - 📬 **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 
 ---
@@ -107,7 +107,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ---
 
-## Verified Credentials & Leadership
+## Credentials & Leadership
 
 - **NYC MUN 2023 &bull; Delegate of Switzerland (UNEP):**
   National Youth Council Model United Nations, organized by United Nations Nepal and NYC Nepal. Endorsed and signed by **Hon. Narayan Kaji Shrestha** (Deputy Prime Minister) and **Hanaa Singer-Hamdy** (UN Resident Coordinator).
@@ -135,7 +135,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ## Contact & Profiles
 
-- **Interactive 3D Portfolio:** [aayushbhatta230-ux.github.io/portfolio/](https://aayushbhatta230-ux.github.io/portfolio/) (Source: [github.com/aayushbhatta230-ux/portfolio](https://github.com/aayushbhatta230-ux/portfolio))
+- **Website & 3D Portfolio:** [aayushbhatta230-ux.github.io/aayushbhatta230-ux](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/) (Source: [github.com/aayushbhatta230-ux/aayush-room-portfolio](https://github.com/aayushbhatta230-ux/aayush-room-portfolio))
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 - **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
