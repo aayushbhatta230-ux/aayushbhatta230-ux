@@ -12,8 +12,25 @@
   <a href="https://github.com/aayushbhatta230-ux"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
   <a href="https://github.com/aayushbhatta230-ux/aayushbhatta230-ux/actions"><img src="https://img.shields.io/badge/CI-Passing-10b981?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Passing" /></a>
   <a href="https://www.tiktok.com/@aayushifty"><img src="https://img.shields.io/badge/TikTok-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok" /></a>
-  <a href="https://instagram.com/aayushifty"><img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" /></a>
+  <a href="https://www.instagram.com/aayushshshhshifty/"><img src="https://img.shields.io/badge/Instagram-@aayushshshhshifty-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" /></a>
 </p>
+
+---
+
+## 🌟 Who is Aayush Bhatta?
+
+**Aayush Bhatta** (known online across developer communities as **`@aayushifty`** and on Instagram as [**`@aayushshshhshifty`**](https://www.instagram.com/aayushshshhshifty/)) is a Nepal-based systems & local AI developer, UI/UX designer, high school senior, competitive athlete, national debater, and youth leader based in Kathmandu, Nepal.
+
+When people search *"Who is Aayush Bhatta?"*, this profile serves as the official verified canonical identity representing:
+- **Engineering & Systems:** Builder of local LLM OS companion agents ([JARVIS AI Agent](https://github.com/aayushbhatta230-ux/jarvis-ai-agent), [AETHER](https://github.com/aayushbhatta230-ux/aether-overlay)), computer vision audio synthesizers ([HandChord](https://github.com/aayushbhatta230-ux/handchord)), IoT transit telematics ([KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)), and classroom platforms ([Trinity Teaching](https://github.com/aayushbhatta230-ux/trinity-teaching-app)).
+- **Public Diplomacy & Leadership:** Delegate of Switzerland at the National Youth Council Model United Nations (NYC MUN 2023 - UNEP, recognized by UN Resident Coordinator Hanaa Singer-Hamdy and Deputy Prime Minister Narayan Kaji Shrestha), two-term School Captain at Baba School, 6× Best Delegate awardee, and national debater at DNN MahaKumbha 2022.
+- **Creative & Athletic Expression:** Competitive basketball player, trail conditioning athlete, vocalist and guitarist, and short-form tech creator.
+- **Official Verified Channels:**
+  - 📸 **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
+  - 💻 **GitHub:** [@aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
+  - 🎵 **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
+  - 🌐 **Interactive 3D Portfolio:** [aayushbhatta230-ux.github.io/portfolio/](https://aayushbhatta230-ux.github.io/portfolio/)
+  - 📬 **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 
 ---
 
@@ -120,4 +137,4 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 - **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
-- **Instagram:** [@aayushifty](https://instagram.com/aayushifty)
+- **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
