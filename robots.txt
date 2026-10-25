@@ -2,4 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/sitemap.xml
-Sitemap: https://aayushbhatta230-ux.github.io/portfolio/sitemap.xml
