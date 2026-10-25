@@ -1,7 +1,7 @@
 # Aayush Bhatta (`@aayushifty`)
 
 <p align="center">
-  <img src="assets/images/mirror_selfie_2.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  <img src="https://aayushifty.is-a.dev/meta/avatar-square.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
 </p>
 <p align="center"> 
   <b>High School Senior &bull; Systems &amp; Local AI Developer &bull; National Competitor &amp; Athlete &bull; Musician</b><br> 
@@ -31,7 +31,7 @@ Highlights:
   - 💻 **GitHub:** [@aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
   - 🎵 **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
   - ✍️ **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
-  - 🌐 **Website & 3D Portfolio:** [aayushbhatta230-ux.github.io/aayushbhatta230-ux](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/)
+  - 🌐 **Website & 3D Portfolio:** [aayushifty.is-a.dev](https://aayushifty.is-a.dev/)
   - 📬 **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 
 ---
@@ -135,7 +135,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ## Contact & Profiles
 
-- **Website & 3D Portfolio:** [aayushbhatta230-ux.github.io/aayushbhatta230-ux](https://aayushbhatta230-ux.github.io/aayushbhatta230-ux/) (Source: [github.com/aayushbhatta230-ux/aayush-room-portfolio](https://github.com/aayushbhatta230-ux/aayush-room-portfolio))
+- **Website & 3D Portfolio:** [aayushifty.is-a.dev](https://aayushifty.is-a.dev/) (Source: [github.com/aayushbhatta230-ux/aayush-room-portfolio](https://github.com/aayushbhatta230-ux/aayush-room-portfolio))
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
 - **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
