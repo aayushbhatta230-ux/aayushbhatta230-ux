@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/aayushbhatta230-ux"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
-  <a href="https://github.com/aayushbhatta230-ux/aayushbhatta230-ux/actions"><img src="https://img.shields.io/badge/CI-Passing-10b981?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Passing" /></a>
+  <a href="https://github.com/aayushifty"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+  <a href="https://github.com/aayushifty/aayushifty/actions"><img src="https://img.shields.io/badge/CI-Passing-10b981?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Passing" /></a>
   <a href="https://www.tiktok.com/@aayushifty"><img src="https://img.shields.io/badge/TikTok-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok" /></a>
   <a href="https://www.instagram.com/aayushshshhshifty/"><img src="https://img.shields.io/badge/Instagram-@aayushshshhshifty-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" /></a>
   <a href="https://www.linkedin.com/in/aayushifty"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
@@ -24,12 +24,12 @@
 **Aayush Bhatta** (known online across developer communities as **`@aayushifty`** and on Instagram as [**`@aayushshshhshifty`**](https://www.instagram.com/aayushshshhshifty/)) is a Nepal-based systems & local AI developer, UI/UX designer, high school senior, competitive athlete, national debater, and youth leader based in Kathmandu, Nepal.
 
 Highlights:
-- **Engineering & Systems:** Builder of local LLM OS companion agents ([JARVIS AI Agent](https://github.com/aayushbhatta230-ux/jarvis-ai-agent), [AETHER](https://github.com/aayushbhatta230-ux/aether-overlay)), computer vision audio synthesizers ([HandChord](https://github.com/aayushbhatta230-ux/handchord)), IoT transit telematics ([KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)), and classroom platforms ([Trinity Teaching](https://github.com/aayushbhatta230-ux/trinity-teaching-app)).
+- **Engineering & Systems:** Builder of local LLM OS companion agents ([JARVIS AI Agent](https://github.com/aayushifty/jarvis-ai-agent), [AETHER](https://github.com/aayushifty/aether-overlay)), computer vision audio synthesizers ([HandChord](https://github.com/aayushifty/handchord)), IoT transit telematics ([KrishiTrust](https://github.com/aayushifty/krishitrust)), and classroom platforms ([Trinity Teaching](https://github.com/aayushifty/trinity-teaching-app)).
 - **Public Diplomacy & Leadership:** Delegate of Switzerland at the National Youth Council Model United Nations (NYC MUN 2023 - UNEP, certificate signed by UN Resident Coordinator Hanaa Singer-Hamdy and Deputy Prime Minister Narayan Kaji Shrestha), two-term School Captain at Baba School, 6× Best Delegate awardee, and national debater at DNN MahaKumbha 2022.
 - **Creative & Athletic Expression:** Competitive basketball player, trail conditioning athlete, vocalist and guitarist, and short-form tech creator.
 - **Profiles:**
   - 📸 **Instagram:** [@aayushshshhshifty](https://www.instagram.com/aayushshshhshifty/)
-  - 💻 **GitHub:** [@aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
+  - 💻 **GitHub:** [@aayushifty](https://github.com/aayushifty)
   - 🎵 **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
   - 💼 **LinkedIn:** [aayushifty](https://www.linkedin.com/in/aayushifty)
   - ✍️ **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
@@ -59,7 +59,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ## Featured Engineering Projects
 
-### 1. [JARVIS AI Assistant](https://github.com/aayushbhatta230-ux/jarvis-ai-agent)
+### 1. [JARVIS AI Assistant](https://github.com/aayushifty/jarvis-ai-agent)
 - **Architecture:** Autonomous local voice and multimodal agent running on Ollama (`llama3.2:latest`) and high-dimensional semantic embeddings (`nomic-embed-text:latest`).
 - **Key Capabilities:**
   - **Neural Vector Memory:** Cosine semantic retrieval of past user interactions, preferences, and system telemetry across sessions.
@@ -68,7 +68,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
   - **Cloudflare Edge Tunnel:** Instant phone-to-PC remote voice command bridge without port forwarding or dynamic IP drift.
 - **Stack:** `Python`, `Ollama`, `Llama 3.2`, `Nomic Embeddings`, `FastAPI`, `Web Speech API`, `Cloudflare Tunnels`
 
-### 2. [AETHER](https://github.com/aayushbhatta230-ux/aether-overlay)
+### 2. [AETHER](https://github.com/aayushifty/aether-overlay)
 - **Architecture:** Ambient, local-first AI overlay for Windows that samples coarse desktop context, asks a local model for one useful nudge, and disappears again.
 - **Key Capabilities:**
   - **Observe, never act:** There is no execution path. `high` risk is withheld entirely and `medium` requires human approval — asserted by the test suite.
@@ -77,17 +77,17 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
   - **Zero required dependencies:** The core runs on the standard library alone (`tkinter` + `urllib` + `sqlite3`), and the polling loop is isolated on a worker thread so the Tk main loop never blocks.
 - **Stack:** `Python`, `Ollama`, `tkinter`, `SQLite`, `pytest`
 
-### 3. [HandChord](https://github.com/aayushbhatta230-ux/handchord)
+### 3. [HandChord](https://github.com/aayushifty/handchord)
 - **Architecture:** Contactless in-air musical instrument translating webcam video into polyphonic audio synthesis in real-time.
 - **Key Capabilities:** Tracks 21 distinct hand landmarks with sub-30ms latency, mapping finger coordinates to dynamic chords and arpeggios via the browser's native Web Audio engine.
 - **Stack:** `JavaScript`, `Google MediaPipe`, `Web Audio API`, `Vite`
 
-### 4. [KrishiTrust](https://github.com/aayushbhatta230-ux/krishitrust)
+### 4. [KrishiTrust](https://github.com/aayushifty/krishitrust)
 - **Architecture:** Agricultural telematics & micro-sponsorship platform decoupling transit risk from smallholder farmer livelihoods in Nepal.
 - **Key Capabilities:** J1939 ECU & MPU-6050 vibration telemetry logging, cold-chain temperature monitoring, GIS mountain corridor risk mapping, and peer-to-peer micro-sponsorship.
 - **Stack:** `React 19`, `Vite`, `TailwindCSS`, `Leaflet GIS`, `ESP32`, `C++`
 
-### 5. [Trinity Teaching](https://github.com/aayushbhatta230-ux/trinity-teaching-app)
+### 5. [Trinity Teaching](https://github.com/aayushifty/trinity-teaching-app)
 - **Architecture:** Offline-first Android & Windows classroom presentation platform tailored for interactive smartboards, tablets, and educator touchscreens at Trinity International College.
 - **Key Capabilities:**
   - **Zero-Cloud Offline Reliability:** Runs completely standalone without requiring external network access during lectures.
@@ -95,7 +95,7 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
   - **Touch & Presentation Optimization:** Designed for high-contrast viewing on classroom smartboards with intuitive slide gestures.
 - **Stack:** `Android (APK)`, `Electron / Windows Installer`, `JavaScript`, `CSS3`
 
-### 6. [Ullens Idea Lab](https://github.com/aayushbhatta230-ux/ullens-idea-lab)
+### 6. [Ullens Idea Lab](https://github.com/aayushifty/ullens-idea-lab)
 - **Architecture:** Autonomous multi-agent AI research and debate ecosystem built for the Ullens Hackathon, focusing on Financial Inclusion and Fintech in Nepal.
 - **Key Capabilities:**
   - **Multi-Agent Specialist Swarm:** Orchestrates parallel domain agents (Nepal Economy, Fintech Rail Systems, Micro-Inclusion).
@@ -137,9 +137,9 @@ Beyond engineering, I am a competitive athlete (basketball and endurance trail c
 
 ## Contact & Profiles
 
-- **Website & 3D Portfolio:** [aayushifty.is-a.dev](https://aayushifty.is-a.dev/) (Source: [github.com/aayushbhatta230-ux/aayush-room-portfolio](https://github.com/aayushbhatta230-ux/aayush-room-portfolio))
+- **Website & 3D Portfolio:** [aayushifty.is-a.dev](https://aayushifty.is-a.dev/) (Source: [github.com/aayushifty/aayush-room-portfolio](https://github.com/aayushifty/aayush-room-portfolio))
 - **Email:** [aayushbhatta230@gmail.com](mailto:aayushbhatta230@gmail.com)
-- **GitHub:** [github.com/aayushbhatta230-ux](https://github.com/aayushbhatta230-ux)
+- **GitHub:** [github.com/aayushifty](https://github.com/aayushifty)
 - **TikTok:** [@aayushifty](https://www.tiktok.com/@aayushifty)
 - **LinkedIn:** [linkedin.com/in/aayushifty](https://www.linkedin.com/in/aayushifty)
 - **DEV Community:** [@aayushifty](https://dev.to/aayushifty)
