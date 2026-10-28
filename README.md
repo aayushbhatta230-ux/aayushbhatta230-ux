@@ -1,4 +1,4 @@
-# Aayush Bhatta (`@aayushifty`)
+# Aayush Bhatta
 
 <p align="center">
   <img src="https://aayushifty.is-a.dev/meta/avatar-square.png" alt="Aayush Bhatta" width="160" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
